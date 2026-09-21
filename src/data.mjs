@@ -116,17 +116,8 @@ export const labelBlurbs = {
   "Landscape": "A landscape scheme that turns outdoor space into an extension of the building.",
 };
 
+// CEO quote shown on the home page (the full Leadership section now lives on the Team page: see teamLeadership).
 export const leadership = {
-  paragraphs: [
-    "At Top Concept, we believe that architecture is more than creating buildings; it is about shaping experiences, improving lifestyles and delivering spaces that serve people with purpose, beauty and function.",
-    "Since our establishment, our vision has been to build a consultancy that combines creative design, technical excellence, and practical project understanding. Every project we undertake is approached with commitment, responsibility and attention to detail, ensuring that our clients receive solutions that are not only visually strong but also technically sound and commercially practical.",
-    "Over the years, Top Concept has grown through trust, dedication, and continuous improvement. Our team has worked across a wide range of projects, gaining valuable experience in architecture, interior design, engineering coordination, authority approvals, and project supervision. This journey has allowed us to understand the needs of clients, developers, contractors and authorities and to deliver design solutions that meet both ambition and reality.",
-    "We thank our clients, partners, and team members for being part of our journey. Together, we look forward to creating meaningful projects that reflect excellence, integrity and lasting value.",
-  ],
-  people: [
-    { name: "Nawaf Al Falasi", role: "Founder" },
-    { name: "Engr. Ragheed Al-Tahhan", role: "CEO & Co-Founder" },
-  ],
   quote: "At Top Concept, we are driven by people who care deeply about design, execution and the lasting impact of the spaces we create.",
   quoteBy: "Ragheed Al Tahhan",
   quoteRole: "CEO / Co-founder",

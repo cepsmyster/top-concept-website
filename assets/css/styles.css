@@ -272,8 +272,12 @@ h2 { font-size: clamp(1.65rem, 1.25rem + 1.05vw, 2.25rem); }
 .signatures { display: flex; flex-wrap: wrap; gap: 20px clamp(28px, 5vw, 64px); margin-top: clamp(28px, 4vw, 56px); }
 .signatures strong { display: block; font: italic 700 1.05rem var(--font-head); }
 .signatures span { font-size: .85rem; color: var(--on-dark-muted); font-weight: 300; }
-.leadership__media { align-self: end; justify-self: center; width: min(100%, 560px); }
-.leadership__media img { width: 100%; height: auto; filter: grayscale(1) contrast(1.05); -webkit-mask-image: linear-gradient(#000 80%, transparent); mask-image: linear-gradient(#000 80%, transparent); }
+/* Founders photo: centred in its column, sitting on the bottom edge of the black band.
+   The image already has a soft fade baked into its alpha; the ::after gradient (same colour as the band)
+   guarantees a seamless blend on every screen size. */
+.leadership__media { position: relative; align-self: end; justify-self: center; width: min(100%, 620px); line-height: 0; }
+.leadership__media img { display: block; width: 100%; height: auto; }
+.leadership__media::after { content: ""; position: absolute; inset: auto 0 -1px 0; height: 34%; background: linear-gradient(to bottom, rgba(10, 10, 10, 0), #0a0a0a 96%); pointer-events: none; }
 @media (max-width: 800px) {
   .leadership__grid { grid-template-columns: 1fr; }
   .leadership__text { padding-bottom: 32px; max-width: none; }
@@ -286,8 +290,8 @@ h2 { font-size: clamp(1.65rem, 1.25rem + 1.05vw, 2.25rem); }
 .dark-band .tabs a { color: #f2f2f2; }
 .dark-band .leadership { background: transparent; }
 @media (min-width: 801px) {
-  .leadership--flip .leadership__media { grid-column: 1; grid-row: 2; justify-self: start; }
-  .leadership--flip .leadership__text { grid-column: 2; grid-row: 2; max-width: 44ch; align-self: start; }
+  .leadership--flip .leadership__media { grid-column: 1; grid-row: 2; justify-self: center; align-self: end; }
+  .leadership--flip .leadership__text { grid-column: 2; grid-row: 2; max-width: 44ch; align-self: center; padding-block: clamp(24px, 4vw, 64px); }
   .leadership--flip .leadership__title { margin-bottom: clamp(24px, 4vw, 56px); }
 }
 :root[data-theme="dark"] .dark-band .leadership__title { font-weight: 400; text-transform: none; letter-spacing: -.012em; font-size: clamp(1.65rem, 1.25rem + 1.05vw, 2.25rem); }

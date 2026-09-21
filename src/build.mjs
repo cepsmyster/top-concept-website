@@ -66,7 +66,7 @@ const MENU = [
   { label: "Expertise", href: "expertise.html", key: "expertise" },
   { label: "People", href: "team.html", key: "team" },
   { label: "Contact", href: "contact.html", key: "contact" },
-  { label: "About", href: "index.html#leadership" },
+  { label: "About", href: "team.html#leadership" },
 ];
 
 function header({ solid, current }) {
@@ -105,10 +105,10 @@ function header({ solid, current }) {
 
 function footer() {
   const cols = [
-    ["Menu", [["Team", "team.html"], ["Leadership", "index.html#leadership"], ["Voices", "culture.html#voices"]]],
+    ["Menu", [["Team", "team.html"], ["Leadership", "team.html#leadership"], ["Voices", "culture.html#voices"]]],
     ["Projects", [["Architecture", "projects.html?type=architecture"], ["Interiors", "projects.html?type=interior"], ["Landscape", "projects.html?cat=landscape"]]],
     ["Blogs", [["Articles", "blogs.html"], ["Gallery", "projects.html"]]],
-    ["Culture", [["Leadership", "index.html#leadership"], ["Unity", "culture.html#life"], ["Culture", "culture.html"]]],
+    ["Culture", [["Leadership", "team.html#leadership"], ["Unity", "culture.html#life"], ["Culture", "culture.html"]]],
     ["Careers", [["Kickstart", "careers.html#kickstart"], ["Connect", "contact.html"]]],
     ["Contact", [["Get in touch", "contact.html#connect"], ["Offices", "contact.html#offices"]]],
   ];
@@ -347,17 +347,6 @@ const paras = (arr, cls = "") => arr.map((t) => `<p${cls ? ` class="${cls}"` : "
       <blockquote><p>“${esc(L.quote)}”</p></blockquote>
       <figcaption>${esc(L.quoteBy)} - <span>${esc(L.quoteRole)}</span></figcaption>
     </figure>
-  </div>
-</section>
-
-<section class="leadership" id="leadership" aria-labelledby="lead-title">
-  <div class="container leadership__grid">
-    <h2 id="lead-title" class="leadership__title">Leadership</h2>
-    <div class="leadership__text reveal">
-      ${paras(L.paragraphs)}
-      <ul class="signatures">${L.people.map((p) => `<li><strong>${esc(p.name)}</strong><span>${esc(p.role)}</span></li>`).join("")}</ul>
-    </div>
-    <div class="leadership__media reveal">${img("founders", { alt: "Nawaf Al Falasi and Engr. Ragheed Al-Tahhan", sizes: "(min-width: 900px) 40vw, 90vw" })}</div>
   </div>
 </section>
 
