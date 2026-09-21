@@ -29,12 +29,12 @@
     onScroll();
   }
 
-  /* Highlight the nav link that matches the current ?type= filter */
+  /* Highlight the menu link that matches the current ?type= filter */
   (() => {
     const here = location.pathname.split("/").pop() || "index.html";
     if (here !== "projects.html") return;
     const type = new URLSearchParams(location.search).get("type");
-    $$(".primary-nav a").forEach((a) => {
+    $$(".menu-overlay nav a").forEach((a) => {
       const u = new URL(a.href, location.href);
       if (u.pathname.endsWith("projects.html") && type && u.searchParams.get("type") === type) a.setAttribute("aria-current", "page");
     });
@@ -77,8 +77,28 @@
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
     });
-    window.matchMedia("(min-width: 1024px)").addEventListener?.("change", (m) => { if (m.matches) closeMenu(); });
   }
+
+  /* ───────── Home hero video ───────── */
+  (() => {
+    const hero = $("[data-hero-video]");
+    const video = hero && $(".hero__video", hero);
+    if (!video) return;
+    const conn = navigator.connection || {};
+    const allowed = window.matchMedia("(min-width: 900px)").matches && !reduceMotion && !conn.saveData && !/2g/.test(conn.effectiveType || "");
+    if (!allowed) return; // phones / reduced motion / data saver keep the still image
+    const start = () => {
+      video.addEventListener("playing", () => hero.classList.add("has-video"), { once: true });
+      video.src = hero.dataset.heroVideo;
+      const p = video.play();
+      if (p && p.catch) p.catch(() => { /* autoplay blocked: the still image stays */ });
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(([e]) => { if (e.isIntersecting) video.play().catch(() => {}); else video.pause(); }).observe(hero);
+      }
+    };
+    if (document.readyState === "complete") setTimeout(start, 300);
+    else window.addEventListener("load", () => setTimeout(start, 300), { once: true });
+  })();
 
   /* ───────── Scroll reveal ───────── */
   (() => {
@@ -201,6 +221,11 @@
     };
     chips.forEach((c) => c.addEventListener("click", () => { type = c.dataset.filter; cat = ""; apply(true); }));
     apply(false);
+    // arriving from a filter link (menu, footer, expertise): jump straight to the grid
+    if (type !== "all" || cat) {
+      const target = $("#all-projects");
+      if (target) requestAnimationFrame(() => target.scrollIntoView({ block: "start", behavior: "instant" }));
+    }
   })();
 
   /* ───────── Lightbox (project galleries) ───────── */

@@ -12,13 +12,16 @@ Built from the design files in `New Website/`.
 
 | Page | File |
 |---|---|
-| Home (hero, blogs, projects carousel, culture/careers, leadership, expertise, contact) | `index.html` |
-| Projects (filterable) + one page per project | `projects.html`, `project-*.html` |
+| Home (video hero, blogs, projects carousel, culture/careers, leadership, expertise, contact) | `index.html` |
+| Expertise (alternating rows + carousel) | `expertise.html` |
+| Projects ("View the Work" hero, showcase, filterable grid) + one page per project | `projects.html`, `project-*.html` |
 | Blogs + one page per article | `blogs.html`, `blog-*.html` |
 | Team · Culture · Careers | `team.html`, `culture.html`, `careers.html` |
 | Contact · Privacy · 404 | `contact.html`, `privacy.html`, `404.html` |
 
-The header has a **light / dark theme switch** (the sun/moon icon). Light is the default; the dark theme follows the "Home Page black" design. The visitor's choice is remembered.
+The header follows the updated designs: **MENU** (left) opens the slide-in menu, the logo is centred, and the sun/moon icon (right) switches between the **dark** and **light** theme. **Dark is the default** (the "black" designs); the visitor's choice is remembered. To make light the default, change `var t="dark"` to `var t="light"` in the `<script>` inside `page()` in `src/build.mjs` and rebuild.
+
+**Hero video (home page):** `assets/video/hero.mp4` plays on screens ≥ 900px wide. Phones, "reduce motion" and data-saver visitors get the still image (`hero.webp`) with the "From concept to completion" headline instead, so they don't download the 18 MB video. To change the video, replace the file (keep the name); it should have the headline baked in, as the current one does.
 
 ## Things to set up before launch (5 minutes)
 
@@ -40,7 +43,7 @@ All text/data lives in **`src/data.mjs`**:
 - `projects` — add/edit projects (title, category, image, optional `gallery`). **Titles marked as descriptive placeholders (e.g. "Community Tower") should be replaced with the real project names.**
 - `team` — names, roles, photos (`img: null` shows the placeholder avatar).
 - `blogs` — articles. **The six sample articles are placeholder copy — replace them with real posts.**
-- `culture`, `careers`, `leadership`, `expertise` — page copy.
+- `expertisePage`, `projectsPage`, `teamLeadership`, `culture`, `careers`, `leadership`, `expertise` — page copy. **On the Expertise carousel, only the "Retails" line comes from the design; the other five short descriptions are placeholders to replace with approved copy.**
 
 After any change to `src/` run, from this folder:
 
@@ -69,6 +72,7 @@ index.html, projects.html, …        generated pages
 assets/css/styles.css               all styles (light + dark themes)
 assets/js/main.js                   theme, menu, carousel, filters, lightbox, forms
 assets/img/                         optimized images (WebP), logos, icons
+assets/video/hero.mp4               home page hero video
 assets/fonts/                       self-hosted Montserrat + Inter
 src/config.mjs                      site settings (forms, socials, map pins)
 src/data.mjs                        content

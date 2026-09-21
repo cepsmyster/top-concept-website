@@ -33,7 +33,7 @@ const V = Date.now().toString(36); // cache-buster for css/js
 const esc = (s = "") => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const fmtDate = (iso, upper = true) => {
   const d = new Date(iso + "T12:00:00Z");
-  const s = d.toLocaleDateString("en-US", { month: "long", day: "2-digit", year: "numeric", timeZone: "UTC" });
+  const s = d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
   return upper ? s.toUpperCase() : s;
 };
 const url = (p) => (cfg.siteUrl ? `${cfg.siteUrl}/${p}` : p);
@@ -58,42 +58,32 @@ const ICON = {
 };
 
 // ───────────────────────── shared chrome ─────────────────────────
-const NAV = [
-  { key: "architecture", label: "Architecture", href: "projects.html?type=architecture" },
-  { key: "interior", label: "Interior", href: "projects.html?type=interior" },
-  { key: "founders", label: "Founders", href: "index.html#leadership" },
-  { key: "team", label: "Team", href: "team.html" },
-  { key: "careers", label: "Careers", href: "careers.html" },
-  { key: "contact", label: "Contact", href: "contact.html" },
-];
+// Menu items come from the "Menu hamburger" design. Culture and Careers live under People (tabs).
 const MENU = [
   { label: "Home", href: "index.html", key: "home" },
   { label: "Architecture", href: "projects.html?type=architecture" },
   { label: "Interior", href: "projects.html?type=interior" },
-  { label: "Expertise", href: "index.html#expertise" },
+  { label: "Expertise", href: "expertise.html", key: "expertise" },
   { label: "People", href: "team.html", key: "team" },
-  { label: "Culture", href: "culture.html", key: "culture" },
-  { label: "Careers", href: "careers.html", key: "careers" },
   { label: "Contact", href: "contact.html", key: "contact" },
   { label: "About", href: "index.html#leadership" },
 ];
 
 function header({ solid, current }) {
-  const links = NAV.map((n) => `<a href="${n.href}"${n.key === current ? ' aria-current="page"' : ""}>${n.label}</a>`).join("");
+  const cur = current === "culture" || current === "careers" ? "team" : current;
   return `
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header${solid ? " is-solid" : ""}" id="site-header">
   <div class="site-header__inner">
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay" data-menu-open>
+      <span class="menu-toggle__bars" aria-hidden="true"><i></i><i></i></span><span>Menu</span>
+    </button>
     <a class="brand" href="index.html" aria-label="${esc(cfg.siteName)} — home">
       <img src="assets/img/logo-light.png" alt="" width="${META["logo-light"].w}" height="${META["logo-light"].h}">
     </a>
-    <nav class="primary-nav" aria-label="Primary">${links}</nav>
     <div class="header-tools">
-      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme" title="Switch theme">
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to light theme" title="Switch theme">
         <span class="theme-toggle__sun">${ICON.sun}</span><span class="theme-toggle__moon">${ICON.moon}</span>
-      </button>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay" data-menu-open>
-        <span class="menu-toggle__bars" aria-hidden="true"><i></i><i></i></span><span>Menu</span>
       </button>
     </div>
   </div>
@@ -103,7 +93,7 @@ function header({ solid, current }) {
   <div class="menu-overlay__panel">
     <button class="menu-close" type="button" data-menu-close><span class="menu-close__x" aria-hidden="true">${ICON.close}</span><span>Menu</span></button>
     <nav aria-label="Site menu">
-      <ul>${MENU.map((m) => `<li><a href="${m.href}"${m.key && m.key === current ? ' aria-current="page"' : ""}>${m.label}</a></li>`).join("")}</ul>
+      <ul>${MENU.map((m) => `<li><a href="${m.href}"${m.key && m.key === cur ? ' aria-current="page"' : ""}>${m.label}</a></li>`).join("")}</ul>
     </nav>
     <div class="menu-overlay__foot">
       <small>© TCI ${new Date().getFullYear()}</small>
@@ -169,13 +159,22 @@ function contactForm() {
   </form>`;
 }
 
-function cta({ title = "Let’s Bring Your Vision to Life", text = "Connect with Top Concept International to explore innovative and tailored design solutions for your next project. Our team is ready to guide you from concept to completion with professionalism and expertise.", tracked = false } = {}) {
+// Default copy differs per theme (light comps: "Let's Bring Your Vision to Life"; dark comps: "Design Begins…").
+// Pass `title`/`text` to use one fixed wording (e.g. the Team page).
+function cta({ title, text, tracked = false } = {}) {
+  const fixed = title !== undefined;
+  const h = fixed
+    ? esc(title)
+    : `<span class="t-light">Let’s Bring Your Vision to Life</span><span class="t-dark">Design Begins With a Conversation.</span>`;
+  const p = fixed
+    ? esc(text)
+    : `<span class="t-light">Connect with Top Concept International to explore innovative and tailored design solutions for your next project. Our team is ready to guide you from concept to completion with professionalism and expertise.</span><span class="t-dark">Share your vision with us. We’ll help shape it into something real.</span>`;
   return `
 <section class="cta${tracked ? " cta--tracked" : ""}" id="connect" aria-labelledby="cta-title">
   <div class="container cta__grid">
     <div class="cta__copy">
-      <h2 id="cta-title">${esc(title)}</h2>
-      <p>${esc(text)}</p>
+      <h2 id="cta-title">${h}</h2>
+      <p>${p}</p>
       ${contactForm()}
     </div>
     <div class="cta__map reveal">${mapFigure()}</div>
@@ -202,7 +201,7 @@ ${cfg.siteUrl ? `<link rel="canonical" href="${url(file === "index.html" ? "" : 
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-<script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("tci-theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script>document.documentElement.classList.add("js");var t="dark";try{var s=localStorage.getItem("tci-theme");if(s==="dark"||s==="light")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)</script>
 <link rel="preload" href="assets/fonts/montserrat-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/styles.css?v=${V}">
@@ -293,8 +292,9 @@ const paras = (arr, cls = "") => arr.map((t) => `<p${cls ? ` class="${cls}"` : "
     current: "home",
     head: `<link rel="preload" as="image" href="assets/img/hero-md.webp" imagesrcset="assets/img/hero-md.webp 800w, assets/img/hero.webp ${hero.w}w" imagesizes="100vw" fetchpriority="high">`,
     body: `
-<section class="hero hero--home">
+<section class="hero hero--home" data-hero-video="assets/video/hero.mp4">
   ${img("hero", { alt: "Azizi tower rising against a deep blue sky", cls: "hero__bg", eager: true })}
+  <video class="hero__video" muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
   <div class="hero__shade"></div>
   <h1 class="hero__title">From <em>concept</em> to <em>completion</em></h1>
   <a class="hero__scroll" href="#blogs" aria-label="Scroll to content"><span></span></a>
@@ -363,7 +363,7 @@ const paras = (arr, cls = "") => arr.map((t) => `<p${cls ? ` class="${cls}"` : "
 
 <section class="section section--expertise" id="expertise" aria-labelledby="ex-title">
   <div class="container">
-    <h2 id="ex-title" class="section__title"><span class="t-light">Fields of Expertise</span><span class="t-dark">Our Expertise</span></h2>
+    <div class="section__head"><h2 id="ex-title" class="section__title"><span class="t-light">Fields of Expertise</span><span class="t-dark">Our Expertise</span></h2><a class="link-caps" href="expertise.html">Explore our expertise</a></div>
     <p class="section__lead dark-only">Our culture comes from the heart at Top Concept International, where we stand together, work with honesty and give our best to create spaces that truly matter.</p>
     <div class="ex-grid">${expertiseCards}</div>
   </div>
@@ -373,8 +373,21 @@ ${cta()}`,
   });
 }
 
+// Full-height hero with a centred title (no tabs) — used by Projects and Expertise.
+function simpleHero({ img: name, alt, title }) {
+  return `
+<section class="hero hero--home">
+  ${img(name, { alt, cls: "hero__bg", eager: true })}
+  <div class="hero__shade"></div>
+  <h1 class="hero__title">${title}</h1>
+  <a class="hero__scroll" href="#intro" aria-label="Scroll to content"><span></span></a>
+</section>`;
+}
+
 // PROJECTS INDEX
 {
+  const P = D.projectsPage;
+  const show = D.projects.find((p) => p.slug === P.showcase.slug);
   const chips = [{ slug: "all", label: "All" }, ...D.projectTypes]
     .map((t, i) => `<button type="button" class="chip${i === 0 ? " is-active" : ""}" data-filter="${t.slug}" aria-pressed="${i === 0}">${t.label}</button>`)
     .join("");
@@ -382,17 +395,85 @@ ${cta()}`,
     file: "projects.html",
     title: "Projects",
     description: "Selected architecture, interior, masterplan and hospitality projects by Top Concept International.",
-    solid: true,
     body: `
-<section class="page-head container">
-  <h1>Projects</h1>
+${simpleHero({ img: "hero-projects", alt: P.heroAlt, title: P.heroTitle })}
+<section class="intro container" id="intro">
+  <h2>${esc(P.heading)}</h2>
+  <p>${esc(P.intro)}</p>
+</section>
+<section class="showcase container" aria-labelledby="showcase-title">
+  <a class="showcase__media reveal" href="project-${show.slug}.html" aria-label="${esc(show.title)}">${img(show.img, { alt: show.alt, sizes: "(min-width: 900px) 40vw, 92vw" })}</a>
+  <div class="showcase__text reveal">
+    <h2 id="showcase-title">Project Showcase</h2>
+    <p class="showcase__label">${esc(P.showcase.label)}</p>
+    <p>${esc(P.showcase.text)}</p>
+    <a class="link-caps" href="project-${show.slug}.html">View project</a>
+  </div>
+</section>
+<section class="container projects-all" id="all-projects" aria-label="All projects">
   <div class="chips" role="group" aria-label="Filter projects" data-chips>${chips}</div>
   <p class="filter-note" data-filter-note hidden></p>
+  <div class="proj-grid" data-projects>
+    ${D.projects.map(projectCard).join("")}
+  </div>
+  <p class="empty" data-empty hidden>No projects match this filter yet.</p>
 </section>
-<section class="container proj-grid" data-projects>
-  ${D.projects.map(projectCard).join("")}
+${cta()}`,
+  });
+}
+
+// EXPERTISE
+{
+  const E = D.expertisePage;
+  const rows = E.rows
+    .map(
+      (r, i) => `<article class="ex-row${i % 2 ? " ex-row--flip" : ""} reveal" id="${r.slug}" style="--pos:${r.pos || "50% 50%"}">
+    <a class="ex-row__media" href="projects.html?cat=${r.slug}" tabindex="-1" aria-hidden="true">${img(r.img, { alt: "", sizes: "(min-width: 900px) 48vw, 92vw" })}</a>
+    <div class="ex-row__text">
+      <h2>${esc(r.title)}</h2>
+      <p>${esc(r.text)}</p>
+      <a class="link-caps" href="projects.html?cat=${r.slug}">See ${esc(r.title.split(" / ")[0])} projects</a>
+    </div>
+  </article>`
+    )
+    .join("\n  <hr class=\"rule\">\n  ");
+  const n = E.carousel.length;
+  const slides = E.carousel
+    .map(
+      (c, i) => `<li class="slide${i === 0 ? " is-active" : ""}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${n}" data-label="" data-title="${esc(c.title)}" data-href="projects.html?cat=${c.slug}">
+        <a href="projects.html?cat=${c.slug}" tabindex="${i === 0 ? 0 : -1}" aria-label="${esc(c.title)}">${img(c.img, { alt: c.alt, sizes: "(min-width: 900px) 34vw, 72vw" })}<span class="slide__text">${esc(c.text)}</span></a>
+      </li>`
+    )
+    .join("");
+  const dots = E.carousel.map((c, i) => `<button type="button" class="dot${i === 0 ? " is-active" : ""}" data-slide="${i}" aria-label="Show ${esc(c.title)}"${i === 0 ? ' aria-current="true"' : ""}></button>`).join("");
+  page({
+    file: "expertise.html",
+    title: "Expertise",
+    description: "Urban design, community buildings, malls, masterplanning, retail, interiors, villas, townhouses, landscape and hospitality — the fields of expertise at Top Concept International.",
+    current: "expertise",
+    body: `
+${simpleHero({ img: "hero-expertise", alt: E.heroAlt, title: E.heroTitle })}
+<section class="intro container" id="intro">
+  <h2>${esc(E.heading)}</h2>
+  <p>${esc(E.intro)}</p>
 </section>
-<p class="container empty" data-empty hidden>No projects match this filter yet.</p>
+<div class="container ex-rows">
+  <hr class="rule">
+  ${rows}
+  <hr class="rule">
+</div>
+<section class="ex-more" aria-label="More fields of expertise">
+  <div class="carousel carousel--expertise" data-carousel aria-roledescription="carousel" aria-label="More fields of expertise">
+    <ul class="carousel__track" data-track>${slides}</ul>
+    <button class="carousel__nav carousel__nav--prev" type="button" data-prev aria-label="Previous field">${ICON.arrow}</button>
+    <button class="carousel__nav carousel__nav--next" type="button" data-next aria-label="Next field">${ICON.arrow}</button>
+    <div class="carousel__caption" aria-live="polite">
+      <span class="carousel__label" data-cap-label></span>
+      <a class="carousel__title" data-cap-title href="projects.html?cat=${E.carousel[0].slug}">${esc(E.carousel[0].title)}</a>
+    </div>
+    <div class="carousel__dots" role="group" aria-label="Choose field">${dots}</div>
+  </div>
+</section>
 ${cta()}`,
   });
 }
@@ -656,6 +737,11 @@ page({
   <p class="notfound__links"><a class="btn" href="index.html">Back to home</a><a class="btn btn--ghost" href="projects.html">View projects</a></p>
 </section>`,
 });
+
+// remove stale generated pages (e.g. after renaming or deleting a project / article)
+for (const f of fs.readdirSync(ROOT)) {
+  if (/^(project|blog)-.+\.html$/.test(f) && !written.includes(f)) { fs.unlinkSync(path.join(ROOT, f)); console.log("Removed stale page:", f); }
+}
 
 // robots + sitemap
 fs.writeFileSync(path.join(ROOT, "robots.txt"), `User-agent: *\nAllow: /\n${cfg.siteUrl ? `Sitemap: ${cfg.siteUrl}/sitemap.xml\n` : ""}`);
