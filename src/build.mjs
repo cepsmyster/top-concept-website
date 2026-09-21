@@ -169,13 +169,13 @@ function contactForm() {
   </form>`;
 }
 
-function cta() {
+function cta({ title = "Let’s Bring Your Vision to Life", text = "Connect with Top Concept International to explore innovative and tailored design solutions for your next project. Our team is ready to guide you from concept to completion with professionalism and expertise.", tracked = false } = {}) {
   return `
-<section class="cta" id="connect" aria-labelledby="cta-title">
+<section class="cta${tracked ? " cta--tracked" : ""}" id="connect" aria-labelledby="cta-title">
   <div class="container cta__grid">
     <div class="cta__copy">
-      <h2 id="cta-title">Let’s Bring Your Vision to Life</h2>
-      <p>Connect with Top Concept International to explore innovative and tailored design solutions for your next project. Our team is ready to guide you from concept to completion with professionalism and expertise.</p>
+      <h2 id="cta-title">${esc(title)}</h2>
+      <p>${esc(text)}</p>
       ${contactForm()}
     </div>
     <div class="cta__map reveal">${mapFigure()}</div>
@@ -241,13 +241,14 @@ function projectCard(p, i = 0) {
   </a>`;
 }
 
-function pageHero({ img: name, alt, title, current }) {
+function pageHero({ img: name, alt, title, current, openBand = false }) {
+  // openBand: the tabs sit inside a black band that the caller must close with </div>
   return `
 <section class="hero hero--page">
   ${img(name, { alt, cls: "hero__bg", eager: true, sizes: "100vw" })}
   <div class="hero__shade"></div>
   <h1 class="hero__title">${title}</h1>
-</section>
+</section>${openBand ? `\n<div class="dark-band">` : ""}
 <div class="container">
   <nav class="tabs" aria-label="People sections">
     <a href="team.html"${current === "team" ? ' aria-current="page"' : ""}>Team</a>
@@ -488,12 +489,19 @@ page({
   description: "Meet the architects, engineers and designers behind Top Concept International.",
   current: "team",
   body: `
-${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>Team</em>", current: "team" })}
+${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>Team</em>", current: "team", openBand: true })}
+  <section class="leadership leadership--flip" id="leadership" aria-labelledby="team-lead-title">
+    <div class="container leadership__grid">
+      <h2 id="team-lead-title" class="leadership__title">Leadership</h2>
+      <div class="leadership__text reveal">
+        ${paras(D.teamLeadership.paragraphs)}
+        <ul class="signatures">${D.teamLeadership.people.map((p) => `<li><strong>${esc(p.name)}</strong><span>${esc(p.role)}</span></li>`).join("")}</ul>
+      </div>
+      <div class="leadership__media reveal">${img("founders", { alt: "Nawaf Al Falasi and Engr. Ragheed Al-Tahhan", sizes: "(min-width: 900px) 40vw, 90vw" })}</div>
+    </div>
+  </section>
+</div>
 <section class="container team" aria-label="Team members">
-  <article class="ceo reveal">
-    <div class="ceo__media">${img(D.ceo.img, { alt: D.ceo.name, sizes: "(min-width: 900px) 30vw, 70vw" })}</div>
-    <div class="ceo__text"><h2>${esc(D.ceo.name)}</h2><p>${esc(D.ceo.role)}</p></div>
-  </article>
   <ul class="team-grid">
     ${D.team
       .map(
@@ -506,7 +514,7 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
       .join("")}
   </ul>
 </section>
-${cta()}`,
+${cta({ title: "Design Begins With a Conversation.", text: "Share your vision with us. We’ll help shape it into something real.", tracked: true })}`,
 });
 
 // CULTURE

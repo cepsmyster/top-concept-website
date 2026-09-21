@@ -18,7 +18,7 @@
 <script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("tci-theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="preload" href="assets/fonts/montserrat-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/styles.css?v=muav0yol">
+<link rel="stylesheet" href="assets/css/styles.css?v=muavr0pz">
 
 </head>
 <body>
@@ -61,6 +61,7 @@
   <div class="hero__shade"></div>
   <h1 class="hero__title">Meet the <em>Team</em></h1>
 </section>
+<div class="dark-band">
 <div class="container">
   <nav class="tabs" aria-label="People sections">
     <a href="team.html" aria-current="page">Team</a>
@@ -68,11 +69,18 @@
     <a href="careers.html">Careers</a>
   </nav>
 </div>
+  <section class="leadership leadership--flip" id="leadership" aria-labelledby="team-lead-title">
+    <div class="container leadership__grid">
+      <h2 id="team-lead-title" class="leadership__title">Leadership</h2>
+      <div class="leadership__text reveal">
+        <p>At Top Concept, we design spaces that feel good to live in, work in, and experience.</p><p>Our work goes beyond buildings. It is about understanding people, their needs, and the way each space should serve them. From architecture and interiors to engineering coordination and project supervision, we bring creativity, technical knowledge, and care into every project.</p><p>Over the years, we have grown through trust, hard work, and strong relationships with our clients and partners. Every project has helped us learn, improve, and deliver designs that are both beautiful and practical.</p><p>We are grateful to everyone who has been part of our journey. Together, we continue to create meaningful spaces built with purpose, integrity, and lasting value.</p>
+        <ul class="signatures"><li><strong>Nawaf Al Falasi</strong><span>Founder</span></li><li><strong>Engr. Ragheed Al-Tahhan</strong><span>CEO &amp; Co-Founder</span></li></ul>
+      </div>
+      <div class="leadership__media reveal"><img src="assets/img/founders.webp" srcset="assets/img/founders-md.webp 800w, assets/img/founders.webp 1300w" sizes="(min-width: 900px) 40vw, 90vw" alt="Nawaf Al Falasi and Engr. Ragheed Al-Tahhan" width="1300" height="1175" loading="lazy" decoding="async"></div>
+    </div>
+  </section>
+</div>
 <section class="container team" aria-label="Team members">
-  <article class="ceo reveal">
-    <div class="ceo__media"><img src="assets/img/t-ragheed-al-tahhan.webp" alt="Ragheed Al Tahhan" width="1100" height="1322" loading="lazy" decoding="async"></div>
-    <div class="ceo__text"><h2>Ragheed Al Tahhan</h2><p>Co Founder / Chief Executive Officer</p></div>
-  </article>
   <ul class="team-grid">
     <li class="member reveal" style="--d:0ms">
       <div class="member__media"><img src="assets/img/t-maria-corazon.webp" alt="Portrait of Maria Corazon" width="459" height="381" loading="lazy" decoding="async"></div>
@@ -158,11 +166,11 @@
   </ul>
 </section>
 
-<section class="cta" id="connect" aria-labelledby="cta-title">
+<section class="cta cta--tracked" id="connect" aria-labelledby="cta-title">
   <div class="container cta__grid">
     <div class="cta__copy">
-      <h2 id="cta-title">Let’s Bring Your Vision to Life</h2>
-      <p>Connect with Top Concept International to explore innovative and tailored design solutions for your next project. Our team is ready to guide you from concept to completion with professionalism and expertise.</p>
+      <h2 id="cta-title">Design Begins With a Conversation.</h2>
+      <p>Share your vision with us. We’ll help shape it into something real.</p>
       <form class="form form--contact" method="post" novalidate data-form="contact" data-endpoint="" data-email="" data-subject="Website enquiry">
     <div class="form__row">
       <label class="field field--icon"><span class="sr-only">Name</span><input name="name" type="text" placeholder="Name" autocomplete="name" required><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.6-4 3.7-6 7.5-6s6.9 2 7.5 6"/></svg></label>
@@ -196,6 +204,6 @@
     </div>
   </div>
 </footer>
-<script src="assets/js/main.js?v=muav0yol" defer></script>
+<script src="assets/js/main.js?v=muavr0pz" defer></script>
 </body>
 </html>

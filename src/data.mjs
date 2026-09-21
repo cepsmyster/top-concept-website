@@ -84,7 +84,19 @@ export const leadership = {
   quoteRole: "CEO / Co-founder",
 };
 
-export const ceo = { name: "Ragheed Al Tahhan", role: "Co Founder / Chief Executive Officer", img: "t-ragheed-al-tahhan" };
+// Leadership copy used on the Team page (from the "Team" design). The home page uses `leadership` above.
+export const teamLeadership = {
+  paragraphs: [
+    "At Top Concept, we design spaces that feel good to live in, work in, and experience.",
+    "Our work goes beyond buildings. It is about understanding people, their needs, and the way each space should serve them. From architecture and interiors to engineering coordination and project supervision, we bring creativity, technical knowledge, and care into every project.",
+    "Over the years, we have grown through trust, hard work, and strong relationships with our clients and partners. Every project has helped us learn, improve, and deliver designs that are both beautiful and practical.",
+    "We are grateful to everyone who has been part of our journey. Together, we continue to create meaningful spaces built with purpose, integrity, and lasting value.",
+  ],
+  people: [
+    { name: "Nawaf Al Falasi", role: "Founder" },
+    { name: "Engr. Ragheed Al-Tahhan", role: "CEO & Co-Founder" },
+  ],
+};
 
 export const team = [
   { name: "Maria Corazon", role: "Head of Department (Architecture)", img: "t-maria-corazon" },
