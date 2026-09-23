@@ -360,6 +360,61 @@
     });
   });
 
+  /* ───────── Nawaf Villa film: landscape or portrait cut, only the chapter on screen plays ───────── */
+  const film = $("[data-film]");
+  if (film) {
+    const landscape = window.matchMedia("(min-aspect-ratio: 1/1)");
+    const vids = $$(".film__chapter video", film);
+    const pick = (v, key) => (key ? v.dataset[key + (landscape.matches ? "D" : "M")] : v.dataset[landscape.matches ? "d" : "m"]);
+    const load = (i) => {
+      const v = vids[i];
+      if (!v) return;
+      if (!v.poster) v.poster = pick(v, "poster");
+      if (!v.getAttribute("src")) v.src = pick(v, "");
+    };
+    let current = -1, onScreen = false;
+    const show = (i) => {
+      current = i;
+      [i, i + 1].forEach(load);
+      vids.forEach((v, k) => {
+        if (k === i && onScreen && !reduceMotion) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+        else v.pause();
+      });
+    };
+    vids.slice(0, 2).forEach((v) => { v.poster = pick(v, "poster"); });
+    film.addEventListener("film:chapter", (e) => { if (e.detail !== current) show(e.detail); });
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([en]) => {
+        onScreen = en.isIntersecting;
+        if (onScreen) vids.forEach((v) => { if (!v.poster) v.poster = pick(v, "poster"); });
+        show(current < 0 ? 0 : current);
+      }, { rootMargin: "200px 0px" }).observe(film);
+      // stacked layout (reduced motion / no motion layer): the chapter in view plays
+      const io = new IntersectionObserver((entries) => {
+        if (film.dataset.pinned) return;
+        entries.forEach((en) => { if (en.isIntersecting) show(Number(en.target.dataset.chapter)); });
+      }, { threshold: 0.55 });
+      $$(".film__chapter", film).forEach((c) => io.observe(c));
+    }
+    landscape.addEventListener?.("change", () => {
+      vids.forEach((v) => { if (v.poster) v.poster = pick(v, "poster"); if (v.getAttribute("src")) v.src = pick(v, ""); });
+      if (current >= 0) show(current);
+    });
+  }
+  const dialog = $("[data-film-dialog]");
+  if (dialog && dialog.showModal) {
+    const v = $("video", dialog);
+    $$("[data-film-open]").forEach((b) => b.addEventListener("click", () => {
+      if (!v.getAttribute("src")) v.src = v.dataset.src;
+      dialog.showModal();
+      window.tciLenis?.stop();
+      const p = v.play(); if (p && p.catch) p.catch(() => {});
+    }));
+    $("[data-film-close]", dialog)?.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
+    dialog.addEventListener("close", () => { v.pause(); window.tciLenis?.start(); });
+  } else $$("[data-film-open]").forEach((b) => { b.hidden = true; });
+
   /* ───────── 3D project model: load the (large) viewer only when it nears the screen ───────── */
   const model = $("[data-model3d]");
   if (model) {

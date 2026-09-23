@@ -18,7 +18,7 @@
 <script>document.documentElement.classList.add("js");if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("m");var t="dark";try{var s=localStorage.getItem("tci-theme");if(s==="dark"||s==="light")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)</script>
 <link rel="preload" href="assets/fonts/montserrat-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/styles.css?v=mudv8t3p">
+<link rel="stylesheet" href="assets/css/styles.css?v=mudwk37o">
 <link rel="preload" as="image" href="assets/img/hero-md.webp" imagesrcset="assets/img/hero-md.webp 800w, assets/img/hero.webp 2400w" imagesizes="100vw" fetchpriority="high">
 </head>
 <body>
@@ -118,26 +118,67 @@
   </div>
 </section>
 
-<section class="showcase3d" id="showcase" aria-labelledby="showcase-title" data-model3d data-src="assets/js/model3d.js?v=mudv8t3p" data-assets="assets/model/">
-  <div class="model__stage" data-model-stage>
-    <div class="model__labels" data-model-labels></div>
-    <p class="model__status model__status--loading" data-model-status>Loading model…</p>
-    <p class="model__status model__status--error">Your browser can’t display the 3D model.</p>
-    <div class="model__scrim" aria-hidden="true"></div>
-    <header class="model__head">
-      <h2 id="showcase-title" class="model__kicker">Project Showcase</h2>
-      <h3>Nawaf Villa</h3>
-      <span class="model__tag">Residential · Ground floor · Interactive 3D</span>
-    </header>
-    <div class="model__foot">
-      <p class="model__desc">A courtyard home on a 28 × 37 m plot: two wings wrapped around a landscaped garden with a meandering water feature and timber decks, a sculptural curved stair and a three-car garage. Scroll to lift the roof.</p>
-      <div class="model__controls" role="group" aria-label="Model view">
-        <button class="model__btn" type="button" data-model-roof aria-pressed="true">Roof</button>
-        <button class="model__btn" type="button" data-model-labels-toggle aria-pressed="true">Labels</button>
-        <button class="model__btn" type="button" data-model-reset>Reset view</button>
-      </div>
+<section class="villa" id="showcase" aria-labelledby="showcase-title">
+  <div class="film" data-film>
+    <div class="film__stack">
+      <figure class="film__chapter" data-chapter="0">
+        <div class="film__media"><video muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-d="assets/video/villa/d1.mp4" data-m="assets/video/villa/m1.mp4" data-poster-d="assets/video/villa/d1.jpg" data-poster-m="assets/video/villa/m1.jpg"></video></div>
+        <figcaption class="film__caption"><span class="film__num">01 / 05</span><strong>Arrival</strong><span>Dusk settles over Dubai and the villa glows beneath the skyline.</span></figcaption>
+      </figure>
+      <figure class="film__chapter" data-chapter="1">
+        <div class="film__media"><video muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-d="assets/video/villa/d2.mp4" data-m="assets/video/villa/m2.mp4" data-poster-d="assets/video/villa/d2.jpg" data-poster-m="assets/video/villa/m2.jpg"></video></div>
+        <figcaption class="film__caption"><span class="film__num">02 / 05</span><strong>Night into day</strong><span>Flowing slabs, timber fins and a starlit soffit.</span></figcaption>
+      </figure>
+      <figure class="film__chapter" data-chapter="2">
+        <div class="film__media"><video muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-d="assets/video/villa/d3.mp4" data-m="assets/video/villa/m3.mp4" data-poster-d="assets/video/villa/d3.jpg" data-poster-m="assets/video/villa/m3.jpg"></video></div>
+        <figcaption class="film__caption"><span class="film__num">03 / 05</span><strong>The façade</strong><span>Curved bands wrap two storeys of glass above a sheltered car porch.</span></figcaption>
+      </figure>
+      <figure class="film__chapter" data-chapter="3">
+        <div class="film__media"><video muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-d="assets/video/villa/d4.mp4" data-m="assets/video/villa/m4.mp4" data-poster-d="assets/video/villa/d4.jpg" data-poster-m="assets/video/villa/m4.jpg"></video></div>
+        <figcaption class="film__caption"><span class="film__num">04 / 05</span><strong>The courtyard</strong><span>A zen garden of raked gravel, crossed by a black-water stream.</span></figcaption>
+      </figure>
+      <figure class="film__chapter" data-chapter="4">
+        <div class="film__media"><video muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-d="assets/video/villa/d5.mp4" data-m="assets/video/villa/m5.mp4" data-poster-d="assets/video/villa/d5.jpg" data-poster-m="assets/video/villa/m5.jpg"></video></div>
+        <figcaption class="film__caption"><span class="film__num">05 / 05</span><strong>From above</strong><span>Decks, dining and planting read as one continuous line.</span></figcaption>
+      </figure>
     </div>
-    <p class="model__hint" data-model-hint>Drag to rotate · Click, then scroll to zoom · Right-drag to pan</p>
+    <div class="film__scrim" aria-hidden="true"></div>
+    <header class="film__head">
+      <h2 id="showcase-title" class="film__kicker">Project Showcase</h2>
+      <h3 class="film__title">Nawaf Villa</h3>
+      <span class="film__tag">Private residence · Dubai</span>
+    </header>
+    <div class="film__foot">
+      <div class="film__bar" aria-hidden="true"><span data-film-progress></span></div>
+      <button class="film__play" type="button" data-film-open><span class="film__play-icon" aria-hidden="true"></span>Watch the film</button>
+    </div>
+  </div>
+  <dialog class="film-dialog" data-film-dialog aria-label="Nawaf Villa film">
+    <button class="film-dialog__close" type="button" data-film-close aria-label="Close film"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+    <video controls playsinline preload="none" poster="assets/video/villa/film.jpg" data-src="assets/video/villa/film.mp4"></video>
+  </dialog>
+
+  <div class="showcase3d" data-model3d data-src="assets/js/model3d.js?v=mudwk37o" data-assets="assets/model/">
+    <div class="model__stage" data-model-stage>
+      <div class="model__labels" data-model-labels></div>
+      <p class="model__status model__status--loading" data-model-status>Loading model…</p>
+      <p class="model__status model__status--error">Your browser can’t display the 3D model.</p>
+      <div class="model__scrim" aria-hidden="true"></div>
+      <header class="model__head">
+        <span class="model__kicker">Interactive 3D</span>
+        <h3>Explore the villa</h3>
+        <span class="model__tag">Scroll to rise over the courtyard · drag to look around</span>
+      </header>
+      <div class="model__foot">
+        <p class="model__desc">A two-storey courtyard home on a 28 × 37 m plot: sweeping slabs with hidden light lines, timber fins, a starlit terrace soffit, a rooftop garden and a zen courtyard with a black-water stream, set against the Dubai skyline.</p>
+        <div class="model__controls" role="group" aria-label="Model view">
+          <button class="model__btn" type="button" data-model-labels-toggle aria-pressed="true">Labels</button>
+          <button class="model__btn" type="button" data-model-reset>Reset view</button>
+          <button class="model__btn" type="button" data-film-open>Watch the film</button>
+        </div>
+      </div>
+      <p class="model__hint" data-model-hint>Drag to rotate · Click, then scroll to zoom · Right-drag to pan</p>
+    </div>
   </div>
 </section>
 
@@ -247,7 +288,7 @@
 <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/vendor/SplitText.min.js" defer></script>
 <script src="assets/js/vendor/lenis.min.js" defer></script>
-<script src="assets/js/main.js?v=mudv8t3p" defer></script>
-<script src="assets/js/motion.js?v=mudv8t3p" defer></script>
+<script src="assets/js/main.js?v=mudwk37o" defer></script>
+<script src="assets/js/motion.js?v=mudwk37o" defer></script>
 </body>
 </html>

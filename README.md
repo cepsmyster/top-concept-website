@@ -61,14 +61,18 @@ Every page has scroll-driven animation in the spirit of award-style sites: smoot
 - It lives in `assets/js/motion.js` and uses GSAP, ScrollTrigger, SplitText and Lenis, self-hosted in `assets/js/vendor/` (about 140 KB together).
 - Visitors with "reduce motion" switched on get the static site. If the scripts fail to load, the curtain hides itself after 4 seconds.
 
-## 3D project showcase (home page)
+## Nawaf Villa showcase (home page)
 
-The full-screen "Project Showcase" after Projects is an interactive 3D model of Nawaf Villa's ground floor, traced from `NWGF-Model.pdf`. It uses real-world textures, sky lighting from an HDR image, soft shadows and ambient occlusion. On large screens the section pins while you scroll: the roof lifts away and the camera rises to show the plan. Visitors can drag to rotate, click then scroll to zoom (or pinch on phones), and switch the roof and room labels on or off.
+After Projects, the home page shows Nawaf Villa in two parts, both built from the final renders in `final/`:
 
-- The viewer (`assets/js/model3d.js`, about 1 MB) and its textures and sky (`assets/model/`, about 7 MB) only download when a visitor scrolls near the section.
-- Textures and the sky are CC0 assets from [Poly Haven](https://polyhaven.com), free to use commercially.
-- The section's text is in the home page block of `src/build.mjs`. The model itself (walls, landscape, materials, labels) is in `src/model3d.mjs`.
-- After editing `src/model3d.mjs`, rebuild the bundle from the `src/` folder: `npm install` (only the first time), then `npm run model`. This is the only part of the site that needs `npm`.
+1. **The film.** A full-screen section that stays in place while five render clips wipe over each other as you scroll: night arrival, night into day, the façade, the courtyard and the view from above. Wide screens get the landscape cuts (`assets/video/villa/d1–d5.mp4`) and phones get the portrait cuts (`m1–m5.mp4`). Only the clip on screen plays, and each clip loads just before it's needed. "Watch the film" opens the full 35-second film (`film.mp4`) in a popup.
+2. **Interactive 3D.** A night model of the final design: curved slabs with LED lines, timber fins, the starlit terrace soffit, the rooftop garden, the zen courtyard with its black-water stream, and the cars in front, set against the Dubai skyline taken from the project's own render. Scrolling cranes the camera from street level over the roof and down into the courtyard. Visitors can drag to rotate, click then scroll to zoom (or pinch on phones), and switch labels on or off.
+
+- The 3D is modelled by hand from the renders and the ground-floor plan, because the `.max` file can't be read outside 3ds Max. For an exact geometric match, export the scene from 3ds Max as FBX or glTF and it can replace the hand-built model.
+- To keep it smooth, the model merges its geometry into a few dozen draw calls, draws shadows once, only renders while something moves, and lowers its resolution on slower devices.
+- The viewer (`assets/js/model3d.js`, about 0.9 MB) and its textures (`assets/model/`, about 5 MB) only download when a visitor scrolls near the section. The film clips add about 11 MB in total, loaded one at a time.
+- Textures are CC0 assets from [Poly Haven](https://polyhaven.com).
+- The captions and text are in `villaShowcase()` in `src/build.mjs`. The model is in `src/model3d.mjs`. After editing the model, rebuild it from the `src/` folder: `npm install` (only the first time), then `npm run model`. This is the only part of the site that needs `npm`.
 
 ## Images
 
@@ -90,7 +94,8 @@ assets/js/main.js                   theme, menu, carousel, filters, lightbox, fo
 assets/js/motion.js                 scroll animation, page transitions, cursor
 assets/js/model3d.js                3D showcase (built from src/model3d.mjs)
 assets/js/vendor/                   GSAP, ScrollTrigger, SplitText, Lenis
-assets/model/                       3D textures + sky
+assets/model/                       3D textures, sky lighting, skyline
+assets/video/villa/                 Nawaf Villa film clips + posters
 assets/img/                         optimized images (WebP), logos, icons
 assets/video/hero.mp4               home page hero video
 assets/fonts/                       self-hosted Montserrat + Inter

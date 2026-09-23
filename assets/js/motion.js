@@ -21,7 +21,7 @@
   /* ───────── Smooth scroll ───────── */
   let lenis = null;
   if (Lenis) {
-    lenis = new Lenis({ lerp: 0.085, anchors: { offset: -76 }, autoRaf: false });
+    lenis = new Lenis({ lerp: 0.1, anchors: { offset: -76 }, autoRaf: false });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
@@ -47,7 +47,7 @@
     });
     return split;
   };
-  const skip = (el) => el.closest("[data-model3d], .menu-overlay, .site-header, .carousel__caption, form");
+  const skip = (el) => el.closest("[data-model3d], [data-film], .film-dialog, .menu-overlay, .site-header, .carousel__caption, form");
 
   /* ───────── Hero ───────── */
   const hero = $(".hero");
@@ -97,24 +97,21 @@
       onEnter: (batch) => gsap.to(batch, { autoAlpha: 1, y: 0, duration: 1.3, stagger: 0.12, ease: EASE, overwrite: true, clearProps: "transform,opacity,visibility" }),
     });
 
-    /* images: unmask + settle from a zoom as they scroll in, then drift (parallax) */
+    /* images: unmask and settle from a zoom as they scroll in (played once, not tied to every scroll frame) */
     const MEDIA = ".blog-card__media, .proj-card__media, .panel__media, .ex-card__media, .quote-block__media, .showcase__media, .split__media, .voice__media, .leadership__media, .kickstart__media, .ex-row__media, .project__shot, .slide";
     $$(MEDIA).forEach((box) => {
       if (skip(box)) return;
-      const imgs = $$("img", box);
+      const imgs = $("img", box);
       if (!imgs.length) return;
       box.classList.add("m-media");
-      const tl = gsap.timeline({ scrollTrigger: { trigger: box, start: "top 98%", end: "top 40%", scrub: 0.8 } });
-      tl.fromTo(box, { clipPath: "inset(14% 10% 14% 10%)" }, { clipPath: "inset(0% 0% 0% 0%)", ease: "none" }, 0);
-      tl.fromTo(imgs, { "--s": 1.35 }, { "--s": 1.08, ease: "none" }, 0);
-      if (box.offsetHeight > window.innerHeight * 0.35) {
-        gsap.fromTo(imgs, { "--py": "-5%" }, { "--py": "5%", ease: "none", scrollTrigger: { trigger: box, start: "top bottom", end: "bottom top", scrub: true } });
-      }
+      const st = { trigger: box, start: "top 90%", once: true };
+      gsap.fromTo(box, { clipPath: "inset(12% 8% 12% 8%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.5, ease: "expo.out", scrollTrigger: st, clearProps: "clipPath" });
+      gsap.fromTo(imgs, { "--s": 1.3 }, { "--s": 1, duration: 2, ease: "expo.out", scrollTrigger: st });
     });
 
     /* full-bleed bands open out from a rounded card */
     $$("main .panel, main .leadership, main .kickstart, main .dark-band, main .quote-block, main .cta").forEach((band) => {
-      gsap.fromTo(band, { clipPath: "inset(7% 4% 0% 4% round 36px)" }, { clipPath: "inset(0% 0% 0% 0% round 0px)", ease: "none", scrollTrigger: { trigger: band, start: "top bottom", end: "top 30%", scrub: true } });
+      gsap.fromTo(band, { clipPath: "inset(6% 4% 0% 4% round 36px)" }, { clipPath: "inset(0% 0% 0% 0% round 0px)", duration: 1.6, ease: "expo.out", clearProps: "clipPath", scrollTrigger: { trigger: band, start: "top 85%", once: true } });
     });
 
     /* rules draw across */
@@ -129,16 +126,51 @@
     const foot = $(".site-footer__grid");
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
-    /* 3D showcase: pinned on large screens while the roof lifts away */
+    /* Nawaf Villa film: pinned; each chapter wipes up over the last as you scroll */
+    const film = $("[data-film]");
+    if (film) {
+      film.dataset.pinned = "1";
+      const ch = $$(".film__chapter", film), n = ch.length;
+      const bar = $("[data-film-progress]", film);
+      const tl = gsap.timeline({ defaults: { ease: "none" } });
+      ch.forEach((c, i) => {
+        if (!i) return;
+        const at = i - 1, prev = ch[i - 1];
+        tl.fromTo(c, { yPercent: 100 }, { yPercent: 0, duration: 1 }, at)
+          .fromTo($(".film__media", c), { yPercent: -60 }, { yPercent: 0, duration: 1 }, at)
+          .to($(".film__media", prev), { yPercent: 10, scale: 1.25, duration: 1 }, at)
+          .to($(".film__caption", prev), { autoAlpha: 0, y: -30, duration: 0.3 }, at)
+          .fromTo($(".film__caption", c), { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.3 }, at + 0.7);
+      });
+      tl.to({}, { duration: 0.35 }); // linger on the last chapter
+      let active = 0;
+      ScrollTrigger.create({
+        trigger: film, start: "top top", end: () => "+=" + Math.round((n - 0.65) * window.innerHeight), pin: true, scrub: 0.5, animation: tl,
+        onUpdate: (st) => {
+          if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")";
+          const i = Math.min(n - 1, Math.floor(st.progress * tl.duration() + 0.35));
+          if (i !== active) { active = i; film.dispatchEvent(new CustomEvent("film:chapter", { detail: i })); }
+        },
+      });
+      const head = $(".film__head", film);
+      if (head) {
+        gsap.from($$(".film__kicker, .film__tag", head), { autoAlpha: 0, y: 20, duration: 1, stagger: 0.15, ease: EASE, scrollTrigger: { trigger: film, start: "top 75%", once: true } });
+        const title = $(".film__title", head);
+        if (title) riseLines(title, { trigger: film, start: "top 70%", type: "lines,chars", target: "chars", stagger: 0.04, duration: 1.4 });
+      }
+      gsap.from($$(".film__foot > *", film), { autoAlpha: 0, y: 30, duration: 1.2, stagger: 0.12, ease: EASE, scrollTrigger: { trigger: film, start: "top 55%", once: true } });
+    }
+
+    /* 3D: pinned while the camera cranes from the street up over the courtyard */
     const model = $("[data-model3d]");
     if (model) {
       model._scroll = 0;
-      const set = (p) => { model._scroll = p; model.style.setProperty("--p", p.toFixed(3)); };
-      if (desktop) ScrollTrigger.create({ trigger: model, start: "top top", end: "+=140%", pin: true, scrub: true, onUpdate: (s) => set(s.progress) });
-      else ScrollTrigger.create({ trigger: model, start: "top 70%", end: "center 45%", scrub: true, onUpdate: (s) => set(s.progress) });
+      const set = (p) => { model._scroll = p; };
+      if (desktop) ScrollTrigger.create({ trigger: model, start: "top top", end: "+=150%", pin: true, scrub: true, onUpdate: (st) => set(st.progress) });
+      else ScrollTrigger.create({ trigger: model, start: "top 60%", end: "bottom 40%", scrub: true, onUpdate: (st) => set(st.progress) });
       const head = $(".model__head", model);
       if (head) {
-        gsap.from($$(".model__kicker, .model__head h2", head), { autoAlpha: 0, y: 20, duration: 1, stagger: 0.1, ease: EASE, scrollTrigger: { trigger: model, start: "top 70%", once: true } });
+        gsap.from($$(".model__kicker, .model__tag", head), { autoAlpha: 0, y: 20, duration: 1, stagger: 0.1, ease: EASE, scrollTrigger: { trigger: model, start: "top 70%", once: true } });
         const name = $(".model__head h3", head);
         if (name) riseLines(name, { trigger: model, start: "top 65%", type: "lines,chars", target: "chars", stagger: 0.035, duration: 1.3 });
       }
@@ -150,9 +182,14 @@
 
   /* ───────── Header: tucks away on the way down, returns on the way up ───────── */
   if (header) {
+    const menu = $("#menu-overlay");
+    let tucked = false;
     ScrollTrigger.create({
       start: 0, end: "max",
-      onUpdate: (s) => header.classList.toggle("is-tucked", s.direction === 1 && s.scroll() > 240 && !$("#menu-overlay.is-open")),
+      onUpdate: (st) => {
+        const t = st.direction === 1 && st.scroll() > 240 && !(menu && menu.classList.contains("is-open"));
+        if (t !== tucked) { tucked = t; header.classList.toggle("is-tucked", t); }
+      },
     });
   }
 
@@ -172,6 +209,7 @@
       [".proj-card, .blog-card, .ex-card, .showcase__media", "View"],
       ["[data-track]", "Drag"],
       ["[data-model-stage] canvas", "Explore"],
+      ["[data-film] .film__stack", "Scroll"],
     ];
     document.addEventListener("pointerover", (e) => {
       const t = e.target;
