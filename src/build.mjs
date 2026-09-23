@@ -310,17 +310,19 @@ function villaShowcase() {
       <header class="model__head">
         <span class="model__kicker">Interactive 3D</span>
         <h3>Explore the villa</h3>
-        <span class="model__tag">Scroll to rise over the courtyard · drag to look around</span>
+        <span class="model__tag">Scroll to rise over the courtyard · drag to look around · Ctrl + scroll to zoom</span>
       </header>
       <div class="model__foot">
         <p class="model__desc">A two-storey courtyard home on a 28 × 37 m plot: sweeping slabs with hidden light lines, timber fins, a starlit terrace soffit, a rooftop garden and a zen courtyard with a black-water stream, set against the Dubai skyline.</p>
         <div class="model__controls" role="group" aria-label="Model view">
           <button class="model__btn" type="button" data-model-labels-toggle aria-pressed="true">Labels</button>
+          <button class="model__btn model__btn--icon" type="button" data-model-zoom-in aria-label="Zoom in">+</button>
+          <button class="model__btn model__btn--icon" type="button" data-model-zoom-out aria-label="Zoom out">−</button>
           <button class="model__btn" type="button" data-model-reset>Reset view</button>
           <button class="model__btn" type="button" data-film-open>Watch the film</button>
         </div>
       </div>
-      <p class="model__hint" data-model-hint>Drag to rotate · Click, then scroll to zoom · Right-drag to pan</p>
+      <p class="model__hint" data-model-hint>Hold Ctrl (⌘ on Mac) and scroll to zoom · drag to rotate</p>
     </div>
   </div>
 </section>`;

@@ -700,16 +700,30 @@ function mount() {
     return s;
   };
 
+  // The page always scrolls: the wheel only zooms with Ctrl/⌘ held (trackpad pinch sends Ctrl too).
+  // Runs in the capture phase, before OrbitControls' own wheel handler on the canvas; touch pinch keeps zooming.
   const hint = root.querySelector("[data-model-hint]");
-  const engage = (on) => {
-    controls.enableZoom = on;
-    stage.classList.toggle("is-engaged", on);
-    if (on) stage.setAttribute("data-lenis-prevent", ""); else stage.removeAttribute("data-lenis-prevent");
-  };
-  stage.addEventListener("pointerdown", (e) => { if (e.target === renderer.domElement) engage(true); });
-  stage.addEventListener("pointerleave", () => engage(false));
-  stage.addEventListener("wheel", () => { if (!controls.enableZoom && hint) { hint.classList.add("is-nudge"); clearTimeout(hint._t); hint._t = setTimeout(() => hint.classList.remove("is-nudge"), 1200); } }, { passive: true });
+  let hintShown = 0;
+  stage.addEventListener("wheel", (e) => {
+    controls.enableZoom = e.ctrlKey || e.metaKey;
+    if (controls.enableZoom) userMoved = true;
+    else if (hint && performance.now() - hintShown > 8000) {
+      hintShown = performance.now();
+      hint.classList.add("is-nudge");
+      clearTimeout(hint._t); hint._t = setTimeout(() => hint.classList.remove("is-nudge"), 1600);
+    }
+  }, { capture: true, passive: true });
+  stage.addEventListener("pointerdown", () => { controls.enableZoom = true; });
   controls.addEventListener("start", () => { userMoved = true; });
+  const zoomBy = (k) => {
+    userMoved = true;
+    const d = camera.position.clone().sub(controls.target).multiplyScalar(k);
+    const len = THREE.MathUtils.clamp(d.length(), controls.minDistance, controls.maxDistance);
+    camera.position.copy(controls.target).add(d.setLength(len));
+    dirty = true;
+  };
+  root.querySelector("[data-model-zoom-in]")?.addEventListener("click", () => zoomBy(0.8));
+  root.querySelector("[data-model-zoom-out]")?.addEventListener("click", () => zoomBy(1.25));
 
   const labelWrap = root.querySelector("[data-model-labels]");
   const labels = LABELS.map(([text, x, z, y, from, to]) => {
