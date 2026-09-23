@@ -54,6 +54,14 @@ node src/build.mjs
 (needs [Node.js](https://nodejs.org) 18+; no `npm install` required). This regenerates every `.html` file.
 Do **not** hand-edit the generated `.html` files — edits there are overwritten on the next build.
 
+## 3D project showcase (home page)
+
+The "Project Showcase" section after Projects is an interactive clay model of the Nawaf Villa ground floor, traced from `NWGF-Model.pdf`. Visitors can rotate it by dragging, zoom with the scroll wheel after clicking into it (or pinch on phones), and switch the roof and room labels on or off.
+
+- The viewer (`assets/js/model3d.js`, three.js bundled in) is about 530 KB. It only downloads when a visitor scrolls near the section.
+- The section's text is in the home page block of `src/build.mjs`. The model itself (walls, landscape, colours, labels) is in `src/model3d.mjs`.
+- After editing `src/model3d.mjs`, rebuild the bundle from the `src/` folder: `npm install` (only the first time), then `npm run model`. This is the only part of the site that needs `npm`.
+
 ## Images
 
 Put optimized `.webp` files in `assets/img/` and refer to them by file name without the extension.

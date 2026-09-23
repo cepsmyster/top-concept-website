@@ -325,6 +325,32 @@ const paras = (arr, cls = "") => arr.map((t) => `<p${cls ? ` class="${cls}"` : "
   </div>
 </section>
 
+<section class="section section--model" id="showcase" aria-labelledby="showcase-title">
+  <div class="container">
+    <div class="section__head"><h2 id="showcase-title">Project Showcase</h2><span class="link-caps model__tag">Interactive 3D model</span></div>
+    <div class="model" data-model3d data-src="assets/js/model3d.js?v=${V}">
+      <div class="model__stage" data-model-stage>
+        <div class="model__labels" data-model-labels></div>
+        <p class="model__status model__status--loading">Loading model…</p>
+        <p class="model__status model__status--error">Your browser can’t display the 3D model.</p>
+        <p class="model__hint" data-model-hint>Drag to rotate · Click, then scroll to zoom · Right-drag to pan</p>
+      </div>
+      <div class="model__bar">
+        <div class="model__meta">
+          <span class="model__kicker">Residential · Ground floor</span>
+          <h3>Nawaf Villa</h3>
+          <p>A courtyard home on a 28 × 37 m plot: two wings wrapped around a landscaped garden with a meandering water feature and timber decks, a sculptural curved stair and a three-car garage.</p>
+        </div>
+        <div class="model__controls" role="group" aria-label="Model view">
+          <button class="model__btn" type="button" data-model-roof aria-pressed="false">Roof</button>
+          <button class="model__btn" type="button" data-model-labels-toggle aria-pressed="true">Labels</button>
+          <button class="model__btn" type="button" data-model-reset>Reset view</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="panel" id="culture-careers" aria-label="Culture and careers">
   <div class="container panel__grid">
     <article class="panel__item reveal">

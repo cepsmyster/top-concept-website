@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "description": "Only needed to rebuild the 3D project model (assets/js/model3d.js) after editing src/model3d.mjs.",
+  "scripts": {
+    "model": "esbuild model3d.mjs --bundle --minify --format=iife --target=es2019 --legal-comments=none --outfile=../assets/js/model3d.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "three": "0.169.0"
+  }
+}

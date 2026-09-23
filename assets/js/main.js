@@ -359,4 +359,21 @@
       }
     });
   });
+
+  /* ───────── 3D project model: load the (large) viewer only when it nears the screen ───────── */
+  const model = $("[data-model3d]");
+  if (model) {
+    const load = () => {
+      const s = document.createElement("script");
+      s.src = model.dataset.src;
+      s.async = true;
+      s.onerror = () => model.classList.add("is-unsupported");
+      document.body.appendChild(s);
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) { io.disconnect(); load(); } }, { rootMargin: "600px 0px" });
+      io.observe(model);
+    } else load();
+  }
 })();
+
