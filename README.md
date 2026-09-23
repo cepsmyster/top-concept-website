@@ -54,12 +54,20 @@ node src/build.mjs
 (needs [Node.js](https://nodejs.org) 18+; no `npm install` required). This regenerates every `.html` file.
 Do **not** hand-edit the generated `.html` files — edits there are overwritten on the next build.
 
+## Motion
+
+Every page has scroll-driven animation in the spirit of award-style sites: smooth (inertial) scrolling, a curtain that lifts on arrival and drops between pages, headings that rise line by line, images that unmask and settle from a zoom, bands that open out as they scroll in, parallax, a header that tucks away while scrolling down, and a custom cursor with magnetic buttons (mouse only).
+
+- It lives in `assets/js/motion.js` and uses GSAP, ScrollTrigger, SplitText and Lenis, self-hosted in `assets/js/vendor/` (about 140 KB together).
+- Visitors with "reduce motion" switched on get the static site. If the scripts fail to load, the curtain hides itself after 4 seconds.
+
 ## 3D project showcase (home page)
 
-The "Project Showcase" section after Projects is an interactive clay model of the Nawaf Villa ground floor, traced from `NWGF-Model.pdf`. Visitors can rotate it by dragging, zoom with the scroll wheel after clicking into it (or pinch on phones), and switch the roof and room labels on or off.
+The full-screen "Project Showcase" after Projects is an interactive 3D model of Nawaf Villa's ground floor, traced from `NWGF-Model.pdf`. It uses real-world textures, sky lighting from an HDR image, soft shadows and ambient occlusion. On large screens the section pins while you scroll: the roof lifts away and the camera rises to show the plan. Visitors can drag to rotate, click then scroll to zoom (or pinch on phones), and switch the roof and room labels on or off.
 
-- The viewer (`assets/js/model3d.js`, three.js bundled in) is about 530 KB. It only downloads when a visitor scrolls near the section.
-- The section's text is in the home page block of `src/build.mjs`. The model itself (walls, landscape, colours, labels) is in `src/model3d.mjs`.
+- The viewer (`assets/js/model3d.js`, about 1 MB) and its textures and sky (`assets/model/`, about 7 MB) only download when a visitor scrolls near the section.
+- Textures and the sky are CC0 assets from [Poly Haven](https://polyhaven.com), free to use commercially.
+- The section's text is in the home page block of `src/build.mjs`. The model itself (walls, landscape, materials, labels) is in `src/model3d.mjs`.
 - After editing `src/model3d.mjs`, rebuild the bundle from the `src/` folder: `npm install` (only the first time), then `npm run model`. This is the only part of the site that needs `npm`.
 
 ## Images
@@ -79,6 +87,10 @@ Netlify, Vercel, Cloudflare Pages, GitHub Pages, or a normal web host (cPanel/FT
 index.html, projects.html, …        generated pages
 assets/css/styles.css               all styles (light + dark themes)
 assets/js/main.js                   theme, menu, carousel, filters, lightbox, forms
+assets/js/motion.js                 scroll animation, page transitions, cursor
+assets/js/model3d.js                3D showcase (built from src/model3d.mjs)
+assets/js/vendor/                   GSAP, ScrollTrigger, SplitText, Lenis
+assets/model/                       3D textures + sky
 assets/img/                         optimized images (WebP), logos, icons
 assets/video/hero.mp4               home page hero video
 assets/fonts/                       self-hosted Montserrat + Inter
@@ -89,6 +101,6 @@ src/build.mjs                       page generator
 
 ## Notes
 
-- Fonts are self-hosted, so the site makes no third-party requests except the optional form endpoint and social links.
+- Fonts and scripts are self-hosted, so the site makes no third-party requests except the optional form endpoint and social links.
 - The privacy policy is a plain-language starting point — have it reviewed before launch.
 - The careers form uses a hidden spam-trap field instead of reCAPTCHA. If you want reCAPTCHA/hCaptcha, most form services (Formspree, Web3Forms) can add it from their dashboard.

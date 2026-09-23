@@ -201,19 +201,25 @@ ${cfg.siteUrl ? `<link rel="canonical" href="${url(file === "index.html" ? "" : 
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-<script>document.documentElement.classList.add("js");var t="dark";try{var s=localStorage.getItem("tci-theme");if(s==="dark"||s==="light")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)</script>
+<script>document.documentElement.classList.add("js");if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("m");var t="dark";try{var s=localStorage.getItem("tci-theme");if(s==="dark"||s==="light")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)</script>
 <link rel="preload" href="assets/fonts/montserrat-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/styles.css?v=${V}">
 ${head}
 </head>
 <body${[solid ? "has-solid-header" : "", bodyClass].filter(Boolean).length ? ` class="${[solid ? "has-solid-header" : "", bodyClass].filter(Boolean).join(" ")}"` : ""}>
+<div class="curtain" data-curtain aria-hidden="true"><img class="curtain__logo" src="assets/img/logo-light.png" alt="" width="${META["logo-light"].w}" height="${META["logo-light"].h}"><span class="curtain__bar"></span></div>
 ${header({ solid, current })}
 <main id="main">
 ${body}
 </main>
 ${footer()}
+<script src="assets/js/vendor/gsap.min.js" defer></script>
+<script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="assets/js/vendor/SplitText.min.js" defer></script>
+<script src="assets/js/vendor/lenis.min.js" defer></script>
 <script src="assets/js/main.js?v=${V}" defer></script>
+<script src="assets/js/motion.js?v=${V}" defer></script>
 </body>
 </html>
 `;
@@ -325,29 +331,26 @@ const paras = (arr, cls = "") => arr.map((t) => `<p${cls ? ` class="${cls}"` : "
   </div>
 </section>
 
-<section class="section section--model" id="showcase" aria-labelledby="showcase-title">
-  <div class="container">
-    <div class="section__head"><h2 id="showcase-title">Project Showcase</h2><span class="link-caps model__tag">Interactive 3D model</span></div>
-    <div class="model" data-model3d data-src="assets/js/model3d.js?v=${V}">
-      <div class="model__stage" data-model-stage>
-        <div class="model__labels" data-model-labels></div>
-        <p class="model__status model__status--loading">Loading model…</p>
-        <p class="model__status model__status--error">Your browser can’t display the 3D model.</p>
-        <p class="model__hint" data-model-hint>Drag to rotate · Click, then scroll to zoom · Right-drag to pan</p>
-      </div>
-      <div class="model__bar">
-        <div class="model__meta">
-          <span class="model__kicker">Residential · Ground floor</span>
-          <h3>Nawaf Villa</h3>
-          <p>A courtyard home on a 28 × 37 m plot: two wings wrapped around a landscaped garden with a meandering water feature and timber decks, a sculptural curved stair and a three-car garage.</p>
-        </div>
-        <div class="model__controls" role="group" aria-label="Model view">
-          <button class="model__btn" type="button" data-model-roof aria-pressed="false">Roof</button>
-          <button class="model__btn" type="button" data-model-labels-toggle aria-pressed="true">Labels</button>
-          <button class="model__btn" type="button" data-model-reset>Reset view</button>
-        </div>
+<section class="showcase3d" id="showcase" aria-labelledby="showcase-title" data-model3d data-src="assets/js/model3d.js?v=${V}" data-assets="assets/model/">
+  <div class="model__stage" data-model-stage>
+    <div class="model__labels" data-model-labels></div>
+    <p class="model__status model__status--loading" data-model-status>Loading model…</p>
+    <p class="model__status model__status--error">Your browser can’t display the 3D model.</p>
+    <div class="model__scrim" aria-hidden="true"></div>
+    <header class="model__head">
+      <h2 id="showcase-title" class="model__kicker">Project Showcase</h2>
+      <h3>Nawaf Villa</h3>
+      <span class="model__tag">Residential · Ground floor · Interactive 3D</span>
+    </header>
+    <div class="model__foot">
+      <p class="model__desc">A courtyard home on a 28 × 37 m plot: two wings wrapped around a landscaped garden with a meandering water feature and timber decks, a sculptural curved stair and a three-car garage. Scroll to lift the roof.</p>
+      <div class="model__controls" role="group" aria-label="Model view">
+        <button class="model__btn" type="button" data-model-roof aria-pressed="true">Roof</button>
+        <button class="model__btn" type="button" data-model-labels-toggle aria-pressed="true">Labels</button>
+        <button class="model__btn" type="button" data-model-reset>Reset view</button>
       </div>
     </div>
+    <p class="model__hint" data-model-hint>Drag to rotate · Click, then scroll to zoom · Right-drag to pan</p>
   </div>
 </section>
 

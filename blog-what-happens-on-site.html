@@ -15,13 +15,14 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-<script>document.documentElement.classList.add("js");var t="dark";try{var s=localStorage.getItem("tci-theme");if(s==="dark"||s==="light")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)</script>
+<script>document.documentElement.classList.add("js");if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("m");var t="dark";try{var s=localStorage.getItem("tci-theme");if(s==="dark"||s==="light")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)</script>
 <link rel="preload" href="assets/fonts/montserrat-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/styles.css?v=muduf2vz">
+<link rel="stylesheet" href="assets/css/styles.css?v=mudv8t3p">
 
 </head>
 <body class="has-solid-header">
+<div class="curtain" data-curtain aria-hidden="true"><img class="curtain__logo" src="assets/img/logo-light.png" alt="" width="1200" height="485"><span class="curtain__bar"></span></div>
 
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header is-solid" id="site-header">
@@ -124,6 +125,11 @@
     </div>
   </div>
 </footer>
-<script src="assets/js/main.js?v=muduf2vz" defer></script>
+<script src="assets/js/vendor/gsap.min.js" defer></script>
+<script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="assets/js/vendor/SplitText.min.js" defer></script>
+<script src="assets/js/vendor/lenis.min.js" defer></script>
+<script src="assets/js/main.js?v=mudv8t3p" defer></script>
+<script src="assets/js/motion.js?v=mudv8t3p" defer></script>
 </body>
 </html>
