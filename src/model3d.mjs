@@ -436,27 +436,34 @@ block(SP.x0, SP.z1 - 0.4, SP.x1, SP.z1 + 0.9, DECK - 1.6, DECK - 0.6, M.darkBand
 wall([[SP.x0, SP.z1], [SP.x1, SP.z1]], { base: DECK, h: 1.1, t: 0.3, material: M.concrete });
 wall([[SP.x0, SP.z0], [SP.x1, SP.z0]], { base: DECK, h: 1.1, t: 0.3, material: M.concrete });
 wall([[SP.x0, SP.z0], [SP.x0, SP.z1]], { base: DECK, h: 1.1, t: 0.3, material: M.concrete });
-parkingRow(SP.x0 + 18, SP.x1 - 30, SP.z0 + 1, SP.z0 + 6.5, { y: DECK, nose: -1, fill: 0.5 });
-parkingRow(SP.x0 + 18, SP.x1 - 30, SP.z1 - 6.5, SP.z1 - 1, { y: DECK, nose: 1, fill: 0.35 });
+wall([[SP.x1, SP.z0], [SP.x1, SP.z1]], { base: DECK, h: 1.1, t: 0.3, material: M.concrete });
+parkingRow(SP.x0 + 18, SP.x1 - 8, SP.z0 + 1, SP.z0 + 6.5, { y: DECK, nose: -1, fill: 0.5 });
+parkingRow(SP.x0 + 18, SP.x1 - 8, SP.z1 - 6.5, SP.z1 - 1, { y: DECK, nose: 1, fill: 0.35 });
 for (const [x, w] of [[-128, 9], [-40, 7], [48, 7], [118, 9]]) block(x, -42, x + w, -33, DECK, DECK + 3.4, M.concrete); // stair & lift cores
-// ramp up to the deck at the east end
-{
-  const len = 46, g = metricBox(len, 0.5, 9);
-  const m = add(g, M.concrete); m.position.set(SP.x1 + len / 2 * Math.cos(0.14) - 0.5, DECK / 2 - 0.1, -46.5); m.rotation.z = -0.14;
+// flat road along the back of the spine (no ramp: the roof deck is reached from the back of the site)
+slab(rect(-190, -61, 192, -53), 0.06, 0.1, M.asphalt, { cast: false });
+for (let x = -186; x < 190; x += 9) block(x, -57.1, x + 4.5, -56.9, 0.061, 0.07, M.line, { cast: false });
+slab(rect(-190, -53, 150, -52), 0.16, 0.2, M.pavers, { cast: false }); // footway at the foot of the back wall
+// additional ground-level parking past the east end of the spine
+slab(rect(150, -53, 192, 20), 0.06, 0.1, M.asphalt, { cast: false });
+for (const [z0, z1, nose] of [[-49, -43.5, -1], [-37.5, -32, 1], [-30, -24.5, -1], [-18.5, -13, 1], [-11, -5.5, -1], [0.5, 6, 1]]) parkingRow(154, 188, z0, z1, { nose, fill: 0.45 });
+for (const [z0, z1] of [[-32, -30], [-13, -11]]) { // planted strips between the double rows
+  slab(rect(154, z0, 188, z1), 0.18, 0.18, M.grass, { cast: false });
+  for (let x = 158; x < 188; x += 10) tree(x, (z0 + z1) / 2, 1.2, 0.18, M.leaf);
 }
 // storage containers at the west end
 [[-178, -48, 0], [-178, -40, 1], [-178, -32, 2], [-166, -48, 3], [-166, -40, 1]].forEach(([x, z, k]) => block(x, z, x + 10, z + 6, 0, 3.2, M.containers[k]));
 
 // ───────── back landscape: jogging trail through planted dunes ─────────
-slab(rect(-190, -110, 190, -52), 0.08, 0.1, M.grass, { cast: false });
+slab(rect(-190, -110, 190, -61), 0.08, 0.1, M.grass, { cast: false });
 {
-  const path = new THREE.CatmullRomCurve3([[-190, -62], [-130, -70], [-80, -60], [-30, -76], [20, -64], [70, -82], [120, -66], [190, -74]].map(([x, z]) => new Vector3(x, 0, z)));
+  const path = new THREE.CatmullRomCurve3([[-190, -70], [-130, -78], [-80, -68], [-30, -84], [20, -72], [70, -88], [120, -74], [190, -82]].map(([x, z]) => new Vector3(x, 0, z)));
   const sp = path.getSpacedPoints(220);
   const off = (d) => sp.map((p, i) => { const t = path.getTangentAt(i / (sp.length - 1)); return [p.x - t.z * d, p.z + t.x * d]; });
   slab([...off(1.8), ...off(-1.8).reverse()], 0.12, 0.05, M.track, { cast: false });
 }
-for (let i = 0; i < 70; i++) { const [x, z] = scatter(1, -185, 185, -108, -55)[0]; if (Math.abs(z + 70 - 8 * Math.sin(x * 0.03)) > 5) tree(x, z, 1.5 + rnd() * 0.9, 0.08, M.leaf); }
-shrubs(scatter(160, -188, 188, -108, -54), 0.08, M.flowers, 0.7);
+for (let i = 0; i < 70; i++) { const [x, z] = scatter(1, -185, 185, -108, -64)[0]; if (Math.abs(z + 78 - 8 * Math.sin(x * 0.03)) > 5) tree(x, z, 1.5 + rnd() * 0.9, 0.08, M.leaf); }
+shrubs(scatter(160, -188, 188, -108, -62), 0.08, M.flowers, 0.7);
 
 // ───────── west retail block: two storeys, cream stucco with brick-framed bays ─────────
 {
@@ -601,7 +608,9 @@ const LABELS = [
   ["Shade-sail market", -82, -5, 8.5, 0.3, 1],
   ["Tree plaza", 14, -8, 10.5, 0.3, 1],
   ["Rooftop parking", -80, -37, DECK + 3, 0.45, 1],
-  ["Jogging trail", -30, -76, 2.5, 0.6, 1],
+  ["Jogging trail", -30, -84, 2.5, 0.6, 1],
+  ["Additional parking", 171, -22, 3, 0.45, 1],
+  ["Back road", 110, -57, 2.5, 0.6, 1],
 ];
 const ease = (t) => t * t * (3 - 2 * t);
 const lerp = THREE.MathUtils.lerp;
