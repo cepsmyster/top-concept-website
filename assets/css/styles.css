@@ -18,6 +18,7 @@
 @font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("../fonts/inter-latin-500-normal.woff2") format("woff2"); }
 @font-face { font-family: "Inter"; font-weight: 500; font-style: italic; font-display: swap; src: url("../fonts/inter-latin-500-italic.woff2") format("woff2"); }
 @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("../fonts/inter-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("../fonts/inter-latin-700-normal.woff2") format("woff2"); }
 
 /* ---------- Tokens ---------- */
 :root {
@@ -861,3 +862,26 @@ html.lenis, html.lenis body { height: auto; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .js .reveal { opacity: 1; transform: none; }
 }
+
+/* ---------- Display headings ----------
+   Every page and section heading: Inter Light caps, the last word on its own line in Bold, left-aligned
+   (after daqconsulting.com's "ENGINEERED FOR / SCALE."). The build adds .hd and wraps the bold word in .hb.
+   The reference sets −0.05em on a Thin (100) cut; at Light (300) that makes capitals touch, so caps use −0.03em.
+   Line-height .92 stacks the lines tight, as in the reference. */
+:root { --hd-light: 300; --hd-bold: 700; --hd-lead: .92; --hd-track: -.03em; }
+main :is(h1, h2, h3).hd {
+  font-family: var(--font-display);
+  font-weight: var(--hd-light);
+  letter-spacing: var(--hd-track);
+  line-height: var(--hd-lead);
+  text-transform: uppercase;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+main .hd .hb { font-weight: var(--hd-bold); }
+main .hd em { font-style: normal; font-weight: inherit; }
+main .hero__title.hd { justify-self: stretch; }
+/* subheads inside article / policy text stay in the reading style */
+main .prose :is(h2, h3).hd { font-weight: 500; line-height: 1.08; text-transform: none; }
+main .prose .hd .hb { font-weight: inherit; }
+main .prose .hd .hbr { display: none; }

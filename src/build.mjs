@@ -38,6 +38,41 @@ const fmtDate = (iso, upper = true) => {
 };
 const url = (p) => (cfg.siteUrl ? `${cfg.siteUrl}/${p}` : p);
 
+// Display headings: light caps, with the last word dropped onto its own line in bold ("ENGINEERED FOR / SCALE.").
+// A short last word ("us", "of") pulls the word before it along. To choose the bold words yourself,
+// wrap them in <span class="hb">…</span> in the heading. The look is set in styles.css under "Display headings".
+function boldLast(inner) {
+  if (/class="hb"/.test(inner)) return inner.replace(/\s*<span class="hb">/, '<br class="hbr"><span class="hb">');
+  const parts = inner.split(/(<[^>]+>)/); // odd indexes are tags
+  for (let i = parts.length - 1; i >= 0; i -= 2) {
+    if (i % 2 || !parts[i].trim()) continue;
+    const words = parts[i].trimEnd().split(/(\s+)/);
+    const trail = parts[i].slice(parts[i].trimEnd().length);
+    let take = 1;
+    const before = parts.slice(0, i).join("").replace(/<[^>]+>/g, "").trim();
+    if (words[words.length - 1].replace(/[^\p{L}\p{N}]/gu, "").length <= 3 && words.length >= 3 && (words.length > 3 || before)) take = 2;
+    const cut = words.length - (take * 2 - 1);
+    const lead = words.slice(0, cut).join("").trimEnd();
+    const bold = words.slice(cut).join("");
+    const hasLight = lead || before;
+    parts[i] = `${lead}${hasLight ? '<br class="hbr">' : ""}<span class="hb">${bold}</span>${trail}`;
+    return parts.join("");
+  }
+  return inner;
+}
+function displayHeadings(html) {
+  return html.replace(/<(h[123])(\s[^>]*)?>([\s\S]*?)<\/\1>/g, (all, tag, attrs = "", inner) => {
+    const cls = (attrs.match(/class="([^"]*)"/) || [, ""])[1];
+    if (/\bfilm__kicker\b/.test(cls) || (tag === "h3" && !/\b(film__title|hd)\b/.test(cls))) return all;
+    // theme-specific wording: each variant gets its own bold word
+    const body = /class="t-(light|dark)"/.test(inner)
+      ? inner.replace(/(<span class="t-(?:light|dark)">)([\s\S]*?)(<\/span>)/g, (m, a, t, b) => a + boldLast(t) + b)
+      : boldLast(inner);
+    const nextAttrs = /\bhd\b/.test(cls) ? attrs : cls ? attrs.replace(/class="[^"]*"/, `class="${cls} hd"`) : `${attrs} class="hd"`;
+    return `<${tag}${nextAttrs}>${body}</${tag}>`;
+  });
+}
+
 function img(name, { alt = "", cls = "", sizes = "100vw", eager = false, attrs = "" } = {}) {
   const m = META[name];
   if (!m) throw new Error(`Unknown image: ${name}`);
@@ -236,6 +271,8 @@ ${cfg.siteUrl ? `<link rel="canonical" href="${url(file === "index.html" ? "" : 
 <script>document.documentElement.classList.add("js");if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("m");var t="dark";try{var s=localStorage.getItem("tci-theme");if(s==="dark"||s==="light")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)</script>
 <link rel="preload" href="assets/fonts/inter-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/styles.css?v=${V}">
 ${head}
 </head>
@@ -253,7 +290,7 @@ ${head}
 </div>
 ${header({ solid, current })}
 <main id="main">
-${body}
+${displayHeadings(body)}
 </main>
 ${footer()}
 <script src="assets/js/vendor/gsap.min.js" defer></script>
@@ -352,7 +389,7 @@ function projectShowcase() {
       <div class="model__scrim" aria-hidden="true"></div>
       <header class="model__head">
         <span class="model__kicker">Interactive 3D</span>
-        <h3>Explore the park</h3>
+        <h3 class="hd">Explore the park</h3>
         <span class="model__tag">Scroll to rise over the site · drag to look around · Ctrl + scroll to zoom</span>
       </header>
       <div class="model__foot">
@@ -734,7 +771,7 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
   <div class="prose prose--lg reveal">${paras(C.intro)}</div>
   <hr class="rule">
   <section id="life" class="split reveal" aria-labelledby="life-title">
-    <h2 id="life-title" class="split__title">Life at Top Concept</h2>
+    <h2 id="life-title" class="split__title">Life at <span class="hb">Top Concept</span></h2>
     <div class="split__media">${img("culture-life", { alt: "Two colleagues discussing a drawing", sizes: "(min-width: 900px) 45vw, 92vw" })}</div>
     <div class="prose prose--lg split__text">${paras(C.life)}</div>
   </section>

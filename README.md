@@ -81,7 +81,9 @@ After the Retail Park showcase, "In trusted company" shows the client logos in t
 
 ## Typography
 
-All headings are Inter Medium with −50 tracking (`--track-head: -.05em`), in sentence case. Small titles (cards, names, menu) use `--track-small: -.03em` so they don’t close up. Body text is Inter Regular with −50 tracking too (`--track-body: -.05em`, set once on `body`). Buttons and small labels stay in Montserrat. Write heading copy in sentence case; the CSS never forces capitals on headings.
+**Page and section headings** follow daqconsulting.com’s “ENGINEERED FOR / **SCALE.**”: Inter Light (300) in capitals, with the last word on its own line in Inter Bold (700), left-aligned, line-height .92 and −30 tracking (`--hd-track: -.03em`). The build does this automatically (`displayHeadings()` in `src/build.mjs`), so keep writing headings in sentence case. If the last word is 3 letters or fewer (“with us”), the word before it goes bold too. To pick the bold words yourself, wrap them in `<span class="hb">…</span>`, as in “Life at <span class="hb">Top Concept</span>”. The weights, tracking and line-height are variables under “Display headings” at the end of `styles.css`. Subheads inside articles and the privacy policy, and the menu and footer headings, keep the old style.
+
+Other headings are Inter Medium with −50 tracking (`--track-head: -.05em`), in sentence case. Small titles (cards, names, menu) use `--track-small: -.03em` so they don’t close up. Body text is Inter Regular with −50 tracking too (`--track-body: -.05em`, set once on `body`). Buttons and small labels stay in Montserrat. Write heading copy in sentence case; the CSS never forces capitals on headings.
 
 ## Leadership, logo and loader
 
