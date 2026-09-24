@@ -360,7 +360,7 @@
     });
   });
 
-  /* ───────── Nawaf Villa film: landscape or portrait cut, only the chapter on screen plays ───────── */
+  /* ───────── Project showcase film: landscape or portrait cut, only the chapter on screen plays ───────── */
   const film = $("[data-film]");
   if (film) {
     const landscape = window.matchMedia("(min-aspect-ratio: 1/1)");

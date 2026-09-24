@@ -126,7 +126,7 @@
     const foot = $(".site-footer__grid");
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
-    /* Nawaf Villa film: pinned; each chapter wipes up over the last as you scroll */
+    /* Project showcase film: pinned; each chapter wipes up over the last as you scroll */
     const film = $("[data-film]");
     if (film) {
       film.dataset.pinned = "1";

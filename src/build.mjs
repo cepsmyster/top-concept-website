@@ -266,39 +266,40 @@ function pageHero({ img: name, alt, title, current, openBand = false }) {
 const paras = (arr, cls = "") => arr.map((t) => `<p${cls ? ` class="${cls}"` : ""}>${esc(t)}</p>`).join("");
 
 // ───────────────────────── pages ─────────────────────────
-// Nawaf Villa showcase: a scroll-driven film of the project's renders, then the interactive 3D model.
-const VILLA_CHAPTERS = [
-  { d: "d1", m: "m1", title: "Arrival", text: "Dusk settles over Dubai and the villa glows beneath the skyline." },
-  { d: "d2", m: "m2", title: "Night into day", text: "Flowing slabs, timber fins and a starlit soffit." },
-  { d: "d3", m: "m3", title: "The façade", text: "Curved bands wrap two storeys of glass above a sheltered car porch." },
-  { d: "d4", m: "m4", title: "The courtyard", text: "A zen garden of raked gravel, crossed by a black-water stream." },
-  { d: "d5", m: "m5", title: "From above", text: "Decks, dining and planting read as one continuous line." },
+// Retail Park showcase: a scroll-driven film of the project's walkthrough, then the interactive 3D model.
+const SHOWCASE_CHAPTERS = [
+  { d: "d1", m: "m1", title: "Arrival", text: "At dusk the glazed front glows behind its lattice screen." },
+  { d: "d2", m: "m2", title: "From above", text: "A long solar roof shelters the shops, with a garden court at its heart." },
+  { d: "d3", m: "m3", title: "The atrium", text: "A tall glass hall where cafés spill out beside planted terraces." },
+  { d: "d4", m: "m4", title: "The arcade", text: "A brick-lined street of shopfronts, lit warm after dark." },
+  { d: "d5", m: "m5", title: "Kiosks", text: "Small kiosks give local makers and young brands a place to start." },
+  { d: "d6", m: "m6", title: "The grove", text: "A shaded plaza of trees and seating for families and friends." },
 ];
-function villaShowcase() {
-  const n = VILLA_CHAPTERS.length;
-  const chapters = VILLA_CHAPTERS.map((c, i) => `
+function projectShowcase() {
+  const n = SHOWCASE_CHAPTERS.length;
+  const chapters = SHOWCASE_CHAPTERS.map((c, i) => `
       <figure class="film__chapter" data-chapter="${i}">
-        <div class="film__media"><video muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-d="assets/video/villa/${c.d}.mp4" data-m="assets/video/villa/${c.m}.mp4" data-poster-d="assets/video/villa/${c.d}.jpg" data-poster-m="assets/video/villa/${c.m}.jpg"></video></div>
+        <div class="film__media"><video muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-d="assets/video/retail/${c.d}.mp4" data-m="assets/video/retail/${c.m}.mp4" data-poster-d="assets/video/retail/${c.d}.jpg" data-poster-m="assets/video/retail/${c.m}.jpg"></video></div>
         <figcaption class="film__caption"><span class="film__num">${String(i + 1).padStart(2, "0")} / ${String(n).padStart(2, "0")}</span><strong>${esc(c.title)}</strong><span>${esc(c.text)}</span></figcaption>
       </figure>`).join("");
-  return `<section class="villa" id="showcase" aria-labelledby="showcase-title">
+  return `<section class="feature" id="showcase" aria-labelledby="showcase-title">
   <div class="film" data-film>
     <div class="film__stack">${chapters}
     </div>
     <div class="film__scrim" aria-hidden="true"></div>
     <header class="film__head">
       <h2 id="showcase-title" class="film__kicker">Project Showcase</h2>
-      <h3 class="film__title">Nawaf Villa</h3>
-      <span class="film__tag">Private residence · Dubai</span>
+      <h3 class="film__title">Retail Park</h3>
+      <span class="film__tag">Retail &amp; community destination · Sharjah</span>
     </header>
     <div class="film__foot">
       <div class="film__bar" aria-hidden="true"><span data-film-progress></span></div>
       <button class="film__play" type="button" data-film-open><span class="film__play-icon" aria-hidden="true"></span>Watch the film</button>
     </div>
   </div>
-  <dialog class="film-dialog" data-film-dialog aria-label="Nawaf Villa film">
+  <dialog class="film-dialog" data-film-dialog aria-label="Retail Park film">
     <button class="film-dialog__close" type="button" data-film-close aria-label="Close film">${ICON.close}</button>
-    <video controls playsinline preload="none" poster="assets/video/villa/film.jpg" data-src="assets/video/villa/film.mp4"></video>
+    <video controls playsinline preload="none" poster="assets/video/retail/film.jpg" data-src="assets/video/retail/film.mp4"></video>
   </dialog>
 
   <div class="showcase3d" data-model3d data-src="assets/js/model3d.js?v=${V}" data-assets="assets/model/">
@@ -309,11 +310,11 @@ function villaShowcase() {
       <div class="model__scrim" aria-hidden="true"></div>
       <header class="model__head">
         <span class="model__kicker">Interactive 3D</span>
-        <h3>Explore the villa</h3>
-        <span class="model__tag">Scroll to rise over the courtyard · drag to look around · Ctrl + scroll to zoom</span>
+        <h3>Explore the park</h3>
+        <span class="model__tag">Scroll to rise over the site · drag to look around · Ctrl + scroll to zoom</span>
       </header>
       <div class="model__foot">
-        <p class="model__desc">A two-storey courtyard home on a 28 × 37 m plot: sweeping slabs with hidden light lines, timber fins, a starlit terrace soffit, a rooftop garden and a zen courtyard with a black-water stream, set against the Dubai skyline.</p>
+        <p class="model__desc">A 300 m retail spine with parking on its roof, fronted by a shade-sail market, the Games hall, a tree-shaded plaza and a pavilion wrapped in a perforated brick screen, with food pods along the promenade and a jogging trail through the dunes behind.</p>
         <div class="model__controls" role="group" aria-label="Model view">
           <button class="model__btn" type="button" data-model-labels-toggle aria-pressed="true">Labels</button>
           <button class="model__btn model__btn--icon" type="button" data-model-zoom-in aria-label="Zoom in">+</button>
@@ -393,7 +394,7 @@ function villaShowcase() {
   </div>
 </section>
 
-${villaShowcase()}
+${projectShowcase()}
 
 <section class="panel" id="culture-careers" aria-label="Culture and careers">
   <div class="container panel__grid">
