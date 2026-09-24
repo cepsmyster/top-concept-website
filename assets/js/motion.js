@@ -281,7 +281,7 @@
     window.addEventListener("scroll", queue, { passive: true });
     document.addEventListener("pointerleave", () => cad.classList.remove("is-on"));
     const LABELS = [
-      [".proj-card, .blog-card, .ex-card, .showcase__media, .menu-blog", "View"],
+      [".proj-card, .blog-card, .ex-card, .xp__media, .showcase__media, .menu-blog", "View"],
       ["[data-track]", "Drag"],
       ["[data-model-stage] canvas", "Explore"],
       ["[data-film] .film__stack", "Scroll"],

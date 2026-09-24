@@ -25,30 +25,30 @@ export const expertisePage = {
   heroAlt: "Azizi mixed-use building with an arcaded retail podium at dusk",
   heading: "One team for every discipline.",
   intro: "Architecture, interiors, landscape and master planning sit under one roof here. Your project stays with one team from the first sketch to handover. Nothing gets lost between stages, and the design holds together.",
-  // Alternating image / text rows
+  // Expertise cards, two per row (rows first, then the carousel fields). hover = second image shown on hover.
   rows: [
-    { slug: "urban-design", title: "Urban design / development", img: "ex-urban", alt: "Waterfront promenade with people, cafés and a marina",
+    { slug: "urban-design", title: "Urban design / development", img: "ex-urban", hover: "p-alrams-urban-development", alt: "Waterfront promenade with people, cafés and a marina",
       text: "We plan districts, waterfronts and public spaces that people want to use. Planning, architecture and landscape are designed together, not one after another. The result is a place with a clear identity that keeps its value as it grows." },
-    { slug: "community", title: "Community buildings / high-rise development expertise", img: "ex-community", pos: "50% 62%", alt: "Corner of a high-rise development with an arched retail podium",
+    { slug: "community", title: "Community buildings / high-rise development expertise", img: "ex-community", hover: "p-community-tower", pos: "50% 62%", alt: "Corner of a high-rise development with an arched retail podium",
       text: "We design towers of G+30 and above that are efficient to build and good to live in. Layouts, cores and podiums are planned together, so every floor works. Azizi City of Arabia shows what that looks like at community scale." },
     { slug: "malls", title: "Malls", img: "p-shopping-mall", pos: "50% 35%", alt: "Mall atrium with a red lantern-style chandelier",
       text: "We design malls that draw visitors in and keep them there. A clear arrival, easy wayfinding and one memorable central space do the work. We learn from places like Souk Al Bahar and Dubai Mall, then give each destination an identity of its own." },
-    { slug: "master-planning", title: "Masterplan", img: "ex-masterplan", alt: "Night aerial view of a masterplanned resort community",
+    { slug: "master-planning", title: "Masterplan", img: "ex-masterplan", hover: "p-resort-masterplan", alt: "Night aerial view of a masterplanned resort community",
       text: "We turn open land into a clear, phased plan. Roads, buildings, landscape and community needs are solved on one drawing. You get a masterplan that investors understand and contractors can build." },
   ],
   // Carousel of the remaining fields.
   carousel: [
-    { slug: "retail", title: "Retails", img: "p-retail-center", alt: "Aerial view of a retail park with a solar roof",
+    { slug: "retail", title: "Retails", img: "p-retail-center", hover: "rp-01", alt: "Aerial view of a retail park with a solar roof",
       text: "Retail spaces that turn a quick errand into a longer visit, and a longer visit into repeat trade." },
-    { slug: "interior-design", title: "Interior design", img: "p-residential-interior", alt: "Living room with floor-to-ceiling windows",
+    { slug: "interior-design", title: "Interior design", img: "p-residential-interior", hover: "p-luxury-lounge", alt: "Living room with floor-to-ceiling windows",
       text: "Interiors planned around how people really live and work, then finished with care." },
     { slug: "villas", title: "High-end villas", img: "p-high-end-villa", alt: "Contemporary villa at sunset",
       text: "Private homes shaped by light, privacy and the view, made to feel right for decades." },
     { slug: "townhouses", title: "Townhouses", img: "p-townhouses", alt: "Row of modern white townhouses",
       text: "Townhouse communities built on one strong idea, with good proportions and shared outdoor space." },
-    { slug: "landscape", title: "Landscape", img: "p-podium-landscape", alt: "Podium landscape with a pool deck",
+    { slug: "landscape", title: "Landscape", img: "p-podium-landscape", hover: "rp-06", alt: "Podium landscape with a pool deck",
       text: "Podium gardens, shaded courtyards and pool decks that make outdoor space usable all year." },
-    { slug: "hospitality", title: "Hospitality", img: "p-wadi-retreat", alt: "Mountain retreat at dusk",
+    { slug: "hospitality", title: "Hospitality", img: "p-wadi-retreat", hover: "p-forest-resort", alt: "Mountain retreat at dusk",
       text: "Resorts and retreats where architecture, landscape and atmosphere are designed as one guest experience." },
   ],
 };

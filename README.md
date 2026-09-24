@@ -13,7 +13,7 @@ Built from the design files in `New Website/`.
 | Page | File |
 |---|---|
 | Home (interactive concept → completion hero, projects carousel, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
-| Expertise (alternating rows + carousel) | `expertise.html` |
+| Expertise (ten fields as big cards, two per row) | `expertise.html` |
 | Projects ("View the Work" hero, showcase, filterable grid) + one page per project | `projects.html`, `project-*.html` |
 | Blogs + one page per article | `blogs.html`, `blog-*.html` |
 | Team · Culture · Careers | `team.html`, `culture.html`, `careers.html` |
@@ -47,7 +47,8 @@ All text/data lives in **`src/data.mjs`**:
 - `projects` — add/edit projects (title, category, image, optional `gallery`). **Titles marked as descriptive placeholders (e.g. "Community Tower") should be replaced with the real project names.**
 - `team` — names, roles, photos (`img: null` shows the placeholder avatar).
 - `blogs` — articles. **The six sample articles are placeholder copy — replace them with real posts.**
-- `expertisePage`, `projectsPage`, `teamLeadership`, `culture`, `careers`, `leadership`, `expertise` — page copy. **On the Expertise carousel, only the "Retails" line comes from the design; the other five short descriptions are placeholders to replace with approved copy.**
+- `expertisePage` — the Expertise page cards (`rows` then `carousel`, all shown as one grid, two big cards per row after madamepolare.com’s Featured Projects). Each card shows the image, the name on the left and the first sentence of `text` on the right; on hover the `hover` image wipes up over the main one (cards without one zoom slowly) and the sentence runs as a marquee.
+- `projectsPage`, `teamLeadership`, `culture`, `careers`, `leadership`, `expertise` — page copy. **On the Expertise cards, only the "Retails" line among the last six comes from the design; the other five short descriptions are placeholders to replace with approved copy.**
 
 After any change to `src/` run, from this folder:
 

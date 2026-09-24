@@ -584,27 +584,24 @@ ${cta()}`,
 // EXPERTISE
 {
   const E = D.expertisePage;
-  const rows = E.rows
-    .map(
-      (r, i) => `<article class="ex-row${i % 2 ? " ex-row--flip" : ""} reveal" id="${r.slug}" style="--pos:${r.pos || "50% 50%"}">
-    <a class="ex-row__media" href="projects.html?cat=${r.slug}" tabindex="-1" aria-hidden="true">${img(r.img, { alt: "", sizes: "(min-width: 900px) 48vw, 92vw" })}</a>
-    <div class="ex-row__text">
-      <h2>${esc(r.title)}</h2>
-      <p>${esc(r.text)}</p>
-      <a class="link-caps" href="projects.html?cat=${r.slug}">See ${esc(r.title.split(" / ")[0])} projects</a>
-    </div>
-  </article>`
-    )
-    .join("\n  <hr class=\"rule\">\n  ");
-  const n = E.carousel.length;
-  const slides = E.carousel
-    .map(
-      (c, i) => `<li class="slide${i === 0 ? " is-active" : ""}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${n}" data-label="" data-title="${esc(c.title)}" data-href="projects.html?cat=${c.slug}">
-        <a href="projects.html?cat=${c.slug}" tabindex="${i === 0 ? 0 : -1}" aria-label="${esc(c.title)}">${img(c.img, { alt: c.alt, sizes: "(min-width: 900px) 34vw, 72vw" })}<span class="slide__text">${esc(c.text)}</span></a>
-      </li>`
-    )
-    .join("");
-  const dots = E.carousel.map((c, i) => `<button type="button" class="dot${i === 0 ? " is-active" : ""}" data-slide="${i}" aria-label="Show ${esc(c.title)}"${i === 0 ? ' aria-current="true"' : ""}></button>`).join("");
+  // Two big cards per row (after madamepolare.com's Featured Projects): image, then the name on the left and a
+  // one-line description on the right that runs as a marquee on hover. A second image (hover) wipes in over the first.
+  const cards = [...E.rows, ...E.carousel]
+    .map((c) => {
+      const line = c.text.split(/(?<=\.)\s/)[0];
+      const media = img(c.img, { alt: c.alt, sizes: "(min-width: 700px) 49vw, 96vw", attrs: `style="object-position:${c.pos || "50% 50%"}"` });
+      const alt = c.hover ? img(c.hover, { alt: "", sizes: "(min-width: 700px) 49vw, 96vw", attrs: 'class="xp__alt" aria-hidden="true"' }) : "";
+      return `<article class="xp reveal${c.hover ? "" : " xp--zoom"}" id="${c.slug}">
+    <a class="xp__link" href="projects.html?cat=${c.slug}">
+      <div class="xp__media">${media}${alt}</div>
+      <div class="xp__meta">
+        <h3 class="xp__title">${esc(c.title)}</h3>
+        <p class="xp__desc" style="--dur:${Math.max(6, Math.round(line.length * 0.11))}s"><span class="xp__run"><span>${esc(line)}</span><span aria-hidden="true">${esc(line)}</span></span></p>
+      </div>
+    </a>
+  </article>`;
+    })
+    .join("\n  ");
   page({
     file: "expertise.html",
     title: "Expertise",
@@ -616,22 +613,8 @@ ${simpleHero({ img: "hero-expertise", alt: E.heroAlt, title: E.heroTitle })}
   <h2>${esc(E.heading)}</h2>
   <p>${esc(E.intro)}</p>
 </section>
-<div class="container ex-rows">
-  <hr class="rule">
-  ${rows}
-  <hr class="rule">
-</div>
-<section class="ex-more" aria-label="More fields of expertise">
-  <div class="carousel carousel--expertise" data-carousel aria-roledescription="carousel" aria-label="More fields of expertise">
-    <ul class="carousel__track" data-track>${slides}</ul>
-    <button class="carousel__nav carousel__nav--prev" type="button" data-prev aria-label="Previous field">${ICON.arrow}</button>
-    <button class="carousel__nav carousel__nav--next" type="button" data-next aria-label="Next field">${ICON.arrow}</button>
-    <div class="carousel__caption" aria-live="polite">
-      <span class="carousel__label" data-cap-label></span>
-      <a class="carousel__title" data-cap-title href="projects.html?cat=${E.carousel[0].slug}">${esc(E.carousel[0].title)}</a>
-    </div>
-    <div class="carousel__dots" role="group" aria-label="Choose field">${dots}</div>
-  </div>
+<section class="xp-grid" aria-label="Fields of expertise">
+  ${cards}
 </section>
 ${cta()}`,
   });

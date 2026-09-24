@@ -863,27 +863,38 @@ html:not(.js) .hero__split, html:not(.js) .hero__knob { display: none; }
 :root[data-theme="dark"] .proj-card__media { position: relative; }
 :root[data-theme="dark"] .proj-card__media::after { content: ""; position: absolute; inset: auto 0 0 0; height: 24%; background: linear-gradient(transparent, rgba(10, 10, 10, .9)); pointer-events: none; }
 
-/* Expertise: alternating rows */
-.ex-rows { padding-bottom: clamp(16px, 3vw, 48px); }
-.ex-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 6vw, 100px); align-items: center; padding-block: clamp(32px, 5vw, 72px); }
-.ex-row__media { display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--shot-bg); }
-.ex-row__media img { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); transition: transform 1.1s var(--ease); }
-.ex-row:hover .ex-row__media img { transform: scale(1.03); }
-.ex-row--flip .ex-row__media { order: 2; }
-.ex-row h2 { font: 500 clamp(1.6rem, 1.2rem + 1.2vw, 2.3rem)/1.12 var(--font-display); letter-spacing: var(--track-head); }
-.ex-row p { margin: 22px 0 26px; max-width: 54ch; font-size: clamp(.95rem, .9rem + .2vw, 1.1rem); line-height: 1.55; }
-@media (max-width: 800px) { .ex-row { grid-template-columns: 1fr; } .ex-row--flip .ex-row__media { order: 0; } }
-
-/* Expertise: carousel with text over the image */
-.ex-more { padding-block: clamp(28px, 4vw, 64px) clamp(56px, 8vw, 120px); }
-.carousel--expertise { --slide-w: min(34vw, 470px); }
-.carousel--expertise .slide { aspect-ratio: 1 / 1; }
-.carousel--expertise .slide a { position: relative; }
-.carousel--expertise .carousel__nav { top: calc(var(--slide-w) / 2); }
-.slide__text { position: absolute; inset: auto 0 0 0; padding: 80px clamp(16px, 2vw, 26px) clamp(16px, 2vw, 24px); color: #fff; font: 400 clamp(.8rem, .74rem + .25vw, 1rem)/1.4 var(--font-body); background: linear-gradient(transparent, rgba(0, 0, 0, .8)); }
-.carousel--expertise .carousel__title { font-size: 1.15rem; }
+/* Expertise: two big cards per row (after madamepolare.com's Featured Projects).
+   Cards rise in as they scroll into view (.reveal in motion.js). On hover the second image wipes up over the first
+   (or the image slowly zooms when there is no second one) and the one-line description runs as a marquee. */
+.xp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(40px, 5vw, 80px) clamp(12px, 1.7vw, 24px); padding: clamp(24px, 3vw, 48px) clamp(12px, 1.7vw, 24px) clamp(64px, 8vw, 128px); }
+.xp { margin: 0; }
+.xp__link { display: block; color: inherit; }
+.xp__media { position: relative; aspect-ratio: 16 / 11; overflow: hidden; border-radius: 2px; background: var(--shot-bg, #1a1a1a); }
+.xp__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease); }
+.xp__media .xp__alt { clip-path: inset(100% 0 0 0); transform: scale(1.12); transition: clip-path .9s cubic-bezier(.77, 0, .18, 1), transform 1.4s var(--ease); }
+.xp__link:hover .xp__alt, .xp__link:focus-visible .xp__alt { clip-path: inset(0 0 0 0); transform: scale(1); }
+.xp--zoom .xp__link:hover .xp__media img, .xp--zoom .xp__link:focus-visible .xp__media img { transform: scale(1.06); }
+.xp__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-top: 16px; }
+.xp__title { flex: 0 1 auto; min-width: 0; font: 500 clamp(1.05rem, .85rem + .6vw, 1.45rem)/1.2 var(--font-display); letter-spacing: var(--track-small); }
+.xp__desc { flex: 0 1 50%; min-width: 0; overflow: hidden; white-space: nowrap; font-size: .78rem; line-height: 1.4; color: var(--muted);
+  -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+.xp__run { display: inline-flex; }
+.xp__run span { flex-shrink: 0; padding-right: 2.5em; }
+.xp__run span + span { display: none; }
+.xp__link:hover .xp__run span + span { display: inline; }
+.xp__link:hover .xp__run { animation: xp-marquee var(--dur, 8s) linear infinite; }
+@keyframes xp-marquee { to { transform: translateX(-50%); } }
+@media (max-width: 700px) {
+  .xp-grid { grid-template-columns: 1fr; }
+  .xp__meta { display: block; margin-top: 12px; }
+  .xp__desc { margin-top: 6px; white-space: normal; -webkit-mask-image: none; mask-image: none; }
+  .xp__run { display: inline; }
+  .xp__run span { padding-right: 0; }
+  .xp__link:hover .xp__run { animation: none; }
+  .xp__link:hover .xp__run span + span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .xp__link:hover .xp__run { animation: none; } .xp__link:hover .xp__run span + span { display: none; } }
 .carousel__label:empty { display: none; }
-@media (max-width: 899px) { .carousel--expertise { --slide-w: 76vw; } }
 
 /* ---------- Motion preferences ---------- */
 @media (prefers-reduced-motion: reduce) {
