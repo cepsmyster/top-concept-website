@@ -518,12 +518,12 @@ ${clientsSection()}
 </section>
 
 <section class="section section--expertise" id="expertise" aria-labelledby="ex-title">
-  <div class="container">
-    <div class="section__head section__head--right">
+  <div class="section__head xp-head">
+    <div>
       <h2 id="ex-title" class="section__title">Field of expertise</h2>
       <p class="section__lead">Ten fields, one team. Pick a field to see the work.</p>
-      <a class="link-caps" href="expertise.html">Explore our expertise</a>
     </div>
+    <a class="link-caps" href="expertise.html">Explore our expertise</a>
   </div>
   <div class="xp-grid xp-grid--home">
   ${expertiseCards}
