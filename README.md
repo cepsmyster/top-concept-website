@@ -75,6 +75,14 @@ After Projects, the home page shows Retail Park (Sharjah) in two parts, built fr
 - Textures and the sky are CC0 assets from [Poly Haven](https://polyhaven.com).
 - The captions and text are in `projectShowcase()` in `src/build.mjs`. The model is in `src/model3d.mjs`. After editing the model, rebuild it from the `src/` folder: `npm install` (only the first time), then `npm run model`. This is the only part of the site that needs `npm`.
 
+## Clients (home page)
+
+After the Retail Park showcase, "In trusted company" shows the client logos in three columns of light tiles that drift upwards on a loop (paused on hover, still for visitors with reduced motion). The logos were cut from `Clients/Logos list.png` into `assets/img/clients/` as transparent WebP files. The copy and the logo list (file, name, size) are in `clients` in `src/data.mjs`; to add a logo, drop a transparent WebP in that folder and add a line to the list.
+
+## Typography
+
+All headings are Inter Medium with −50 tracking (`--track-head: -.05em`), in sentence case. Small titles (cards, names, menu) use `--track-small: -.03em` so they don’t close up. Buttons and small labels stay in Montserrat. Write heading copy in sentence case; the CSS never forces capitals on headings.
+
 ## Images
 
 Put optimized `.webp` files in `assets/img/` and refer to them by file name without the extension.

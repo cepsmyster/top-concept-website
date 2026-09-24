@@ -195,7 +195,7 @@ function cta({ title, text, tracked = false } = {}) {
   const fixed = title !== undefined;
   const h = fixed
     ? esc(title)
-    : `<span class="t-light">Let’s Bring Your Vision to Life</span><span class="t-dark">Design Begins With a Conversation.</span>`;
+    : `<span class="t-light">Let’s bring your vision to life</span><span class="t-dark">Design begins with a conversation.</span>`;
   const p = fixed
     ? esc(text)
     : `<span class="t-light">Connect with Top Concept International to explore innovative and tailored design solutions for your next project. Our team is ready to guide you from concept to completion with professionalism and expertise.</span><span class="t-dark">Share your vision with us. We’ll help shape it into something real.</span>`;
@@ -232,7 +232,7 @@ ${cfg.siteUrl ? `<link rel="canonical" href="${url(file === "index.html" ? "" : 
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <script>document.documentElement.classList.add("js");if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("m");var t="dark";try{var s=localStorage.getItem("tci-theme");if(s==="dark"||s==="light")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)</script>
-<link rel="preload" href="assets/fonts/montserrat-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/styles.css?v=${V}">
 ${head}
@@ -318,7 +318,7 @@ function projectShowcase() {
     </div>
     <div class="film__scrim" aria-hidden="true"></div>
     <header class="film__head">
-      <h2 id="showcase-title" class="film__kicker">Project Showcase</h2>
+      <h2 id="showcase-title" class="film__kicker">Project showcase</h2>
       <h3 class="film__title">Retail Park</h3>
       <span class="film__tag">Retail &amp; community destination · Sharjah</span>
     </header>
@@ -354,6 +354,28 @@ function projectShowcase() {
         </div>
       </div>
       <p class="model__hint" data-model-hint>Hold Ctrl (⌘ on Mac) and scroll to zoom · drag to rotate</p>
+    </div>
+  </div>
+</section>`;
+}
+
+// Clients: three columns of logo tiles that drift upwards on a loop (each list is doubled so the loop is seamless).
+function clientsSection() {
+  const C = D.clients;
+  const cols = [[], [], []];
+  C.logos.forEach((l, i) => cols[i % 3].push(l));
+  const tile = (l, hidden) => `<li class="clients__tile"><img src="assets/img/clients/${l.file}.webp" alt="${hidden ? "" : esc(l.name)}" width="${l.w}" height="${l.h}" loading="lazy" decoding="async"></li>`;
+  const col = (list, k) => `
+      <div class="clients__col" style="--dur:${[46, 38, 52][k]}s">
+        <ul class="clients__track">${list.map((l) => tile(l)).join("")}${list.map((l) => tile(l, true).replace("<li ", '<li aria-hidden="true" ')).join("")}</ul>
+      </div>`;
+  return `<section class="clients" id="clients" aria-labelledby="clients-title">
+  <div class="container clients__grid">
+    <div class="clients__copy">
+      <h2 id="clients-title">${esc(C.title)}</h2>
+      <p class="reveal">${esc(C.text)}</p>
+    </div>
+    <div class="clients__wall" role="group" aria-label="Our clients">${cols.map(col).join("")}
     </div>
   </div>
 </section>`;
@@ -417,6 +439,8 @@ function projectShowcase() {
 
 ${projectShowcase()}
 
+${clientsSection()}
+
 <section class="panel" id="culture-careers" aria-label="Culture and careers">
   <div class="container panel__grid">
     <article class="panel__item reveal">
@@ -444,7 +468,7 @@ ${projectShowcase()}
 
 <section class="section section--expertise" id="expertise" aria-labelledby="ex-title">
   <div class="container">
-    <div class="section__head"><h2 id="ex-title" class="section__title"><span class="t-light">Fields of Expertise</span><span class="t-dark">Our Expertise</span></h2><a class="link-caps" href="expertise.html">Explore our expertise</a></div>
+    <div class="section__head"><h2 id="ex-title" class="section__title"><span class="t-light">Fields of expertise</span><span class="t-dark">Our expertise</span></h2><a class="link-caps" href="expertise.html">Explore our expertise</a></div>
     <p class="section__lead dark-only">Our culture comes from the heart at Top Concept International, where we stand together, work with honesty and give our best to create spaces that truly matter.</p>
     <div class="ex-grid">${expertiseCards}</div>
   </div>
@@ -485,7 +509,7 @@ ${simpleHero({ img: "hero-projects", alt: P.heroAlt, title: P.heroTitle })}
 <section class="showcase container" aria-labelledby="showcase-title">
   <a class="showcase__media reveal" href="project-${show.slug}.html" aria-label="${esc(show.title)}">${img(show.img, { alt: show.alt, sizes: "(min-width: 900px) 40vw, 92vw" })}</a>
   <div class="showcase__text reveal">
-    <h2 id="showcase-title">Project Showcase</h2>
+    <h2 id="showcase-title">Project showcase</h2>
     <p class="showcase__label">${esc(P.showcase.label)}</p>
     <p>${esc(P.showcase.text)}</p>
     <a class="link-caps" href="project-${show.slug}.html">View project</a>
@@ -597,7 +621,7 @@ for (const p of D.projects) {
     </nav>
   </div>
   <section class="section container">
-    <div class="section__head"><h2>More Projects</h2><a class="link-caps" href="projects.html">See all projects</a></div>
+    <div class="section__head"><h2>More projects</h2><a class="link-caps" href="projects.html">See all projects</a></div>
     <div class="proj-grid proj-grid--3">${related.map(projectCard).join("")}</div>
   </section>
 </article>
@@ -636,7 +660,7 @@ for (const b of D.blogs) {
   <div class="container container--narrow"><figure class="post__cover">${img(b.img, { alt: b.alt, eager: true, sizes: "(min-width: 900px) 900px, 92vw" })}</figure></div>
   <div class="container container--narrow prose">${paras(b.body)}</div>
   <section class="section container">
-    <div class="section__head"><h2>More Reading</h2><a class="link-caps" href="blogs.html">See all blogs</a></div>
+    <div class="section__head"><h2>More reading</h2><a class="link-caps" href="blogs.html">See all blogs</a></div>
     <div class="cards cards--3">${others.map(blogCard).join("")}</div>
   </section>
 </article>
@@ -651,7 +675,7 @@ page({
   description: "Meet the architects, engineers and designers behind Top Concept International.",
   current: "team",
   body: `
-${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>Team</em>", current: "team", openBand: true })}
+${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>team</em>", current: "team", openBand: true })}
   <section class="leadership leadership--flip" id="leadership" aria-labelledby="team-lead-title">
     <div class="container leadership__grid">
       <h2 id="team-lead-title" class="leadership__title">Leadership</h2>
@@ -676,7 +700,7 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
       .join("")}
   </ul>
 </section>
-${cta({ title: "Design Begins With a Conversation.", text: "Share your vision with us. We’ll help shape it into something real.", tracked: true })}`,
+${cta({ title: "Design begins with a conversation.", text: "Share your vision with us. We’ll help shape it into something real.", tracked: true })}`,
 });
 
 // CULTURE
@@ -688,7 +712,7 @@ ${cta({ title: "Design Begins With a Conversation.", text: "Share your vision wi
     description: "Life at Top Concept International: a culture built on trust, respect and genuinely caring for one another.",
     current: "culture",
     body: `
-${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>Team</em>", current: "culture" })}
+${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>team</em>", current: "culture" })}
 <div class="container culture">
   <figure class="wide-shot reveal">${img("culture-hero", { alt: "Colleagues in conversation on a leather sofa", sizes: "(min-width: 1000px) 1350px, 96vw" })}</figure>
   <div class="prose prose--lg reveal">${paras(C.intro)}</div>
@@ -700,7 +724,7 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
   </section>
   <hr class="rule">
   <section class="split reveal" aria-labelledby="thrive-title">
-    <h2 id="thrive-title" class="split__title">A Place Where People Thrive</h2>
+    <h2 id="thrive-title" class="split__title">A place where people thrive</h2>
     <div class="split__media split__media--stack">
       ${img("culture-place", { alt: "Open-plan studio with plants and a foosball table", sizes: "(min-width: 900px) 45vw, 92vw" })}
       ${img("culture-roundtable", { alt: "Team meeting around a round table", sizes: "(min-width: 900px) 45vw, 92vw" })}
@@ -709,7 +733,7 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
   </section>
   <hr class="rule">
   <section id="voices" class="voices" aria-labelledby="voices-title">
-    <h2 id="voices-title">Voices from our Team</h2>
+    <h2 id="voices-title">Voices from our team</h2>
     ${C.voices
       .map(
         (v) => `<figure class="voice reveal">
@@ -731,7 +755,7 @@ page({
   description: "Build inspiring spaces and a rewarding future at Top Concept International. Send us your CV.",
   current: "careers",
   body: `
-${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>Team</em>", current: "careers" })}
+${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>team</em>", current: "careers" })}
 <div class="container careers">
   <figure class="wide-shot wide-shot--tall reveal">${img("careers-team", { alt: "Colleagues gathered around a long table of drawings, seen from above", sizes: "(min-width: 1000px) 1350px, 96vw" })}</figure>
   <p class="prose prose--lg reveal">${esc(D.careers.intro)}</p>
@@ -739,7 +763,7 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
 <section class="kickstart" id="kickstart" aria-labelledby="kick-title">
   <div class="container kickstart__grid">
     <div class="kickstart__copy">
-      <h2 id="kick-title">Kickstart Your Journey With Us</h2>
+      <h2 id="kick-title">Kickstart your journey with us</h2>
       <p>Connect with Top Concept International and discover thoughtful design solutions tailored to your vision. Our team is here to guide you from concept to completion with creativity, precision, and trusted expertise.</p>
       <form class="form form--careers" method="post" enctype="multipart/form-data" novalidate ${formAttrs("careers", "Career application")}>
         <label class="line-field"><span>Full Name:</span><input name="name" type="text" placeholder="Enter your full name..." autocomplete="name" required></label>
@@ -764,13 +788,13 @@ ${cta()}`,
 // CONTACT
 page({
   file: "contact.html",
-  title: "Contact Us",
+  title: "Contact us",
   description: "Contact Top Concept International — offices serving clients across the UAE, India and London.",
   solid: true,
   current: "contact",
   body: `
 <section class="contact-intro container">
-  <h1>Contact Us</h1>
+  <h1>Contact us</h1>
   <div id="offices" class="reveal">${mapFigure()}</div>
   <p class="prose prose--lg">Top Concept International connects clients across the UAE, India and London, bringing creative expertise and trusted support across every stage of the journey. Wherever your project begins, our team is ready to turn ideas into meaningful spaces with quality, care and precision.</p>
   ${cfg.contactEmail || cfg.whatsapp ? `<p class="contact-direct">${cfg.contactEmail ? `<a href="mailto:${esc(cfg.contactEmail)}">${esc(cfg.contactEmail)}</a>` : ""}${cfg.whatsapp ? `<a href="https://wa.me/${esc(cfg.whatsapp)}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : ""}</p>` : ""}
@@ -781,11 +805,11 @@ ${cta()}`,
 // PRIVACY
 page({
   file: "privacy.html",
-  title: "Privacy Policy",
+  title: "Privacy policy",
   description: "How Top Concept International handles the information you send us.",
   solid: true,
   body: `
-<section class="page-head container container--narrow"><h1>Privacy Policy</h1></section>
+<section class="page-head container container--narrow"><h1>Privacy policy</h1></section>
 <div class="container container--narrow prose prose--legal">
   <p><em>Last updated: ${fmtDate(new Date().toISOString().slice(0, 10), false)}</em></p>
   <p>Top Concept International (“we”, “us”) respects your privacy. This page explains what information this website collects and how it is used.</p>

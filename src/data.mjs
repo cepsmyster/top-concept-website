@@ -7,29 +7,29 @@
 // Fields of expertise (home page grid + project filters).
 // size: "lg" = wide card, "sm" = small card (matches the design's alternating rows)
 export const expertise = [
-  { slug: "urban-design", title: "Urban Design / Development", type: "masterplan", img: "p-alrams-urban-development", size: "lg", alt: "Aerial view of a waterfront urban development with a marina" },
-  { slug: "community", title: "Community", darkTitle: "Community Buildings", type: "architecture", img: "p-community-tower", size: "lg", alt: "High-rise residential tower rising above a city skyline" },
-  { slug: "interior-design", title: "Interior Design", type: "interior", img: "p-residential-interior", size: "sm", alt: "Bright living room with a large sofa and floor-to-ceiling windows" },
-  { slug: "villas", title: "High-End Villas", type: "architecture", img: "p-high-end-villa", size: "sm", alt: "Contemporary luxury villa at sunset" },
+  { slug: "urban-design", title: "Urban design / development", type: "masterplan", img: "p-alrams-urban-development", size: "lg", alt: "Aerial view of a waterfront urban development with a marina" },
+  { slug: "community", title: "Community", darkTitle: "Community buildings", type: "architecture", img: "p-community-tower", size: "lg", alt: "High-rise residential tower rising above a city skyline" },
+  { slug: "interior-design", title: "Interior design", type: "interior", img: "p-residential-interior", size: "sm", alt: "Bright living room with a large sofa and floor-to-ceiling windows" },
+  { slug: "villas", title: "High-end villas", type: "architecture", img: "p-high-end-villa", size: "sm", alt: "Contemporary luxury villa at sunset" },
   { slug: "townhouses", title: "Townhouses", type: "architecture", img: "p-townhouses", size: "sm", alt: "Row of modern white townhouses" },
   { slug: "malls", title: "Malls", type: "architecture", img: "p-shopping-mall", size: "lg", alt: "Shopping mall atrium with an ornate chandelier and escalators" },
   { slug: "retail", title: "Retails", type: "architecture", img: "p-retail-center", size: "lg", alt: "Aerial view of a retail centre with a solar roof" },
-  { slug: "master-planning", title: "Master Planning", darkTitle: "Masterplan", type: "masterplan", img: "p-resort-masterplan", size: "sm", alt: "Aerial view of a resort masterplan with lagoon pools" },
+  { slug: "master-planning", title: "Master planning", darkTitle: "Masterplan", type: "masterplan", img: "p-resort-masterplan", size: "sm", alt: "Aerial view of a resort masterplan with lagoon pools" },
   { slug: "landscape", title: "Landscape", type: "masterplan", img: "p-podium-landscape", size: "sm", alt: "Podium landscape with a pool deck and palm trees" },
   { slug: "hospitality", title: "Hospitality", type: "hospitality", img: "p-wadi-retreat", size: "sm", alt: "Mountain retreat resort at dusk" },
 ];
 
 // ── Expertise page (from the "Expertise (black)" design) ──
 export const expertisePage = {
-  heroTitle: "Uncover our <em>Expertise</em>",
+  heroTitle: "Uncover our <em>expertise</em>",
   heroAlt: "Azizi mixed-use building with an arcaded retail podium at dusk",
   heading: "Where every discipline shapes a stronger vision.",
   intro: "At Top Concept International, our expertise moves across architecture, interiors, landscape and master planning. By connecting these fields, we create design solutions that feel complete, purposeful, and deeply considered from concept to completion.",
   // Alternating image / text rows
   rows: [
-    { slug: "urban-design", title: "Urban Design / Development", img: "ex-urban", alt: "Waterfront promenade with people, cafés and a marina",
+    { slug: "urban-design", title: "Urban design / development", img: "ex-urban", alt: "Waterfront promenade with people, cafés and a marina",
       text: "We shape places that connect people, movement and purpose. Our urban design and development approach brings together planning, architecture, landscape and community experience to create environments that feel organized, livable and future-ready. From mixed-use districts to residential communities and public spaces, each project is designed with a clear vision for growth, identity, and long-term value." },
-    { slug: "community", title: "Community Buildings / High-Rise Development Expertise", img: "ex-community", pos: "50% 62%", alt: "Corner of a high-rise development with an arched retail podium",
+    { slug: "community", title: "Community buildings / high-rise development expertise", img: "ex-community", pos: "50% 62%", alt: "Corner of a high-rise development with an arched retail podium",
       text: "We design vertical communities that bring comfort, function, and identity into high-density living. Our expertise in G+30 and above developments focuses on creating buildings that are efficient, elegant, and connected to the urban fabric around them. From residential towers to large-scale community developments like Azizi City of Arabia, each project is shaped to support modern lifestyles, long-term value, and a stronger sense of place." },
     { slug: "malls", title: "Malls", img: "p-shopping-mall", pos: "50% 35%", alt: "Mall atrium with a red lantern-style chandelier",
       text: "We design retail destinations that bring commerce, culture and experience together. Our expertise in malls and lifestyle developments focuses on creating spaces that feel active, welcoming and memorable. Inspired by destinations such as Souk Al Bahar and Dubai Mall, each project is planned to support shopping, dining, leisure and community interaction while creating a strong identity that attracts visitors and adds long-term value." },
@@ -41,9 +41,9 @@ export const expertisePage = {
   carousel: [
     { slug: "retail", title: "Retails", img: "p-retail-center", alt: "Aerial view of a retail park with a solar roof",
       text: "We design retail spaces that connect shopping, dining, and daily experience into vibrant destinations built for people, movement, and long-term commercial value." },
-    { slug: "interior-design", title: "Interior Design", img: "p-residential-interior", alt: "Living room with floor-to-ceiling windows",
+    { slug: "interior-design", title: "Interior design", img: "p-residential-interior", alt: "Living room with floor-to-ceiling windows",
       text: "We design interiors that feel connected, comfortable, and considered in every detail, shaping how people live, work, and gather." },
-    { slug: "villas", title: "High-End Villas", img: "p-high-end-villa", alt: "Contemporary villa at sunset",
+    { slug: "villas", title: "High-end villas", img: "p-high-end-villa", alt: "Contemporary villa at sunset",
       text: "We design private residences with a considered relationship to light, privacy, and landscape, creating homes with lasting character." },
     { slug: "townhouses", title: "Townhouses", img: "p-townhouses", alt: "Row of modern white townhouses",
       text: "We design townhouse communities that repeat a strong architectural idea with well-proportioned detail, shared spaces, and everyday comfort." },
@@ -56,7 +56,7 @@ export const expertisePage = {
 
 // ── Projects page (from the "Projects Page (black)" design) ──
 export const projectsPage = {
-  heroTitle: "View the <em>Work</em>",
+  heroTitle: "View the <em>work</em>",
   heroAlt: "Aerial view of a retail park with a solar roof in a desert landscape",
   heading: "Bringing ambitious concepts to life.",
   intro: "From the ground up, Top Concept International is dedicated to creating transformative spaces. We combine honest teamwork with a drive for excellence, turning open landscapes into thriving, purposeful destinations that truly matter.",
@@ -65,6 +65,31 @@ export const projectsPage = {
     label: "Retail Park",
     text: "Discover our latest landmark development. This expansive retail park merges high-end commercial architecture with forward-thinking design. Featuring an integrated solar-canopy roof and modern, minimalist facades, the complex is built to be a premier destination for both commerce and community. It perfectly encapsulates our commitment to sustainable, large-scale commercial environments that elevate the surrounding landscape.",
   },
+};
+
+// ── Clients (home page logo wall). Logos are cut from Clients/Logos list.png into assets/img/clients/ (transparent WebP). ──
+export const clients = {
+  title: "In trusted company",
+  text: "Many of our projects come from clients who return to us time and again: developers, government entities and brands across the UAE. From landmark masterplans and civic buildings to retail and hospitality, our partnerships are built to last well beyond handover.",
+  logos: [
+    { file: "emaar", name: "Emaar", w: 400, h: 98 },
+    { file: "eagle-hills", name: "Eagle Hills", w: 153, h: 220 },
+    { file: "dubai-police", name: "Dubai Police", w: 400, h: 155 },
+    { file: "asq-holding", name: "ASQ Holding", w: 392, h: 220 },
+    { file: "albatha", name: "Al Batha", w: 231, h: 220 },
+    { file: "azizi", name: "Azizi Developments", w: 400, h: 118 },
+    { file: "ecbd", name: "Emirates Council for Balanced Development", w: 400, h: 105 },
+    { file: "durres", name: "Durres", w: 400, h: 96 },
+    { file: "nshama", name: "Nshama", w: 400, h: 59 },
+    { file: "dubai-courts", name: "Dubai Courts", w: 240, h: 220 },
+    { file: "edge-etimad", name: "EDGE Etimad", w: 394, h: 220 },
+    { file: "ministry-of-defence", name: "UAE Ministry of Defence", w: 250, h: 220 },
+    { file: "wasl", name: "wasl", w: 400, h: 162 },
+    { file: "rox", name: "ROX", w: 400, h: 89 },
+    { file: "gargash", name: "Gargash", w: 212, h: 216 },
+    { file: "dubai-civil-defence", name: "Dubai Civil Defence", w: 381, h: 220 },
+    { file: "detailing-xperts", name: "The Detailing Xperts", w: 400, h: 88 },
+  ],
 };
 
 export const projectTypes = [
@@ -80,23 +105,23 @@ export const projects = [
   { slug: "alrams-urban-development", title: "Alrams Urban Development", label: "Masterplan", cat: "urban-design", type: "masterplan", img: "p-alrams-urban-development", alt: "Aerial view of the Alrams waterfront urban development", featured: true },
   { slug: "azizi-city-of-arabia", title: "Azizi City of Arabia", label: "Commercial", cat: "community", type: "architecture", img: "p-azizi-city-of-arabia", alt: "Azizi City of Arabia towers with sculpted white façade fins", featured: true },
   { slug: "al-manara-center", title: "Al Manara Center", label: "Commercial", cat: "interior-design", type: "interior", img: "p-al-manara-center", alt: "Boardroom interior with a long dark table and glass partitions", featured: true },
-  { slug: "wadi-retreat", title: "Wadi Retreat", label: "Hospitality", cat: "hospitality", type: "hospitality", img: "p-wadi-retreat", alt: "Retreat nestled in a mountain wadi with an infinity pool", featured: true },
+  { slug: "wadi-retreat", title: "Wadi retreat", label: "Hospitality", cat: "hospitality", type: "hospitality", img: "p-wadi-retreat", alt: "Retreat nestled in a mountain wadi with an infinity pool", featured: true },
   { slug: "rox-showroom", title: "Rox Showroom", label: "Commercial Interior", cat: "interior-design", type: "interior", img: "p-rox-reception", alt: "Rox showroom reception desk", gallery: ["p-rox-showroom-1", "p-rox-showroom-2", "p-rox-showroom-3", "p-rox-showroom-4", "p-rox-showroom-5", "p-automotive-showroom"], featured: true },
-  { slug: "high-end-villa", title: "High-End Villa", label: "Villas", cat: "villas", type: "architecture", img: "p-high-end-villa", alt: "Two-storey contemporary villa glowing at sunset", featured: true },
-  { slug: "community-tower", title: "Community Tower", label: "Community Buildings", cat: "community", type: "architecture", img: "p-community-tower", alt: "Slender residential tower with horizontal balcony bands" },
-  { slug: "mid-rise-residential", title: "Mid-Rise Residential", label: "Residential", cat: "community", type: "architecture", img: "p-mid-rise-residential", alt: "Mid-rise residential building with palms and mountains behind" },
-  { slug: "waterfront-residences", title: "Waterfront Residences", label: "Residential", cat: "community", type: "architecture", img: "p-waterfront-residences", alt: "Residential blocks along a waterfront promenade at dusk" },
-  { slug: "boutique-mid-rise", title: "Boutique Mid-Rise", label: "Residential", cat: "community", type: "architecture", img: "p-boutique-mid-rise", alt: "Five-storey residential building with stone cladding" },
-  { slug: "townhouses", title: "Townhouse Community", label: "Townhouses", cat: "townhouses", type: "architecture", img: "p-townhouses", alt: "Rows of modern white townhouses with dark gates" },
-  { slug: "shopping-mall", title: "Shopping Mall", label: "Malls", cat: "malls", type: "architecture", img: "p-shopping-mall", alt: "Mall atrium with a red lantern-style chandelier" },
+  { slug: "high-end-villa", title: "High-end villa", label: "Villas", cat: "villas", type: "architecture", img: "p-high-end-villa", alt: "Two-storey contemporary villa glowing at sunset", featured: true },
+  { slug: "community-tower", title: "Community tower", label: "Community Buildings", cat: "community", type: "architecture", img: "p-community-tower", alt: "Slender residential tower with horizontal balcony bands" },
+  { slug: "mid-rise-residential", title: "Mid-rise residential", label: "Residential", cat: "community", type: "architecture", img: "p-mid-rise-residential", alt: "Mid-rise residential building with palms and mountains behind" },
+  { slug: "waterfront-residences", title: "Waterfront residences", label: "Residential", cat: "community", type: "architecture", img: "p-waterfront-residences", alt: "Residential blocks along a waterfront promenade at dusk" },
+  { slug: "boutique-mid-rise", title: "Boutique mid-rise", label: "Residential", cat: "community", type: "architecture", img: "p-boutique-mid-rise", alt: "Five-storey residential building with stone cladding" },
+  { slug: "townhouses", title: "Townhouse community", label: "Townhouses", cat: "townhouses", type: "architecture", img: "p-townhouses", alt: "Rows of modern white townhouses with dark gates" },
+  { slug: "shopping-mall", title: "Shopping mall", label: "Malls", cat: "malls", type: "architecture", img: "p-shopping-mall", alt: "Mall atrium with a red lantern-style chandelier" },
   { slug: "retail-park", title: "Retail Park", label: "Retail", cat: "retail", type: "architecture", img: "p-retail-center", alt: "Retail centre seen from above with a solar-panel roof" },
-  { slug: "residential-interior", title: "Residential Interior", label: "Interior Design", cat: "interior-design", type: "interior", img: "p-residential-interior", alt: "Living room with a modern pendant light and garden views" },
-  { slug: "luxury-lounge", title: "Luxury Lounge", label: "Interior Design", cat: "interior-design", type: "interior", img: "p-luxury-lounge", alt: "Double-height lounge with sculptural pendant lighting" },
-  { slug: "executive-boardroom", title: "Executive Boardroom", label: "Commercial Interior", cat: "interior-design", type: "interior", img: "p-executive-boardroom", alt: "Executive boardroom with a long oval table" },
-  { slug: "reception-lobby", title: "Reception Lobby", label: "Commercial Interior", cat: "interior-design", type: "interior", img: "p-reception-lobby", alt: "Reception lobby with a circular desk and ring pendant lights" },
-  { slug: "resort-masterplan", title: "Resort Masterplan", label: "Masterplan", cat: "master-planning", type: "masterplan", img: "p-resort-masterplan", alt: "Aerial view of a resort masterplan with lagoon pools" },
-  { slug: "podium-landscape", title: "Podium Landscape", label: "Landscape", cat: "landscape", type: "masterplan", img: "p-podium-landscape", alt: "Landscaped podium with a pool, decking and palms" },
-  { slug: "forest-resort", title: "Forest Resort Concept", label: "Hospitality Masterplan", cat: "hospitality", type: "hospitality", img: "p-forest-resort", alt: "Night aerial view of a forest resort concept design" },
+  { slug: "residential-interior", title: "Residential interior", label: "Interior Design", cat: "interior-design", type: "interior", img: "p-residential-interior", alt: "Living room with a modern pendant light and garden views" },
+  { slug: "luxury-lounge", title: "Luxury lounge", label: "Interior Design", cat: "interior-design", type: "interior", img: "p-luxury-lounge", alt: "Double-height lounge with sculptural pendant lighting" },
+  { slug: "executive-boardroom", title: "Executive boardroom", label: "Commercial Interior", cat: "interior-design", type: "interior", img: "p-executive-boardroom", alt: "Executive boardroom with a long oval table" },
+  { slug: "reception-lobby", title: "Reception lobby", label: "Commercial Interior", cat: "interior-design", type: "interior", img: "p-reception-lobby", alt: "Reception lobby with a circular desk and ring pendant lights" },
+  { slug: "resort-masterplan", title: "Resort masterplan", label: "Masterplan", cat: "master-planning", type: "masterplan", img: "p-resort-masterplan", alt: "Aerial view of a resort masterplan with lagoon pools" },
+  { slug: "podium-landscape", title: "Podium landscape", label: "Landscape", cat: "landscape", type: "masterplan", img: "p-podium-landscape", alt: "Landscaped podium with a pool, decking and palms" },
+  { slug: "forest-resort", title: "Forest resort concept", label: "Hospitality Masterplan", cat: "hospitality", type: "hospitality", img: "p-forest-resort", alt: "Night aerial view of a forest resort concept design" },
 ];
 
 // Short, neutral summaries used on project pages (keyed by `label`).
@@ -190,7 +215,7 @@ export const careers = {
 export const blogs = [
   {
     slug: "from-concept-to-completion",
-    title: "From Concept to Completion: Keeping One Team Behind Every Project",
+    title: "From concept to completion: keeping one team behind every project",
     date: "2026-06-23",
     img: "b-engineers",
     alt: "Two colleagues reviewing drawings on site",
@@ -203,7 +228,7 @@ export const blogs = [
   },
   {
     slug: "designing-for-light-and-climate",
-    title: "Designing for Light, Shade and Climate",
+    title: "Designing for light, shade and climate",
     date: "2026-06-16",
     img: "b-atrium",
     alt: "Person walking through a bright glazed atrium holding plans",
@@ -216,7 +241,7 @@ export const blogs = [
   },
   {
     slug: "coordination-is-design",
-    title: "Coordination Is Part of Design",
+    title: "Coordination is part of design",
     date: "2026-06-04",
     img: "b-blueprint",
     alt: "Architect leaning over a large set of drawings",
@@ -229,7 +254,7 @@ export const blogs = [
   },
   {
     slug: "interiors-that-feel-connected",
-    title: "Interiors That Feel Connected to Their Setting",
+    title: "Interiors that feel connected to their setting",
     date: "2026-05-21",
     img: "b-landscape",
     alt: "Landscaper laying turf in front of a villa",
@@ -242,7 +267,7 @@ export const blogs = [
   },
   {
     slug: "what-happens-on-site",
-    title: "What Happens on Site Is Part of the Design Story",
+    title: "What happens on site is part of the design story",
     date: "2026-05-07",
     img: "b-site",
     alt: "Concrete structure under construction",
@@ -255,7 +280,7 @@ export const blogs = [
   },
   {
     slug: "spaces-that-serve-people",
-    title: "Spaces That Serve People",
+    title: "Spaces that serve people",
     date: "2026-04-23",
     img: "b-walkthrough",
     alt: "Colleagues inspecting a finished interior",
