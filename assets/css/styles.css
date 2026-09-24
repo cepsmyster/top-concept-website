@@ -947,3 +947,7 @@ main .prose .hd .hbr { display: none; }
 
 /* ---------- Home: Fields of expertise uses the Expertise page cards (.xp), two at a time, end to end ---------- */
 .xp-grid--home { padding-top: 0; padding-bottom: 0; }
+/* its heading, line and link sit stacked on the right, the same in both themes */
+.section__head--right { flex-direction: column; align-items: flex-end; gap: 14px; text-align: right; }
+main .section__head--right .hd { text-align: right; }
+.section__head--right .section__lead { margin: 0; }
