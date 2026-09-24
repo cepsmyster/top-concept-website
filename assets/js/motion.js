@@ -219,7 +219,7 @@
       cur.classList.toggle("is-link", !hit && !!t.closest("a, button, [role=button], label, select"));
     });
 
-    $$(".btn, .carousel__nav, .theme-toggle, .menu-toggle, .model__btn").forEach((el) => {
+    $$(".btn, .carousel__nav, .hdr-chip, .menu-toggle, .talk, .model__btn").forEach((el) => {
       const mx = gsap.quickTo(el, "x", { duration: 0.6, ease: "elastic.out(1, 0.4)" });
       const my = gsap.quickTo(el, "y", { duration: 0.6, ease: "elastic.out(1, 0.4)" });
       el.addEventListener("pointermove", (e) => { const r = el.getBoundingClientRect(); mx((e.clientX - r.left - r.width / 2) * 0.3); my((e.clientY - r.top - r.height / 2) * 0.3); });

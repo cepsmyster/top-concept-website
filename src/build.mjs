@@ -54,6 +54,7 @@ const ICON = {
   sun: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>`,
   moon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg>`,
   arrow: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>`,
+  arrowRight: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
   close: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg>`,
 };
 
@@ -69,35 +70,64 @@ const MENU = [
   { label: "About", href: "team.html#leadership" },
 ];
 
+// Floating header (after thirdway.com): theme switch left · logo + menu button in a card, centred · "Let’s talk" right.
+// The menu grows out of the card: the same links, set large, then a strip of the latest blogs.
+const brandLogos = (h = "") => `<img class="logo--on-light" src="assets/img/logo-dark.png" alt="" width="${META["logo-dark"].w}" height="${META["logo-dark"].h}"${h}><img class="logo--on-dark" src="assets/img/logo-light.png" alt="" width="${META["logo-light"].w}" height="${META["logo-light"].h}"${h}>`;
+const themeToggle = (cls = "") => `<button class="theme-toggle${cls}" type="button" data-theme-toggle aria-label="Switch to light theme" title="Switch theme">
+        <span class="theme-toggle__sun">${ICON.sun}</span><span class="theme-toggle__moon">${ICON.moon}</span>
+      </button>`;
+function menuBlogCard(b) {
+  return `<li class="menu-blog"><a href="blog-${b.slug}.html">
+          <div class="menu-blog__media">${img(b.img, { alt: "", sizes: "240px" })}</div>
+          <time datetime="${b.date}">${fmtDate(b.date)}</time>
+          <h3>${esc(b.title)}</h3>
+        </a></li>`;
+}
+
 function header({ solid, current }) {
   const cur = current === "culture" || current === "careers" ? "team" : current;
   return `
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header${solid ? " is-solid" : ""}" id="site-header">
   <div class="site-header__inner">
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay" data-menu-open>
-      <span class="menu-toggle__bars" aria-hidden="true"><i></i><i></i></span><span>Menu</span>
-    </button>
-    <a class="brand" href="index.html" aria-label="${esc(cfg.siteName)} — home">
-      <img src="assets/img/logo-light.png" alt="" width="${META["logo-light"].w}" height="${META["logo-light"].h}">
-    </a>
-    <div class="header-tools">
-      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to light theme" title="Switch theme">
-        <span class="theme-toggle__sun">${ICON.sun}</span><span class="theme-toggle__moon">${ICON.moon}</span>
+    <div class="hdr-side hdr-side--left">
+      ${themeToggle(" hdr-chip")}
+    </div>
+    <div class="hdr-card">
+      <a class="brand" href="index.html" aria-label="${esc(cfg.siteName)} — home">${brandLogos()}</a>
+      <a class="talk-link" href="contact.html">Let’s talk</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay" aria-label="Open menu" data-menu-open>
+        <span class="menu-toggle__bars" aria-hidden="true"><i></i><i></i></span>
       </button>
+    </div>
+    <div class="hdr-side hdr-side--right">
+      <a class="talk" href="contact.html"><span class="talk__text">Let’s talk</span><span class="talk__arrow" aria-hidden="true">${ICON.arrowRight}</span></a>
     </div>
   </div>
 </header>
 <div class="menu-overlay" id="menu-overlay" hidden aria-label="Site menu" role="dialog" aria-modal="true">
   <div class="menu-overlay__backdrop" data-menu-close></div>
-  <div class="menu-overlay__panel">
-    <button class="menu-close" type="button" data-menu-close><span class="menu-close__x" aria-hidden="true">${ICON.close}</span><span>Menu</span></button>
+  <div class="menu-overlay__panel" data-lenis-prevent>
+    <div class="menu-overlay__head">
+      <a class="brand" href="index.html" aria-label="${esc(cfg.siteName)} — home">${brandLogos(' loading="lazy"')}</a>
+      <div class="menu-overlay__tools">
+        ${themeToggle(" menu-overlay__theme")}
+        <button class="menu-close" type="button" data-menu-close aria-label="Close menu"><span class="menu-close__x" aria-hidden="true">${ICON.close}</span></button>
+      </div>
+    </div>
     <nav aria-label="Site menu">
       <ul>${MENU.map((m) => `<li><a href="${m.href}"${m.key && m.key === cur ? ' aria-current="page"' : ""}>${m.label}</a></li>`).join("")}</ul>
     </nav>
+    <section class="menu-blogs" aria-labelledby="menu-blogs-title">
+      <div class="menu-blogs__head">
+        <h2 id="menu-blogs-title"><span class="menu-blogs__dot" aria-hidden="true"></span>Latest blogs</h2>
+        <a class="menu-blogs__all" href="blogs.html"${cur === "blogs" ? ' aria-current="page"' : ""}>See all blogs</a>
+      </div>
+      <ul class="menu-blogs__track">${D.blogs.map(menuBlogCard).join("")}</ul>
+    </section>
     <div class="menu-overlay__foot">
       <small>© TCI ${new Date().getFullYear()}</small>
-      <p>From concept<br>to completion</p>
+      <p>From concept to completion</p>
     </div>
   </div>
 </div>`;
@@ -333,7 +363,6 @@ function projectShowcase() {
 {
   const hero = META["hero"];
   const featured = D.projects.filter((p) => p.featured);
-  const blogs3 = D.blogs.slice(0, 3);
   const L = D.leadership;
 
   const slides = featured
@@ -366,17 +395,9 @@ function projectShowcase() {
   <video class="hero__video" muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
   <div class="hero__shade"></div>
   <h1 class="hero__title">From <em>concept</em> to <em>completion</em></h1>
-  <a class="hero__scroll" href="#blogs" aria-label="Scroll to content"><span></span></a>
+  <a class="hero__scroll" href="#projects" aria-label="Scroll to content"><span></span></a>
 </section>
 
-<section class="section" id="blogs" aria-labelledby="blogs-title">
-  <div class="container">
-    <div class="section__head"><h2 id="blogs-title">Blogs</h2><a class="link-caps" href="blogs.html">See all blogs</a></div>
-    <div class="cards cards--3">${blogs3.map(blogCard).join("")}</div>
-  </div>
-</section>
-
-<div class="container"><hr class="rule"></div>
 
 <section class="section section--projects" id="projects" aria-labelledby="projects-title">
   <div class="container">

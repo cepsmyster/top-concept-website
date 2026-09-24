@@ -12,14 +12,14 @@ Built from the design files in `New Website/`.
 
 | Page | File |
 |---|---|
-| Home (video hero, blogs, projects carousel, culture/careers, leadership, expertise, contact) | `index.html` |
+| Home (video hero, projects carousel, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
 | Expertise (alternating rows + carousel) | `expertise.html` |
 | Projects ("View the Work" hero, showcase, filterable grid) + one page per project | `projects.html`, `project-*.html` |
 | Blogs + one page per article | `blogs.html`, `blog-*.html` |
 | Team · Culture · Careers | `team.html`, `culture.html`, `careers.html` |
 | Contact · Privacy · 404 | `contact.html`, `privacy.html`, `404.html` |
 
-The header follows the updated designs: **MENU** (left) opens the slide-in menu, the logo is centred, and the sun/moon icon (right) switches between the **dark** and **light** theme. **Dark is the default** (the "black" designs); the visitor's choice is remembered. To make light the default, change `var t="dark"` to `var t="light"` in the `<script>` inside `page()` in `src/build.mjs` and rebuild.
+The header is modelled on thirdway.com. A floating card in the centre holds the logo and the menu button, a **Let’s talk** button on the right goes to the Contact page, and the sun/moon button on the left switches between the **dark** and **light** theme. On phones all of this sits in one full-width card. The menu grows out of the card: the site links set large, then a scrolling strip of the latest blogs (the home page no longer has its own Blogs section), plus a second theme switch. The menu links live in `MENU` and the markup in `header()`, both in `src/build.mjs`. **Dark is the default** (the "black" designs); the visitor's choice is remembered. To make light the default, change `var t="dark"` to `var t="light"` in the `<script>` inside `page()` in `src/build.mjs` and rebuild.
 
 **Hero video (home page):** `assets/video/hero.mp4` plays on screens ≥ 900px wide. Phones, "reduce motion" and data-saver visitors get the still image (`hero.webp`) with the "From concept to completion" headline instead, so they don't download the 18 MB video. To change the video, replace the file (keep the name); it should have the headline baked in, as the current one does.
 

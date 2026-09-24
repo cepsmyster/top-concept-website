@@ -7,19 +7,18 @@
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ───────── Theme (light / dark) ───────── */
-  const themeBtn = $("[data-theme-toggle]");
+  const themeBtns = $$("[data-theme-toggle]"); // one in the header, one in the menu
   const syncThemeLabel = () => {
-    if (!themeBtn) return;
     const dark = root.getAttribute("data-theme") === "dark";
-    themeBtn.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    themeBtns.forEach((b) => b.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme"));
   };
   syncThemeLabel();
-  themeBtn?.addEventListener("click", () => {
+  themeBtns.forEach((b) => b.addEventListener("click", () => {
     const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
     root.setAttribute("data-theme", next);
     try { localStorage.setItem("tci-theme", next); } catch (e) { /* storage unavailable */ }
     syncThemeLabel();
-  });
+  }));
 
   /* ───────── Header: solid once scrolled ───────── */
   const header = $("#site-header");
@@ -40,7 +39,7 @@
     });
   })();
 
-  /* ───────── Slide-in menu ───────── */
+  /* ───────── Menu (grows out of the header card) ───────── */
   const overlay = $("#menu-overlay");
   const openBtn = $("[data-menu-open]");
   if (overlay && openBtn) {
