@@ -12,7 +12,7 @@ Built from the design files in `New Website/`.
 
 | Page | File |
 |---|---|
-| Home (interactive concept → completion hero, projects carousel, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
+| Home (full-screen interactive concept → completion hero, about us, projects carousel, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
 | Expertise (ten fields as big cards, two per row) | `expertise.html` |
 | Projects ("View the Work" hero, showcase, filterable grid) + one page per project | `projects.html`, `project-*.html` |
 | Blogs + one page per article | `blogs.html`, `blog-*.html` |
@@ -86,7 +86,9 @@ After the Retail Park showcase, "In trusted company" shows the client logos in t
 
 ## Layout
 
-Every section runs end to end at every screen size: there is no maximum page width, only a small edge margin (`--gutter`, 12px on phones growing to 32px on large screens). Long reading text (articles, the privacy policy, intros) keeps a comfortable line length (about 72 characters) inside the full-width layout. Above 1800px wide the base font size grows with the screen (up to 22px), so large monitors keep the same proportions instead of showing small type in a wide layout.
+Pages sit in a centred column (`--container`, 1350px) with side margins (`--gutter`). Two sections run end to end instead: the Fields of expertise cards on the home page (landscape cards; a lone card on the last row spans it as a panorama) and the Expertise page card grid.
+
+**Home page order:** the hero fills exactly one screen, so it is all a visitor sees on arrival. Right after it comes **About us** (layout after madamepolare.com): a lead paragraph on the left, two short paragraphs on the right and a “Meet the team” button to the Team page. The copy is in `about` in `src/data.mjs`, written to the web-copywriter skill; it uses only facts already on the site (offices in the UAE, India and London; the disciplines; approvals and site supervision).
 
 ## Typography
 

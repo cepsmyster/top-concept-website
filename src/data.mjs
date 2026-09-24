@@ -6,9 +6,21 @@
 
 // Fields of expertise (home page grid + project filters).
 // size: "lg" = wide card, "sm" = small card (matches the design's alternating rows)
+// Home "About us" section, right after the hero (layout after madamepolare.com): a lead paragraph on the left,
+// two short paragraphs on the right, and a button to the Team page. Written to the web-copywriter skill.
+export const about = {
+  lead: "Top Concept International (TCI) is a team of architects, engineers and designers. We work from offices in the UAE, India and London. We take projects from the first sketch to handover. One team stays with your project the whole way, so the design you approve is the building you get.",
+  paragraphs: [
+    "Architecture, interiors, landscape and master planning sit under one roof. Structural and MEP coordination run alongside the design, not after it. That means fewer clashes on site and fewer costly redesigns.",
+    "Developers, government entities and brands across the UAE trust us with their work. We design, steer authority approvals and supervise construction. You deal with one team, and nothing gets lost between stages.",
+  ],
+  cta: "Meet the team",
+  href: "team.html",
+};
+
 export const expertise = [
   { slug: "urban-design", title: "Urban design / development", type: "masterplan", img: "p-alrams-urban-development", size: "lg", alt: "Aerial view of a waterfront urban development with a marina" },
-  { slug: "community", title: "Community", darkTitle: "Community buildings", type: "architecture", img: "p-community-tower", size: "lg", alt: "High-rise residential tower rising above a city skyline" },
+  { slug: "community", title: "Community", darkTitle: "Community buildings", type: "architecture", img: "ex-community", pos: "50% 62%", size: "lg", alt: "High-rise residential tower rising above a city skyline" },
   { slug: "interior-design", title: "Interior design", type: "interior", img: "p-residential-interior", size: "sm", alt: "Bright living room with a large sofa and floor-to-ceiling windows" },
   { slug: "villas", title: "High-end villas", type: "architecture", img: "p-high-end-villa", size: "sm", alt: "Contemporary luxury villa at sunset" },
   { slug: "townhouses", title: "Townhouses", type: "architecture", img: "p-townhouses", size: "sm", alt: "Row of modern white townhouses" },

@@ -446,7 +446,7 @@ function clientsSection() {
 
   const expertiseCards = D.expertise
     .map(
-      (e, i) => `<a class="ex-card ex-card--${e.size} reveal" style="--d:${(i % 3) * 70}ms" href="projects.html?cat=${e.slug}">
+      (e, i) => `<a class="ex-card ex-card--${e.size} reveal" style="--d:${(i % 3) * 70}ms;--pos:${e.pos || "50% 50%"}" href="projects.html?cat=${e.slug}">
       <div class="ex-card__media">${img(e.img, { alt: e.alt, sizes: e.size === "lg" ? "(min-width: 900px) 46vw, 92vw" : "(min-width: 900px) 30vw, 92vw" })}</div>
       <h3><span class="t-light">${esc(e.title)}</span><span class="t-dark">${esc(e.darkTitle || e.title)}</span></h3>
     </a>`
@@ -471,7 +471,13 @@ function clientsSection() {
   <div class="hero__knob" role="slider" tabindex="0" aria-label="Drawing to finished building" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M15 7l5 5-5 5"/></svg></div>
   <h1 class="hero__title">From concept to completion</h1>
   <p class="hero__sheet" aria-hidden="true"><span>Top Concept International</span><span>Sheet A-001 · Elevation</span></p>
-  <a class="hero__scroll" href="#projects" aria-label="Scroll to content"><span></span></a>
+  <a class="hero__scroll" href="#about" aria-label="Scroll to content"><span></span></a>
+</section>
+
+<section class="about container" id="about" aria-label="About us">
+  <p class="about__lead">${esc(D.about.lead)}</p>
+  <div class="about__more">${D.about.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}</div>
+  <a class="about__btn" href="${D.about.href}"><span class="about__label">${esc(D.about.cta)}</span><span class="about__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
 </section>
 
 
