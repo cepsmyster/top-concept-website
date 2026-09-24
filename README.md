@@ -84,6 +84,10 @@ After Projects, the home page shows Retail Park (Sharjah) in two parts, built fr
 
 After the Retail Park showcase, "In trusted company" shows the client logos in three columns of light tiles that drift upwards on a loop (paused on hover, still for visitors with reduced motion). The logos were cut from `Clients/Logos list.png` into `assets/img/clients/` as transparent WebP files. The copy and the logo list (file, name, size) are in `clients` in `src/data.mjs`; to add a logo, drop a transparent WebP in that folder and add a line to the list.
 
+## Layout
+
+Every section runs end to end at every screen size: there is no maximum page width, only a small edge margin (`--gutter`, 12px on phones growing to 32px on large screens). Long reading text (articles, the privacy policy, intros) keeps a comfortable line length (about 72 characters) inside the full-width layout. Above 1800px wide the base font size grows with the screen (up to 22px), so large monitors keep the same proportions instead of showing small type in a wide layout.
+
 ## Typography
 
 **Page and section headings** follow daqconsulting.com’s “ENGINEERED FOR / **SCALE.**”: Inter Light (300) with Each Word Capitalised, the last word on its own line in Inter Bold (700), left-aligned, line-height 1 and −30 tracking (`--hd-track: -.03em`). The capitals come from CSS (`text-transform: capitalize`), so keep typing headings in sentence case. The build does this automatically (`displayHeadings()` in `src/build.mjs`), so keep writing headings in sentence case. If the last word is 3 letters or fewer (“with us”), the word before it goes bold too. To pick the bold words yourself, wrap them in `<span class="hb">…</span>`, as in “Life at <span class="hb">Top Concept</span>”. The weights, tracking and line-height are variables under “Display headings” at the end of `styles.css`. Subheads inside articles and the privacy policy, and the menu and footer headings, keep the old style.
