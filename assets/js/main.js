@@ -78,25 +78,77 @@
     });
   }
 
-  /* ───────── Home hero video ───────── */
+  /* ───────── Home hero: from the drawing (concept) to the render (completion) ───────── */
+  // A vertical line splits the hero: blueprint linework on the left, the finished building on the right.
+  // The mouse moves the line; on touch screens drag (or tap) across the hero; the handle takes the arrow keys.
   (() => {
-    const hero = $("[data-hero-video]");
-    const video = hero && $(".hero__video", hero);
-    if (!video) return;
-    const conn = navigator.connection || {};
-    const allowed = window.matchMedia("(min-width: 900px)").matches && !reduceMotion && !conn.saveData && !/2g/.test(conn.effectiveType || "");
-    if (!allowed) return; // phones / reduced motion / data saver keep the still image
-    const start = () => {
-      video.addEventListener("playing", () => hero.classList.add("has-video"), { once: true });
-      video.src = hero.dataset.heroVideo;
-      const p = video.play();
-      if (p && p.catch) p.catch(() => { /* autoplay blocked: the still image stays */ });
-      if ("IntersectionObserver" in window) {
-        new IntersectionObserver(([e]) => { if (e.isIntersecting) video.play().catch(() => {}); else video.pause(); }).observe(hero);
-      }
+    const hero = $("[data-compare]");
+    if (!hero) return;
+    const knob = $(".hero__knob", hero);
+    const tags = $$(".hero__tag", hero);
+    const clamp = (v) => Math.min(0.97, Math.max(0.03, v));
+    let cur = 1, target = 1, raf = 0, live = false, user = false, drag = false;
+
+    const paint = () => {
+      hero.style.setProperty("--split", (cur * 100).toFixed(2) + "%");
+      const v = Math.round(cur * 100);
+      knob.setAttribute("aria-valuenow", v);
+      knob.setAttribute("aria-valuetext", `${v}% drawing, ${100 - v}% finished building`);
+      tags[0].style.opacity = cur > 0.16 ? "" : "0"; // "Concept" sits left of the line, "Completion" right
+      tags[1].style.opacity = cur < 0.84 ? "" : "0";
     };
-    if (document.readyState === "complete") setTimeout(start, 300);
-    else window.addEventListener("load", () => setTimeout(start, 300), { once: true });
+    const tick = () => {
+      raf = 0;
+      cur += (target - cur) * 0.14;
+      if (Math.abs(target - cur) < 0.0005) cur = target;
+      else raf = requestAnimationFrame(tick);
+      paint();
+    };
+    const go = (v) => {
+      user = true;
+      target = clamp(v);
+      if (reduceMotion) { cur = target; paint(); }
+      else if (!raf) raf = requestAnimationFrame(tick);
+    };
+    paint();
+
+    const start = () => {
+      if (live) return;
+      live = true;
+      hero.classList.add("is-live"); // the drawing builds up (CSS)…
+      if (reduceMotion) { cur = target = 0.5; paint(); return; }
+      const t0 = performance.now() + 900, dur = 2000, to = 0.5; // …then the building sweeps in from the right
+      const sweep = (now) => {
+        if (user) return; // the visitor has taken over
+        const k = Math.min(1, Math.max(0, (now - t0) / dur));
+        const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+        cur = target = 1 + (to - 1) * e;
+        paint();
+        if (k < 1) requestAnimationFrame(sweep);
+      };
+      requestAnimationFrame(sweep);
+    };
+    document.addEventListener("tci:intro", start, { once: true }); // sent by motion.js as the curtain lifts
+    setTimeout(start, root.classList.contains("m") ? 3500 : 0);
+
+    const xOf = (e) => { const r = hero.getBoundingClientRect(); return (e.clientX - r.left) / r.width; };
+    hero.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse" || e.target.closest("a")) return;
+      drag = true;
+      go(xOf(e));
+    });
+    hero.addEventListener("pointermove", (e) => {
+      if (live && (e.pointerType === "mouse" || drag)) go(xOf(e));
+    });
+    ["pointerup", "pointercancel"].forEach((t) => hero.addEventListener(t, () => { drag = false; }));
+    knob.addEventListener("keydown", (e) => {
+      const step = { ArrowLeft: -0.05, ArrowDown: -0.05, ArrowRight: 0.05, ArrowUp: 0.05 }[e.key];
+      if (step) go(target + step);
+      else if (e.key === "Home") go(0);
+      else if (e.key === "End") go(1);
+      else return;
+      e.preventDefault();
+    });
   })();
 
   /* ───────── Scroll reveal ───────── */

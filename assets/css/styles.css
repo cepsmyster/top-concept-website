@@ -293,8 +293,6 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
    ========================================================================== */
 .hero { position: relative; display: grid; place-items: center; overflow: hidden; color: #fff; background: #10161f; isolation: isolate; }
 .hero--home { height: clamp(520px, 100svh, 1080px); }
-/* landscape screens: full-width 16:9 frame so the 1080p hero video shows uncropped */
-@media (min-aspect-ratio: 1/1) { .hero--home { height: auto; aspect-ratio: 16 / 9; } }
 .hero--page { height: clamp(380px, 72svh, 780px); }
 .hero__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
 .hero__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(to bottom, rgba(4, 12, 30, .34), rgba(4, 12, 30, .2) 45%, rgba(4, 12, 30, .42)); }
@@ -799,15 +797,49 @@ html.lenis, html.lenis body { height: auto; }
 .notfound__links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
 
 /* ==========================================================================
-   Revisions: hero video, intro block, project showcase, expertise rows
+   Revisions: home hero, intro block, project showcase, expertise rows
    ========================================================================== */
-/* Home hero video (loaded by JS on wide, non-reduced-motion screens; the still image is the fallback) */
-.hero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: 0; transition: opacity 1.2s ease; pointer-events: none; }
-.hero.has-video .hero__video { opacity: 1; }
-.hero.has-video .hero__shade { opacity: .2; }
-/* the headline is baked into the video, so keep the <h1> for screen readers/SEO only */
-.hero.has-video .hero__title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; animation: none; }
-@media (prefers-reduced-motion: reduce) { .hero__video { display: none; } }
+/* Home hero: concept → completion.
+   The blueprint (hero-blueprint.webp, linework made from the render by src/blueprint.html) sits on a drafting grid;
+   the render is laid over it and clipped to the right of the split line (--split, set by main.js).
+   Without JS --split stays 0%, so visitors see the finished render. */
+.hero--compare { --split: 0%; --bp: #0a1626; --bp-line: rgba(140, 180, 235, .14); --bp-fine: rgba(140, 180, 235, .06);
+  height: clamp(560px, 100svh, 1200px); grid-template-columns: minmax(0, 1fr); place-items: end start; touch-action: pan-y; background: var(--bp); }
+.hero__stage { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
+.hero__plan, .hero__done { position: absolute; inset: 0; }
+.hero__plan {
+  background-color: var(--bp);
+  background-image:
+    linear-gradient(var(--bp-line) 1px, transparent 1px), linear-gradient(90deg, var(--bp-line) 1px, transparent 1px),
+    linear-gradient(var(--bp-fine) 1px, transparent 1px), linear-gradient(90deg, var(--bp-fine) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  background-position: -1px -1px;
+}
+.hero__done { clip-path: inset(0 0 0 var(--split)); }
+.hero--compare .hero__bg { z-index: auto; }
+/* the drawing builds up from the ground once the page has arrived */
+.js .hero--compare:not(.is-live) .hero__bp { clip-path: inset(100% 0 0 0); }
+.hero--compare.is-live .hero__bp { animation: bpdraw 1.8s cubic-bezier(.65, 0, .35, 1) both; }
+@keyframes bpdraw { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+.hero--compare .hero__shade { background: linear-gradient(to top, rgba(3, 9, 20, .62), rgba(3, 9, 20, 0) 48%), linear-gradient(to bottom, rgba(3, 9, 20, .35), rgba(3, 9, 20, 0) 22%); }
+
+.hero__split { position: absolute; top: 0; bottom: 0; left: var(--split); z-index: 1; width: 1px; margin-left: -.5px; background: rgba(255, 255, 255, .9); box-shadow: 0 0 18px rgba(120, 170, 255, .45); pointer-events: none; }
+.hero__tag { position: absolute; top: calc(var(--header-h) + clamp(18px, 4vh, 44px)); display: flex; align-items: center; gap: 10px; font: 500 .7rem var(--font-head); letter-spacing: .18em; text-transform: uppercase; white-space: nowrap; color: #fff; transition: opacity .3s; }
+.hero__tag::before, .hero__tag::after { content: ""; width: 22px; height: 1px; background: currentColor; opacity: .6; }
+.hero__tag--l { right: 16px; } .hero__tag--l::after { display: none; }
+.hero__tag--r { left: 16px; } .hero__tag--r::before { display: none; }
+.hero__knob { position: absolute; top: 50%; left: var(--split); z-index: 3; width: 56px; height: 56px; margin: -28px 0 0 -28px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: rgba(8, 18, 34, .5); border: 1px solid rgba(255, 255, 255, .85); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); cursor: ew-resize; touch-action: none; transition: transform .25s var(--ease), background .25s; }
+.hero__knob:hover, .hero__knob:focus-visible { transform: scale(1.08); background: rgba(8, 18, 34, .75); }
+.hero__knob svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+html:not(.js) .hero__split, html:not(.js) .hero__knob { display: none; }
+
+.hero--compare .hero__title { position: relative; z-index: 2; padding-bottom: clamp(72px, 12vh, 132px); font-size: clamp(2.2rem, 1.1rem + 4.8vw, 6.4rem); text-shadow: 0 2px 30px rgba(0, 0, 0, .3); pointer-events: none; }
+.hero__sheet { position: absolute; right: var(--gutter); bottom: clamp(24px, 4vh, 40px); z-index: 2; display: grid; border: 1px solid rgba(255, 255, 255, .55); font: 500 .62rem var(--font-head); letter-spacing: .16em; text-transform: uppercase; color: rgba(255, 255, 255, .88); background: rgba(8, 18, 34, .35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); pointer-events: none; }
+.hero__sheet span { padding: 7px 12px; } .hero__sheet span + span { border-top: 1px solid rgba(255, 255, 255, .35); }
+@media (max-width: 700px) {
+  .hero__sheet { display: none; }
+  .hero__knob { top: 42%; }
+}
 
 .section__head .section__title { margin: 0; }
 

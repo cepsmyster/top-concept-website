@@ -53,7 +53,7 @@
   const hero = $(".hero");
   const intro = gsap.timeline({ defaults: { ease: EASE }, paused: true });
   if (hero) {
-    const media = $$(".hero__bg, .hero__video", hero);
+    const media = $$(".hero__bg", hero);
     const title = $(".hero__title", hero);
     gsap.set(media, { scale: 1.22, transformOrigin: "50% 60%" });
     intro.to(media, { scale: 1, duration: 2.6, ease: "power3.out" }, 0);
@@ -68,6 +68,7 @@
     gsap.to(media, { yPercent: 18, ease: "none", scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true } });
     if (title) gsap.to(title, { yPercent: -45, autoAlpha: 0, ease: "none", scrollTrigger: { trigger: hero, start: "top top", end: "70% top", scrub: true } });
   }
+  intro.add(() => document.dispatchEvent(new Event("tci:intro")), 0.2); // home hero: start drawing
   const header = $("#site-header");
   if (header) intro.from(header.children, { yPercent: -120, autoAlpha: 0, duration: 1.2, stagger: 0.08 }, 0.5);
 

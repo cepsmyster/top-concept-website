@@ -12,7 +12,7 @@ Built from the design files in `New Website/`.
 
 | Page | File |
 |---|---|
-| Home (video hero, projects carousel, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
+| Home (interactive concept → completion hero, projects carousel, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
 | Expertise (alternating rows + carousel) | `expertise.html` |
 | Projects ("View the Work" hero, showcase, filterable grid) + one page per project | `projects.html`, `project-*.html` |
 | Blogs + one page per article | `blogs.html`, `blog-*.html` |
@@ -21,7 +21,11 @@ Built from the design files in `New Website/`.
 
 The header is modelled on thirdway.com. A floating card in the centre holds the logo and the menu button, a **Let’s talk** button on the right goes to the Contact page, and the sun/moon button on the left switches between the **dark** and **light** theme. On phones all of this sits in one full-width card. The menu grows out of the card: the site links set large, then a scrolling strip of the latest blogs (the home page no longer has its own Blogs section), plus a second theme switch. The menu links live in `MENU` and the markup in `header()`, both in `src/build.mjs`. **Dark is the default** (the "black" designs); the visitor's choice is remembered. To make light the default, change `var t="dark"` to `var t="light"` in the `<script>` inside `page()` in `src/build.mjs` and rebuild.
 
-**Hero video (home page):** `assets/video/hero.mp4` plays on screens ≥ 900px wide. Phones, "reduce motion" and data-saver visitors get the still image (`hero.webp`) with the "From concept to completion" headline instead, so they don't download the 18 MB video. To change the video, replace the file (keep the name); it should have the headline baked in, as the current one does.
+**Home hero: from concept to completion.** The hero shows the tower as a blueprint drawing on a drafting grid on the left of a vertical line and the finished render on the right. As the page arrives, the drawing builds up from the ground and the render sweeps in until the line sits in the middle. After that the line follows the mouse; on phones visitors drag or tap across the hero; the round handle takes the arrow keys. "Reduce motion" visitors get the line at the middle with no sweep, and without JavaScript the render shows on its own.
+- The render is `assets/img/hero.webp`. The drawing (`hero-blueprint.webp` and `hero-blueprint-md.webp`) is linework traced from that render by `src/blueprint.html`. If you change the render, make a new drawing: from this folder run
+  `chrome --headless=new --allow-file-access-from-files --dump-dom "file:///<full path>/src/blueprint.html?src=../assets/img/hero.webp&w=1600" > out.txt`
+  and save the `data:image/webp;base64,…` text in `out.txt` as `assets/img/hero-blueprint.webp` (and again with `w=900` for `-md`). `lo`/`hi` in the address control how many lines come through (defaults 48 / 160; lower = more lines).
+- Markup is in the `index.html` page in `src/build.mjs`, behaviour in `assets/js/main.js` ("Home hero"), styles under "Home hero: concept → completion" in `styles.css`. The previous hero video was removed (it is still in the git history).
 
 ## Things to set up before launch (5 minutes)
 
@@ -118,7 +122,6 @@ assets/js/vendor/                   GSAP, ScrollTrigger, SplitText, Lenis
 assets/model/                       3D textures, sky lighting
 assets/video/retail/                Retail Park film clips + posters
 assets/img/                         optimized images (WebP), logos, icons
-assets/video/hero.mp4               home page hero video
 assets/fonts/                       self-hosted Montserrat + Inter
 src/config.mjs                      site settings (forms, socials, map pins)
 src/data.mjs                        content

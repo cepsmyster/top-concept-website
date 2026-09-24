@@ -20,7 +20,8 @@
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/styles.css?v=mufc3ut6">
+<link rel="stylesheet" href="assets/css/styles.css?v=mufcr1s1">
+<link rel="preload" as="image" href="assets/img/hero-blueprint-md.webp" imagesrcset="assets/img/hero-blueprint-md.webp 900w, assets/img/hero-blueprint.webp 1600w" imagesizes="100vw" fetchpriority="high">
 <link rel="preload" as="image" href="assets/img/hero-md.webp" imagesrcset="assets/img/hero-md.webp 800w, assets/img/hero.webp 2400w" imagesizes="100vw" fetchpriority="high">
 </head>
 <body>
@@ -134,11 +135,16 @@
 </div>
 <main id="main">
 
-<section class="hero hero--home" data-hero-video="assets/video/hero.mp4">
-  <img class="hero__bg" src="assets/img/hero.webp" srcset="assets/img/hero-md.webp 800w, assets/img/hero.webp 2400w" sizes="100vw" alt="Azizi tower rising against a deep blue sky" width="2400" height="1500" fetchpriority="high">
-  <video class="hero__video" muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
+<section class="hero hero--home hero--compare" data-compare aria-label="From concept to completion">
+  <div class="hero__stage">
+    <div class="hero__plan"><img class="hero__bg hero__bp" src="assets/img/hero-blueprint.webp" srcset="assets/img/hero-blueprint-md.webp 900w, assets/img/hero-blueprint.webp 1600w" sizes="100vw" alt="" width="1600" height="1000" fetchpriority="high"></div>
+    <div class="hero__done"><img class="hero__bg" src="assets/img/hero.webp" srcset="assets/img/hero-md.webp 800w, assets/img/hero.webp 2400w" sizes="100vw" alt="Azizi tower rising against a deep blue sky" width="2400" height="1500" fetchpriority="high"></div>
+  </div>
   <div class="hero__shade"></div>
-  <h1 class="hero__title hd">From <em>concept</em> to <em><br class="hbr"><span class="hb">completion</span></em></h1>
+  <div class="hero__split" aria-hidden="true"><span class="hero__tag hero__tag--l">Concept</span><span class="hero__tag hero__tag--r">Completion</span></div>
+  <div class="hero__knob" role="slider" tabindex="0" aria-label="Drawing to finished building" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M15 7l5 5-5 5"/></svg></div>
+  <h1 class="hero__title hd">From concept to<br class="hbr"><span class="hb">completion</span></h1>
+  <p class="hero__sheet" aria-hidden="true"><span>Top Concept International</span><span>Sheet A-001 · Elevation</span></p>
   <a class="hero__scroll" href="#projects" aria-label="Scroll to content"><span></span></a>
 </section>
 
@@ -215,7 +221,7 @@
     <video controls playsinline preload="none" poster="assets/video/retail/film.jpg" data-src="assets/video/retail/film.mp4"></video>
   </dialog>
 
-  <div class="showcase3d" data-model3d data-src="assets/js/model3d.js?v=mufc3ut6" data-assets="assets/model/">
+  <div class="showcase3d" data-model3d data-src="assets/js/model3d.js?v=mufcr1s1" data-assets="assets/model/">
     <div class="model__stage" data-model-stage>
       <div class="model__labels" data-model-labels></div>
       <p class="model__status model__status--loading" data-model-status>Loading model…</p>
@@ -367,7 +373,7 @@
 <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/vendor/SplitText.min.js" defer></script>
 <script src="assets/js/vendor/lenis.min.js" defer></script>
-<script src="assets/js/main.js?v=mufc3ut6" defer></script>
-<script src="assets/js/motion.js?v=mufc3ut6" defer></script>
+<script src="assets/js/main.js?v=mufcr1s1" defer></script>
+<script src="assets/js/motion.js?v=mufcr1s1" defer></script>
 </body>
 </html>

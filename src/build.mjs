@@ -462,13 +462,19 @@ function clientsSection() {
     title: cfg.siteName,
     description: cfg.description,
     current: "home",
-    head: `<link rel="preload" as="image" href="assets/img/hero-md.webp" imagesrcset="assets/img/hero-md.webp 800w, assets/img/hero.webp ${hero.w}w" imagesizes="100vw" fetchpriority="high">`,
+    head: `<link rel="preload" as="image" href="assets/img/hero-blueprint-md.webp" imagesrcset="assets/img/hero-blueprint-md.webp ${META["hero-blueprint-md"].w}w, assets/img/hero-blueprint.webp ${META["hero-blueprint"].w}w" imagesizes="100vw" fetchpriority="high">
+<link rel="preload" as="image" href="assets/img/hero-md.webp" imagesrcset="assets/img/hero-md.webp 800w, assets/img/hero.webp ${hero.w}w" imagesizes="100vw" fetchpriority="high">`,
     body: `
-<section class="hero hero--home" data-hero-video="assets/video/hero.mp4">
-  ${img("hero", { alt: "Azizi tower rising against a deep blue sky", cls: "hero__bg", eager: true })}
-  <video class="hero__video" muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
+<section class="hero hero--home hero--compare" data-compare aria-label="From concept to completion">
+  <div class="hero__stage">
+    <div class="hero__plan">${img("hero-blueprint", { alt: "", cls: "hero__bg hero__bp", eager: true })}</div>
+    <div class="hero__done">${img("hero", { alt: "Azizi tower rising against a deep blue sky", cls: "hero__bg", eager: true })}</div>
+  </div>
   <div class="hero__shade"></div>
-  <h1 class="hero__title">From <em>concept</em> to <em>completion</em></h1>
+  <div class="hero__split" aria-hidden="true"><span class="hero__tag hero__tag--l">Concept</span><span class="hero__tag hero__tag--r">Completion</span></div>
+  <div class="hero__knob" role="slider" tabindex="0" aria-label="Drawing to finished building" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M15 7l5 5-5 5"/></svg></div>
+  <h1 class="hero__title">From concept to completion</h1>
+  <p class="hero__sheet" aria-hidden="true"><span>Top Concept International</span><span>Sheet A-001 · Elevation</span></p>
   <a class="hero__scroll" href="#projects" aria-label="Scroll to content"><span></span></a>
 </section>
 
