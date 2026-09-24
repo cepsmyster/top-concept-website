@@ -81,7 +81,7 @@ After the Retail Park showcase, "In trusted company" shows the client logos in t
 
 ## Typography
 
-All headings are Inter Medium with −50 tracking (`--track-head: -.05em`), in sentence case. Small titles (cards, names, menu) use `--track-small: -.03em` so they don’t close up. Buttons and small labels stay in Montserrat. Write heading copy in sentence case; the CSS never forces capitals on headings.
+All headings are Inter Medium with −50 tracking (`--track-head: -.05em`), in sentence case. Small titles (cards, names, menu) use `--track-small: -.03em` so they don’t close up. Body text is Inter Regular with −50 tracking too (`--track-body: -.05em`, set once on `body`). Buttons and small labels stay in Montserrat. Write heading copy in sentence case; the CSS never forces capitals on headings.
 
 ## Images
 

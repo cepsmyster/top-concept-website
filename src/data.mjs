@@ -163,7 +163,7 @@ export const teamLeadership = {
 };
 
 export const team = [
-  { name: "Maria Corazon", role: "Head of Department (Architecture)", img: "t-maria-corazon" },
+  { name: "Maria Gomez", role: "Head of Department (Architecture)", img: "t-maria-corazon" },
   { name: "Lobna Elsawy", role: "Head of Department (Interior)", img: "t-lobna-elsawy" },
   { name: "Mohammad Yousseff", role: "Group HR Manager", img: "t-mohammad-yousseff" },
   { name: "Rola Ayman", role: "Project Manager (Interior)", img: "t-rola-ayman" },
