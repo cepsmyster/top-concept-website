@@ -56,7 +56,7 @@ Do **not** hand-edit the generated `.html` files — edits there are overwritten
 
 ## Motion
 
-Every page has scroll-driven animation in the spirit of award-style sites: smooth (inertial) scrolling, a curtain that lifts on arrival and drops between pages, headings that rise line by line, images that unmask and settle from a zoom, bands that open out as they scroll in, parallax, a header that tucks away while scrolling down, and a custom cursor with magnetic buttons (mouse only).
+Every page has scroll-driven animation in the spirit of award-style sites: smooth (inertial) scrolling, a curtain that lifts on arrival and drops between pages, headings that rise line by line, images that unmask and settle from a zoom, bands that open out as they scroll in, parallax, a header that tucks away while scrolling down, a CAD-style drafting cursor (pick box with crosshair arms, faint hairlines across the screen and a live X / Y readout; it snaps to a bracketed marker over links, names the action over cards, and gives way to the normal text cursor in form fields), and magnetic buttons. Mouse only; touch screens keep their normal behaviour.
 
 - It lives in `assets/js/motion.js` and uses GSAP, ScrollTrigger, SplitText and Lenis, self-hosted in `assets/js/vendor/` (about 140 KB together).
 - Visitors with "reduce motion" switched on get the static site. If the scripts fail to load, the curtain hides itself after 4 seconds.

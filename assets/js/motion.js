@@ -193,31 +193,49 @@
     });
   }
 
-  /* ───────── Cursor + magnetic controls (mouse only) ───────── */
+  /* ───────── CAD cursor + magnetic controls (mouse only) ─────────
+     A drafting crosshair: pick box with short arms, faint hairlines across the screen and a live X / Y readout.
+     Over links and buttons it snaps to a bracketed marker; over cards etc. the tag names the action. */
   if (fine) {
-    const cur = document.createElement("div");
-    cur.className = "cursor";
-    cur.setAttribute("aria-hidden", "true");
-    cur.innerHTML = '<span class="cursor__label"></span>';
-    document.body.appendChild(cur);
-    const label = cur.firstChild;
-    const xTo = gsap.quickTo(cur, "x", { duration: 0.45, ease: "power3" });
-    const yTo = gsap.quickTo(cur, "y", { duration: 0.45, ease: "power3" });
-    window.addEventListener("pointermove", (e) => { xTo(e.clientX); yTo(e.clientY); cur.classList.add("is-on"); }, { passive: true });
-    document.addEventListener("pointerleave", () => cur.classList.remove("is-on"));
+    const cad = document.createElement("div");
+    cad.className = "cad";
+    cad.setAttribute("aria-hidden", "true");
+    cad.innerHTML = '<span class="cad__h"></span><span class="cad__v"></span><div class="cad__pt"><span class="cad__arm cad__arm--x"></span><span class="cad__arm cad__arm--y"></span><span class="cad__box"></span><span class="cad__tag"></span></div>';
+    document.body.appendChild(cad);
+    document.documentElement.classList.add("has-cad");
+    const [h, v, pt] = cad.children;
+    const tag = pt.querySelector(".cad__tag");
+    let x = -100, y = -100, raf = 0, word = "";
+    const pad = (n) => String(Math.max(0, Math.round(n))).padStart(4, "0");
+    const draw = () => {
+      raf = 0;
+      pt.style.transform = "translate3d(" + x + "px, " + y + "px, 0)";
+      h.style.transform = "translate3d(0, " + y + "px, 0)";
+      v.style.transform = "translate3d(" + x + "px, 0, 0)";
+      tag.textContent = word || "X " + pad(x) + "  Y " + pad(y + window.scrollY);
+    };
+    const queue = () => { if (!raf) raf = requestAnimationFrame(draw); };
+    window.addEventListener("pointermove", (e) => { x = e.clientX; y = e.clientY; cad.classList.add("is-on"); queue(); }, { passive: true });
+    window.addEventListener("scroll", queue, { passive: true });
+    document.addEventListener("pointerleave", () => cad.classList.remove("is-on"));
     const LABELS = [
-      [".proj-card, .blog-card, .ex-card, .showcase__media", "View"],
+      [".proj-card, .blog-card, .ex-card, .showcase__media, .menu-blog", "View"],
       ["[data-track]", "Drag"],
       ["[data-model-stage] canvas", "Explore"],
       ["[data-film] .film__stack", "Scroll"],
     ];
     document.addEventListener("pointerover", (e) => {
       const t = e.target;
-      const hit = LABELS.find(([sel]) => t.closest(sel));
-      label.textContent = hit ? hit[1] : "";
-      cur.classList.toggle("has-label", !!hit);
-      cur.classList.toggle("is-link", !hit && !!t.closest("a, button, [role=button], label, select"));
+      const text = !!t.closest("input:not([type=checkbox]):not([type=file]), textarea, select, [contenteditable]");
+      const hit = !text && LABELS.find(([sel]) => t.closest(sel));
+      word = hit ? hit[1] : "";
+      cad.classList.toggle("is-text", text);
+      cad.classList.toggle("has-label", !!hit);
+      cad.classList.toggle("is-link", !text && !hit && !!t.closest("a, button, [role=button], label, select"));
+      queue();
     });
+    document.addEventListener("pointerdown", () => cad.classList.add("is-down"));
+    document.addEventListener("pointerup", () => cad.classList.remove("is-down"));
 
     $$(".btn, .carousel__nav, .hdr-chip, .menu-toggle, .talk, .model__btn").forEach((el) => {
       const mx = gsap.quickTo(el, "x", { duration: 0.6, ease: "elastic.out(1, 0.4)" });
