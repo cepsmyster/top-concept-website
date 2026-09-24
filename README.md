@@ -83,6 +83,16 @@ After the Retail Park showcase, "In trusted company" shows the client logos in t
 
 All headings are Inter Medium with −50 tracking (`--track-head: -.05em`), in sentence case. Small titles (cards, names, menu) use `--track-small: -.03em` so they don’t close up. Body text is Inter Regular with −50 tracking too (`--track-body: -.05em`, set once on `body`). Buttons and small labels stay in Montserrat. Write heading copy in sentence case; the CSS never forces capitals on headings.
 
+## Leadership, logo and loader
+
+- **Leadership (Team page):** the two founders side by side, names under them, the letter below. The portraits (`assets/img/leader-*.webp`) are transparent: each person sits in a soft oval of light cut from the photos in `Leadership/`, and a slow-drifting smoke layer (`assets/img/smoke.webp`, used as a mask) is painted in the page colour, so it melts into the dark and the light theme alike. Names, roles and the letter are in `teamLeadership` in `src/data.mjs`.
+- **Logo:** the header, menu and loader use the TCI wordmark only (`assets/img/wordmark-*.png`). The footer keeps the full logo with "Architects · Engineers · Designers".
+- **Loader:** on a blueprint grid, the wordmark is built up floor by floor behind a gold laser level while a dimension line measures it out in millimetres. It lives in `lift()` in `assets/js/motion.js` and the `.curtain` styles.
+
+## Copy
+
+Site copy follows the web-copywriter skill in `.claude/skills/web-copywriter/`: short sentences, what the client gets, no filler words. Attributed quotes (the CEO quote and the staff voices) are kept exactly as given.
+
 ## Images
 
 Put optimized `.webp` files in `assets/img/` and refer to them by file name without the extension.

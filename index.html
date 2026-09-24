@@ -18,11 +18,21 @@
 <script>document.documentElement.classList.add("js");if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("m");var t="dark";try{var s=localStorage.getItem("tci-theme");if(s==="dark"||s==="light")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)</script>
 <link rel="preload" href="assets/fonts/inter-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/styles.css?v=muf7gyaa">
+<link rel="stylesheet" href="assets/css/styles.css?v=muf8mb04">
 <link rel="preload" as="image" href="assets/img/hero-md.webp" imagesrcset="assets/img/hero-md.webp 800w, assets/img/hero.webp 2400w" imagesizes="100vw" fetchpriority="high">
 </head>
 <body>
-<div class="curtain" data-curtain aria-hidden="true"><img class="curtain__logo" src="assets/img/logo-light.png" alt="" width="1200" height="485"><span class="curtain__bar"></span></div>
+<div class="curtain" data-curtain aria-hidden="true">
+  <div class="curtain__grid"></div>
+  <div class="curtain__stage">
+    <div class="curtain__mark">
+      <img class="curtain__ghost" src="assets/img/wordmark-light.png" alt="" width="1185" height="389">
+      <img class="curtain__logo" src="assets/img/wordmark-light.png" alt="" width="1185" height="389">
+      <span class="curtain__level"></span>
+    </div>
+    <div class="curtain__dim"><span class="curtain__tick"></span><span class="curtain__line"></span><span class="curtain__tick"></span><span class="curtain__count" data-curtain-count>000</span></div>
+  </div>
+</div>
 
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" id="site-header">
@@ -33,7 +43,7 @@
       </button>
     </div>
     <div class="hdr-card">
-      <a class="brand" href="index.html" aria-label="Top Concept International — home"><img class="logo--on-light" src="assets/img/logo-dark.png" alt="" width="1200" height="485"><img class="logo--on-dark" src="assets/img/logo-light.png" alt="" width="1200" height="485"></a>
+      <a class="brand" href="index.html" aria-label="Top Concept International — home"><img class="logo--on-light" src="assets/img/wordmark-dark.png" alt="" width="1185" height="389"><img class="logo--on-dark" src="assets/img/wordmark-light.png" alt="" width="1185" height="389"></a>
       <a class="talk-link" href="contact.html">Let’s talk</a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay" aria-label="Open menu" data-menu-open>
         <span class="menu-toggle__bars" aria-hidden="true"><i></i><i></i></span>
@@ -48,7 +58,7 @@
   <div class="menu-overlay__backdrop" data-menu-close></div>
   <div class="menu-overlay__panel" data-lenis-prevent>
     <div class="menu-overlay__head">
-      <a class="brand" href="index.html" aria-label="Top Concept International — home"><img class="logo--on-light" src="assets/img/logo-dark.png" alt="" width="1200" height="485" loading="lazy"><img class="logo--on-dark" src="assets/img/logo-light.png" alt="" width="1200" height="485" loading="lazy"></a>
+      <a class="brand" href="index.html" aria-label="Top Concept International — home"><img class="logo--on-light" src="assets/img/wordmark-dark.png" alt="" width="1185" height="389" loading="lazy"><img class="logo--on-dark" src="assets/img/wordmark-light.png" alt="" width="1185" height="389" loading="lazy"></a>
       <div class="menu-overlay__tools">
         <button class="theme-toggle menu-overlay__theme" type="button" data-theme-toggle aria-label="Switch to light theme" title="Switch theme">
         <span class="theme-toggle__sun"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg></span><span class="theme-toggle__moon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></span>
@@ -119,7 +129,7 @@
       </li><li class="slide" id="slide-2" role="group" aria-roledescription="slide" aria-label="3 of 6" data-label="Commercial" data-title="Al Manara Center" data-href="project-al-manara-center.html">
         <a href="project-al-manara-center.html" tabindex="-1" aria-label="Al Manara Center — Commercial"><img src="assets/img/p-al-manara-center.webp" srcset="assets/img/p-al-manara-center-md.webp 800w, assets/img/p-al-manara-center.webp 1920w" sizes="(min-width: 900px) 62vw, 82vw" alt="Boardroom interior with a long dark table and glass partitions" width="1920" height="1080" loading="lazy" decoding="async"></a>
       </li><li class="slide" id="slide-3" role="group" aria-roledescription="slide" aria-label="4 of 6" data-label="Hospitality" data-title="Wadi retreat" data-href="project-wadi-retreat.html">
-        <a href="project-wadi-retreat.html" tabindex="-1" aria-label="Wadi retreat — Hospitality"><img src="assets/img/p-wadi-retreat.webp" srcset="assets/img/p-wadi-retreat-md.webp 800w, assets/img/p-wadi-retreat.webp 1920w" sizes="(min-width: 900px) 62vw, 82vw" alt="Retreat nestled in a mountain wadi with an infinity pool" width="1920" height="1628" loading="lazy" decoding="async"></a>
+        <a href="project-wadi-retreat.html" tabindex="-1" aria-label="Wadi retreat — Hospitality"><img src="assets/img/p-wadi-retreat.webp" srcset="assets/img/p-wadi-retreat-md.webp 800w, assets/img/p-wadi-retreat.webp 1920w" sizes="(min-width: 900px) 62vw, 82vw" alt="Retreat set in a mountain wadi with an infinity pool" width="1920" height="1628" loading="lazy" decoding="async"></a>
       </li><li class="slide" id="slide-4" role="group" aria-roledescription="slide" aria-label="5 of 6" data-label="Commercial Interior" data-title="Rox Showroom" data-href="project-rox-showroom.html">
         <a href="project-rox-showroom.html" tabindex="-1" aria-label="Rox Showroom — Commercial Interior"><img src="assets/img/p-rox-reception.webp" srcset="assets/img/p-rox-reception-md.webp 800w, assets/img/p-rox-reception.webp 1920w" sizes="(min-width: 900px) 62vw, 82vw" alt="Rox showroom reception desk" width="1920" height="1079" loading="lazy" decoding="async"></a>
       </li><li class="slide" id="slide-5" role="group" aria-roledescription="slide" aria-label="6 of 6" data-label="Villas" data-title="High-end villa" data-href="project-high-end-villa.html">
@@ -179,7 +189,7 @@
     <video controls playsinline preload="none" poster="assets/video/retail/film.jpg" data-src="assets/video/retail/film.mp4"></video>
   </dialog>
 
-  <div class="showcase3d" data-model3d data-src="assets/js/model3d.js?v=muf7gyaa" data-assets="assets/model/">
+  <div class="showcase3d" data-model3d data-src="assets/js/model3d.js?v=muf8mb04" data-assets="assets/model/">
     <div class="model__stage" data-model-stage>
       <div class="model__labels" data-model-labels></div>
       <p class="model__status model__status--loading" data-model-status>Loading model…</p>
@@ -209,7 +219,7 @@
   <div class="container clients__grid">
     <div class="clients__copy">
       <h2 id="clients-title">In trusted company</h2>
-      <p class="reveal">Many of our projects come from clients who return to us time and again: developers, government entities and brands across the UAE. From landmark masterplans and civic buildings to retail and hospitality, our partnerships are built to last well beyond handover.</p>
+      <p class="reveal">Developers, government entities and brands across the UAE trust us with their projects. From masterplans and civic buildings to retail and hospitality, we design, coordinate and supervise each one through to handover.</p>
     </div>
     <div class="clients__wall" role="group" aria-label="Our clients">
       <div class="clients__col" style="--dur:44s">
@@ -230,12 +240,12 @@
     <article class="panel__item reveal">
       <h2><a href="culture.html">Culture</a></h2>
       <a class="panel__media" href="culture.html" tabindex="-1" aria-hidden="true"><img src="assets/img/culture-meeting.webp" srcset="assets/img/culture-meeting-md.webp 800w, assets/img/culture-meeting.webp 1920w" sizes="(min-width: 900px) 45vw, 92vw" alt="" width="1920" height="1079" loading="lazy" decoding="async"></a>
-      <p>Our culture comes from the heart at Top Concept International, where we stand together, work with honesty and give our best to create spaces that truly matter.</p>
+      <p>One team that stands together, works honestly and gives its best to every project.</p>
     </article>
     <article class="panel__item reveal" style="--d:100ms">
       <h2><a href="careers.html">Careers</a></h2>
       <a class="panel__media" href="careers.html" tabindex="-1" aria-hidden="true"><img src="assets/img/careers-office.webp" srcset="assets/img/careers-office-md.webp 800w, assets/img/careers-office.webp 1920w" sizes="(min-width: 900px) 45vw, 92vw" alt="" width="1920" height="1280" loading="lazy" decoding="async"></a>
-      <p>Our careers begin with opportunity at Top Concept International, where we grow together, welcome ambition and support people to build meaningful futures that truly matter.</p>
+      <p>Grow with a team that backs your ambition and trusts you with real projects.</p>
     </article>
   </div>
 </section>
@@ -253,7 +263,7 @@
 <section class="section section--expertise" id="expertise" aria-labelledby="ex-title">
   <div class="container">
     <div class="section__head"><h2 id="ex-title" class="section__title"><span class="t-light">Fields of expertise</span><span class="t-dark">Our expertise</span></h2><a class="link-caps" href="expertise.html">Explore our expertise</a></div>
-    <p class="section__lead dark-only">Our culture comes from the heart at Top Concept International, where we stand together, work with honesty and give our best to create spaces that truly matter.</p>
+    <p class="section__lead dark-only">Ten fields, one team. Pick a field to see the work.</p>
     <div class="ex-grid"><a class="ex-card ex-card--lg reveal" style="--d:0ms" href="projects.html?cat=urban-design">
       <div class="ex-card__media"><img src="assets/img/p-alrams-urban-development.webp" srcset="assets/img/p-alrams-urban-development-md.webp 800w, assets/img/p-alrams-urban-development.webp 1920w" sizes="(min-width: 900px) 46vw, 92vw" alt="Aerial view of a waterfront urban development with a marina" width="1920" height="1081" loading="lazy" decoding="async"></div>
       <h3><span class="t-light">Urban design / development</span><span class="t-dark">Urban design / development</span></h3>
@@ -292,17 +302,17 @@
 <section class="cta" id="connect" aria-labelledby="cta-title">
   <div class="container cta__grid">
     <div class="cta__copy">
-      <h2 id="cta-title"><span class="t-light">Let’s bring your vision to life</span><span class="t-dark">Design begins with a conversation.</span></h2>
-      <p><span class="t-light">Connect with Top Concept International to explore innovative and tailored design solutions for your next project. Our team is ready to guide you from concept to completion with professionalism and expertise.</span><span class="t-dark">Share your vision with us. We’ll help shape it into something real.</span></p>
+      <h2 id="cta-title"><span class="t-light">Tell us about your project</span><span class="t-dark">Start with a conversation</span></h2>
+      <p><span class="t-light">Send a few lines about your site, brief or idea. Our team will reply with clear next steps.</span><span class="t-dark">Share your idea. We’ll help you shape it into something you can build.</span></p>
       <form class="form form--contact" method="post" novalidate data-form="contact" data-endpoint="" data-email="" data-subject="Website enquiry">
     <div class="form__row">
       <label class="field field--icon"><span class="sr-only">Name</span><input name="name" type="text" placeholder="Name" autocomplete="name" required><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.6-4 3.7-6 7.5-6s6.9 2 7.5 6"/></svg></label>
       <label class="field field--icon"><span class="sr-only">Phone</span><input name="phone" type="tel" placeholder="+971" autocomplete="tel"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.8l1.4 4-1.9 1.3a11 11 0 0 0 5.3 5.3l1.3-1.9 4 1.4v2.8a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2Z"/></svg></label>
       <label class="field field--icon"><span class="sr-only">Email</span><input name="email" type="email" placeholder="Email" autocomplete="email" required><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="m4 7 8 6 8-6"/></svg></label>
     </div>
-    <label class="field"><span class="sr-only">Message</span><textarea name="message" placeholder="Message" rows="4" required></textarea></label>
+    <label class="field"><span class="sr-only">Message</span><textarea name="message" placeholder="Tell us about your project" rows="4" required></textarea></label>
     <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <button class="btn" type="submit">Submit</button>
+    <button class="btn" type="submit">Send my enquiry</button>
     <p class="form__status" role="status" aria-live="polite"></p>
   </form>
     </div>
@@ -331,7 +341,7 @@
 <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/vendor/SplitText.min.js" defer></script>
 <script src="assets/js/vendor/lenis.min.js" defer></script>
-<script src="assets/js/main.js?v=muf7gyaa" defer></script>
-<script src="assets/js/motion.js?v=muf7gyaa" defer></script>
+<script src="assets/js/main.js?v=muf8mb04" defer></script>
+<script src="assets/js/motion.js?v=muf8mb04" defer></script>
 </body>
 </html>

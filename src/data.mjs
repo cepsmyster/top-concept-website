@@ -21,36 +21,35 @@ export const expertise = [
 
 // ── Expertise page (from the "Expertise (black)" design) ──
 export const expertisePage = {
-  heroTitle: "Uncover our <em>expertise</em>",
+  heroTitle: "Explore our <em>expertise</em>",
   heroAlt: "Azizi mixed-use building with an arcaded retail podium at dusk",
-  heading: "Where every discipline shapes a stronger vision.",
-  intro: "At Top Concept International, our expertise moves across architecture, interiors, landscape and master planning. By connecting these fields, we create design solutions that feel complete, purposeful, and deeply considered from concept to completion.",
+  heading: "One team for every discipline.",
+  intro: "Architecture, interiors, landscape and master planning sit under one roof here. Your project stays with one team from the first sketch to handover. Nothing gets lost between stages, and the design holds together.",
   // Alternating image / text rows
   rows: [
     { slug: "urban-design", title: "Urban design / development", img: "ex-urban", alt: "Waterfront promenade with people, cafés and a marina",
-      text: "We shape places that connect people, movement and purpose. Our urban design and development approach brings together planning, architecture, landscape and community experience to create environments that feel organized, livable and future-ready. From mixed-use districts to residential communities and public spaces, each project is designed with a clear vision for growth, identity, and long-term value." },
+      text: "We plan districts, waterfronts and public spaces that people want to use. Planning, architecture and landscape are designed together, not one after another. The result is a place with a clear identity that keeps its value as it grows." },
     { slug: "community", title: "Community buildings / high-rise development expertise", img: "ex-community", pos: "50% 62%", alt: "Corner of a high-rise development with an arched retail podium",
-      text: "We design vertical communities that bring comfort, function, and identity into high-density living. Our expertise in G+30 and above developments focuses on creating buildings that are efficient, elegant, and connected to the urban fabric around them. From residential towers to large-scale community developments like Azizi City of Arabia, each project is shaped to support modern lifestyles, long-term value, and a stronger sense of place." },
+      text: "We design towers of G+30 and above that are efficient to build and good to live in. Layouts, cores and podiums are planned together, so every floor works. Azizi City of Arabia shows what that looks like at community scale." },
     { slug: "malls", title: "Malls", img: "p-shopping-mall", pos: "50% 35%", alt: "Mall atrium with a red lantern-style chandelier",
-      text: "We design retail destinations that bring commerce, culture and experience together. Our expertise in malls and lifestyle developments focuses on creating spaces that feel active, welcoming and memorable. Inspired by destinations such as Souk Al Bahar and Dubai Mall, each project is planned to support shopping, dining, leisure and community interaction while creating a strong identity that attracts visitors and adds long-term value." },
+      text: "We design malls that draw visitors in and keep them there. A clear arrival, easy wayfinding and one memorable central space do the work. We learn from places like Souk Al Bahar and Dubai Mall, then give each destination an identity of its own." },
     { slug: "master-planning", title: "Masterplan", img: "ex-masterplan", alt: "Night aerial view of a masterplanned resort community",
-      text: "We create masterplans that turn land into clear, connected, and meaningful destinations. Our approach brings together urban design, architecture, landscape, mobility, and community needs to shape developments that are practical, future-ready, and visually cohesive. From residential communities to mixed-use districts and large-scale destinations, each masterplan is guided by a strong vision, balanced planning, and long-term development value." },
+      text: "We turn open land into a clear, phased plan. Roads, buildings, landscape and community needs are solved on one drawing. You get a masterplan that investors understand and contractors can build." },
   ],
-  // Carousel of the remaining fields. The Retails line is from the design; the other five are
-  // short placeholder lines in the same voice — replace with approved copy.
+  // Carousel of the remaining fields.
   carousel: [
     { slug: "retail", title: "Retails", img: "p-retail-center", alt: "Aerial view of a retail park with a solar roof",
-      text: "We design retail spaces that connect shopping, dining, and daily experience into vibrant destinations built for people, movement, and long-term commercial value." },
+      text: "Retail spaces that turn a quick errand into a longer visit, and a longer visit into repeat trade." },
     { slug: "interior-design", title: "Interior design", img: "p-residential-interior", alt: "Living room with floor-to-ceiling windows",
-      text: "We design interiors that feel connected, comfortable, and considered in every detail, shaping how people live, work, and gather." },
+      text: "Interiors planned around how people really live and work, then finished with care." },
     { slug: "villas", title: "High-end villas", img: "p-high-end-villa", alt: "Contemporary villa at sunset",
-      text: "We design private residences with a considered relationship to light, privacy, and landscape, creating homes with lasting character." },
+      text: "Private homes shaped by light, privacy and the view, made to feel right for decades." },
     { slug: "townhouses", title: "Townhouses", img: "p-townhouses", alt: "Row of modern white townhouses",
-      text: "We design townhouse communities that repeat a strong architectural idea with well-proportioned detail, shared spaces, and everyday comfort." },
+      text: "Townhouse communities built on one strong idea, with good proportions and shared outdoor space." },
     { slug: "landscape", title: "Landscape", img: "p-podium-landscape", alt: "Podium landscape with a pool deck",
-      text: "We design landscapes that turn outdoor space into an extension of the building, from podium gardens to shaded courtyards and pool decks." },
+      text: "Podium gardens, shaded courtyards and pool decks that make outdoor space usable all year." },
     { slug: "hospitality", title: "Hospitality", img: "p-wadi-retreat", alt: "Mountain retreat at dusk",
-      text: "We design hospitality destinations where architecture, landscape, and atmosphere come together to create memorable guest experiences." },
+      text: "Resorts and retreats where architecture, landscape and atmosphere are designed as one guest experience." },
   ],
 };
 
@@ -58,19 +57,19 @@ export const expertisePage = {
 export const projectsPage = {
   heroTitle: "View the <em>work</em>",
   heroAlt: "Aerial view of a retail park with a solar roof in a desert landscape",
-  heading: "Bringing ambitious concepts to life.",
-  intro: "From the ground up, Top Concept International is dedicated to creating transformative spaces. We combine honest teamwork with a drive for excellence, turning open landscapes into thriving, purposeful destinations that truly matter.",
+  heading: "Ambitious ideas, built for real.",
+  intro: "From waterfront masterplans to boardroom fit-outs, these are projects we took from first sketch to finished space. Filter by type to find work like yours.",
   showcase: {
     slug: "retail-park",
     label: "Retail Park",
-    text: "Discover our latest landmark development. This expansive retail park merges high-end commercial architecture with forward-thinking design. Featuring an integrated solar-canopy roof and modern, minimalist facades, the complex is built to be a premier destination for both commerce and community. It perfectly encapsulates our commitment to sustainable, large-scale commercial environments that elevate the surrounding landscape.",
+    text: "A retail and community destination in Sharjah. A long solar roof shelters the shops. In front sit a shaded market, a tree-lined plaza and a pavilion wrapped in a brick screen. It gives people a reason to stay: to eat, meet and spend the afternoon, not just to shop.",
   },
 };
 
 // ── Clients (home page logo wall). Logos are cut from Clients/Logos list.png into assets/img/clients/ (transparent WebP). ──
 export const clients = {
   title: "In trusted company",
-  text: "Many of our projects come from clients who return to us time and again: developers, government entities and brands across the UAE. From landmark masterplans and civic buildings to retail and hospitality, our partnerships are built to last well beyond handover.",
+  text: "Developers, government entities and brands across the UAE trust us with their projects. From masterplans and civic buildings to retail and hospitality, we design, coordinate and supervise each one through to handover.",
   logos: [
     { file: "emaar", name: "Emaar", w: 400, h: 98 },
     { file: "eagle-hills", name: "Eagle Hills", w: 153, h: 220 },
@@ -105,7 +104,7 @@ export const projects = [
   { slug: "alrams-urban-development", title: "Alrams Urban Development", label: "Masterplan", cat: "urban-design", type: "masterplan", img: "p-alrams-urban-development", alt: "Aerial view of the Alrams waterfront urban development", featured: true },
   { slug: "azizi-city-of-arabia", title: "Azizi City of Arabia", label: "Commercial", cat: "community", type: "architecture", img: "p-azizi-city-of-arabia", alt: "Azizi City of Arabia towers with sculpted white façade fins", featured: true },
   { slug: "al-manara-center", title: "Al Manara Center", label: "Commercial", cat: "interior-design", type: "interior", img: "p-al-manara-center", alt: "Boardroom interior with a long dark table and glass partitions", featured: true },
-  { slug: "wadi-retreat", title: "Wadi retreat", label: "Hospitality", cat: "hospitality", type: "hospitality", img: "p-wadi-retreat", alt: "Retreat nestled in a mountain wadi with an infinity pool", featured: true },
+  { slug: "wadi-retreat", title: "Wadi retreat", label: "Hospitality", cat: "hospitality", type: "hospitality", img: "p-wadi-retreat", alt: "Retreat set in a mountain wadi with an infinity pool", featured: true },
   { slug: "rox-showroom", title: "Rox Showroom", label: "Commercial Interior", cat: "interior-design", type: "interior", img: "p-rox-reception", alt: "Rox showroom reception desk", gallery: ["p-rox-showroom-1", "p-rox-showroom-2", "p-rox-showroom-3", "p-rox-showroom-4", "p-rox-showroom-5", "p-automotive-showroom"], featured: true },
   { slug: "high-end-villa", title: "High-end villa", label: "Villas", cat: "villas", type: "architecture", img: "p-high-end-villa", alt: "Two-storey contemporary villa glowing at sunset", featured: true },
   { slug: "community-tower", title: "Community tower", label: "Community Buildings", cat: "community", type: "architecture", img: "p-community-tower", alt: "Slender residential tower with horizontal balcony bands" },
@@ -126,19 +125,19 @@ export const projects = [
 
 // Short, neutral summaries used on project pages (keyed by `label`).
 export const labelBlurbs = {
-  "Masterplan": "A masterplanning project shaped by connected public space, movement and a strong sense of place.",
-  "Commercial": "A commercial project taken from concept design through to a deliverable, buildable scheme.",
-  "Commercial Interior": "An interior fit-out designed around brand, function and the way people move through the space.",
+  "Masterplan": "A masterplan built around connected public space, easy movement and a clear sense of place.",
+  "Commercial": "A commercial project taken from first concept to a buildable, approved design.",
+  "Commercial Interior": "A fit-out designed around the brand and the way people move through the space.",
   "Hospitality": "A hospitality project where landscape, architecture and atmosphere are designed together.",
-  "Hospitality Masterplan": "A hospitality masterplan balancing guest experience, landscape and phasing.",
-  "Villas": "A high-end residence designed for light, privacy and a considered relationship with its setting.",
-  "Community Buildings": "A community-scale building designed to serve people with purpose, beauty and function.",
-  "Residential": "A residential project resolved for livability, technical performance and commercial practicality.",
-  "Townhouses": "A townhouse community that repeats a strong architectural idea with quiet, well-proportioned detail.",
-  "Malls": "A retail destination designed around arrival, orientation and a memorable central space.",
-  "Retail": "A retail development coordinated across architecture, engineering and authority requirements.",
-  "Interior Design": "An interior designed to feel connected, comfortable and considered in every detail.",
-  "Landscape": "A landscape scheme that turns outdoor space into an extension of the building.",
+  "Hospitality Masterplan": "A hospitality masterplan that balances guest experience, landscape and phased delivery.",
+  "Villas": "A private home designed for light, privacy and a strong connection to its setting.",
+  "Community Buildings": "A community building designed around the people who use it every day.",
+  "Residential": "A residential building that works for the people who live in it, the contractor who builds it and the budget.",
+  "Townhouses": "A townhouse community built on one strong idea, repeated with care.",
+  "Malls": "A retail destination planned around arrival, wayfinding and one memorable central space.",
+  "Retail": "A retail development coordinated across architecture, engineering and authority approvals.",
+  "Interior Design": "An interior planned around daily use, then finished with care in every detail.",
+  "Landscape": "A landscape that turns outdoor space into a usable part of the building.",
 };
 
 // CEO quote shown on the home page (the full Leadership section now lives on the Team page: see teamLeadership).
@@ -151,14 +150,14 @@ export const leadership = {
 // Leadership copy used on the Team page (from the "Team" design). The home page uses `leadership` above.
 export const teamLeadership = {
   paragraphs: [
-    "At Top Concept, we design spaces that feel good to live in, work in, and experience.",
-    "Our work goes beyond buildings. It is about understanding people, their needs, and the way each space should serve them. From architecture and interiors to engineering coordination and project supervision, we bring creativity, technical knowledge, and care into every project.",
-    "Over the years, we have grown through trust, hard work, and strong relationships with our clients and partners. Every project has helped us learn, improve, and deliver designs that are both beautiful and practical.",
-    "We are grateful to everyone who has been part of our journey. Together, we continue to create meaningful spaces built with purpose, integrity, and lasting value.",
+    "At Top Concept, we design spaces that feel good to live in, work in and visit.",
+    "Our work goes beyond buildings. We start with people: who will use a space, and what they need from it. From architecture and interiors to engineering coordination and site supervision, one team brings the ideas, the technical knowledge and the care.",
+    "We have grown through trust, hard work and strong relationships with our clients and partners. Every project has taught us something, and each one makes the next design better.",
+    "Thank you to everyone who has been part of our journey. Together, we will keep creating spaces built with purpose, integrity and lasting value.",
   ],
   people: [
-    { name: "Nawaf Al Falasi", role: "Founder" },
-    { name: "Engr. Ragheed Al-Tahhan", role: "CEO & Co-Founder" },
+    { name: "Nawaf Al Falasi", role: "Founder", img: "leader-nawaf" },
+    { name: "Engr. Ragheed Al-Tahhan", role: "CEO & Co-Founder", img: "leader-ragheed" },
   ],
 };
 
@@ -187,19 +186,19 @@ export const team = [
 
 export const culture = {
   intro: [
-    "Our culture comes from the heart and is built on trust, respect, and genuinely caring for one another.",
-    "At Top Concept International, we believe the best work happens when people feel supported, valued and inspired to grow together. We work as one team, celebrate every win together, and face every challenge with honesty and commitment.",
-    "For us, it’s not just about creating great spaces, it’s about building meaningful relationships and enjoying the journey along the way.",
+    "Our culture is built on trust, respect and real care for one another.",
+    "We do our best work when people feel supported and valued. We work as one team, celebrate wins together and face problems honestly.",
+    "Great spaces matter to us. So do the friendships we make while building them.",
   ],
   life: [
-    "From the first brainstorming session to the final project handover, we enjoy every part of the journey together.",
-    "We share ideas openly, solve challenges as a team, celebrate every milestone along the way, big or small and share a few smiles along the way.",
-    "We support one another through busy days, tight deadlines, and new opportunities, always knowing that great work happens when people work together with trust, energy and a shared sense of purpose.",
+    "From the first sketch to the final handover, we work through every stage together.",
+    "We share ideas openly, solve problems as a team and mark every milestone, big or small.",
+    "Busy days and tight deadlines are easier when you trust the people next to you. That trust is what keeps our work strong.",
   ],
   thrive: [
-    "Our work environment is built on kindness, respect and the belief that people do their best when they feel valued and supported.",
-    "We’ve created a place where everyone is welcomed, ideas are heard and teamwork comes naturally. It’s a space where we work hard, help one another through challenges, celebrate progress together and never forget to enjoy the journey.",
-    "We also believe that a quick break, a friendly game or a good coffee can go a long way in recharging the mind and bringing people together. When people feel happy, trusted and inspired, great things happen.",
+    "Our studio runs on kindness and respect. People do their best work when they feel valued.",
+    "Everyone is welcome here, and every idea gets heard. We work hard, help each other through challenges and celebrate progress together.",
+    "A quick break, a friendly game or a good coffee goes a long way. When people are happy and trusted, it shows in the work.",
   ],
   voices: [
     { quote: "Leading the Architecture Department at Top Concept International has been a truly rewarding journey. Every project gives us the opportunity to shape spaces that inspire people, improve everyday experiences, and leave a lasting impact through thoughtful design, collaboration, and innovation.", name: "Maria Gomez", role: "Head of Department (Architecture)", img: "voice-maria" },
@@ -208,7 +207,7 @@ export const culture = {
 };
 
 export const careers = {
-  intro: "A career at Top Concept International is more than a job, it’s a chance to grow, create, and be part of something meaningful. We’re always looking for passionate people who value teamwork, creativity, and excellence, and who want to build inspiring spaces while building a rewarding future for themselves.",
+  intro: "A career here means real projects, real responsibility and a team that helps you grow. We look for people who value teamwork, care about the craft and want to build spaces that matter.",
 };
 
 // Sample editorial content — replace with real articles. `body` is an array of paragraphs.
@@ -219,7 +218,7 @@ export const blogs = [
     date: "2026-06-23",
     img: "b-engineers",
     alt: "Two colleagues reviewing drawings on site",
-    excerpt: "Why the strongest projects are carried by the same people from the first sketch to the final handover.",
+    excerpt: "Why the best projects keep the same team from the first sketch to the final handover.",
     body: [
       "A project rarely fails because of a single bad decision. More often, it drifts: an idea that was clear on day one becomes diluted as it passes through hands that were never part of the original conversation.",
       "That is why we organise our work around continuity. The people who shape the concept stay close to the project as it moves into engineering coordination, authority approvals and supervision on site, so the reasoning behind each decision travels with the drawings.",
@@ -232,7 +231,7 @@ export const blogs = [
     date: "2026-06-16",
     img: "b-atrium",
     alt: "Person walking through a bright glazed atrium holding plans",
-    excerpt: "Good façades start with the sun: how orientation, shading and materials shape comfortable buildings.",
+    excerpt: "Good façades start with the sun. Here is how orientation, shading and materials keep buildings comfortable.",
     body: [
       "In a hot climate, the façade is a piece of environmental equipment as much as an architectural gesture. Where it sits, how deep it is and what it is made of decide how much heat enters the building before a single mechanical system switches on.",
       "We test orientation and shading early, when changing course is cheap. Deep balconies, fins and recessed glazing do double duty: they give a building its rhythm and they keep interiors bright without the glare.",
@@ -245,7 +244,7 @@ export const blogs = [
     date: "2026-06-04",
     img: "b-blueprint",
     alt: "Architect leaning over a large set of drawings",
-    excerpt: "Architecture, structure and services have to be resolved together — not one after the other.",
+    excerpt: "Architecture, structure and services work best when they are solved together, not one after another.",
     body: [
       "It is tempting to treat coordination as the tidy-up phase that happens after the creative work. In practice, the most elegant solutions are usually found when architects, structural engineers and MEP engineers are solving the same problem at the same time.",
       "Sharing a single model, agreeing clear ceiling and riser zones early, and reviewing clashes as they appear keeps the design intent intact while making the building simpler to build.",
@@ -258,7 +257,7 @@ export const blogs = [
     date: "2026-05-21",
     img: "b-landscape",
     alt: "Landscaper laying turf in front of a villa",
-    excerpt: "The best interiors keep a conversation going with the landscape and the architecture around them.",
+    excerpt: "The best interiors keep talking to the landscape and the architecture around them.",
     body: [
       "An interior is never a separate project. It inherits the light, views and proportions of the architecture and, when it is done well, extends them.",
       "We start from the way a space will be used and the sightlines that matter, then choose materials and lighting to support those moments rather than compete with them.",
@@ -271,7 +270,7 @@ export const blogs = [
     date: "2026-05-07",
     img: "b-site",
     alt: "Concrete structure under construction",
-    excerpt: "Site supervision closes the loop between drawings and the finished building.",
+    excerpt: "Site supervision closes the gap between the drawings and the finished building.",
     body: [
       "Drawings describe intent; a site delivers reality. The gap between the two is where quality is won or lost.",
       "Regular supervision, clear communication with contractors and a habit of solving problems on the spot keep that gap small. It also feeds lessons back into the studio so the next set of drawings is better than the last.",

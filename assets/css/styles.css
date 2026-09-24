@@ -140,7 +140,8 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
 .hdr-card { pointer-events: auto; display: flex; align-items: center; gap: 18px; height: 60px; padding: 0 8px 0 20px; background: var(--card-bg); color: var(--card-fg); border-radius: 4px; box-shadow: 0 8px 28px rgba(0, 0, 0, .18); }
 :root[data-theme="dark"] .hdr-card { box-shadow: 0 0 0 1px var(--card-line), 0 8px 28px rgba(0, 0, 0, .35); }
 .brand { display: block; }
-.brand img { height: 40px; width: auto; }
+.brand img { height: 32px; width: auto; }
+.menu-overlay__head .brand img { height: 38px; }
 .theme-toggle { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; transition: background .2s, border-color .2s; }
 .theme-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .theme-toggle__sun { display: none; }
@@ -220,7 +221,8 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
   .hdr-side { display: none; }
   .hdr-card { width: 100%; height: 56px; padding-left: 16px; gap: 14px; }
   .hdr-card .brand { margin-right: auto; }
-  .brand img { height: 34px; }
+  .brand img { height: 28px; }
+  .menu-overlay__head .brand img { height: 32px; }
   .talk-link { display: block; font: 500 .88rem var(--font-head); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
   .menu-overlay__panel { top: 12px; width: calc(100% - 24px); max-height: calc(100% - 24px); clip-path: inset(0 0 calc(100% - 56px) 0 round 4px); }
   .menu-overlay__head { height: 56px; padding-left: 16px; }
@@ -252,6 +254,30 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
   .clients__grid { grid-template-columns: 1fr; }
   .clients__wall { --tile: calc((100vw - 2 * var(--gutter) - 2 * var(--gap)) / 3); --gap: 10px; justify-content: center; }
 }
+
+/* Leadership (Team page): two portraits side by side, names under them, the letter below.
+   Portraits are transparent; the smoke is painted in the page colour, so it melts into dark and light alike. */
+.leaders { padding-block: clamp(48px, 7vw, 110px) clamp(40px, 6vw, 90px); }
+.leaders__people { display: flex; justify-content: center; gap: clamp(20px, 6vw, 110px); margin-top: clamp(28px, 4vw, 56px); }
+.leader { margin: 0; width: min(360px, 44vw); text-align: center; }
+.leader__media { position: relative; aspect-ratio: 1174 / 1123; isolation: isolate; }
+.leader__media img { width: 100%; height: 100%; object-fit: contain; }
+:root[data-theme="dark"] .leader__media img { filter: brightness(.9) contrast(1.04); }
+.leader__smoke {
+  position: absolute; left: -14%; right: -14%; bottom: -2px; height: 46%; pointer-events: none;
+  background: var(--bg); transition: background-color .3s;
+  -webkit-mask: url("../img/smoke.webp") 0 100% / 200% 100% no-repeat; mask: url("../img/smoke.webp") 0 100% / 200% 100% no-repeat;
+  animation: smoke-drift 38s ease-in-out infinite alternate;
+}
+@keyframes smoke-drift { to { -webkit-mask-position: 100% 100%; mask-position: 100% 100%; } }
+@media (prefers-reduced-motion: reduce) { .leader__smoke { animation: none; } }
+.leader figcaption { position: relative; margin-top: -12%; display: grid; gap: 4px; }
+.leader__name { font: italic 500 clamp(1.05rem, .95rem + .4vw, 1.3rem) var(--font-display); letter-spacing: var(--track-small); }
+.leader__role { font-size: .9rem; color: var(--muted); }
+.leaders__text { max-width: 980px; margin: clamp(36px, 5vw, 72px) auto 0; }
+.leaders__text p { font-size: clamp(1rem, .95rem + .3vw, 1.2rem); line-height: 1.55; margin-bottom: 1.2em; }
+.leaders__text p:first-child { font: 500 clamp(1.3rem, 1.05rem + .9vw, 1.9rem)/1.3 var(--font-display); letter-spacing: var(--track-small); }
+@media (max-width: 560px) { .leaders__people { gap: 14px; } .leader__name { font-size: .98rem; } .leader__role { font-size: .8rem; } }
 
 /* ==========================================================================
    Hero
@@ -397,8 +423,21 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
 /* ---------- Motion layer (assets/js/motion.js) ---------- */
 .curtain { display: none; }
 .js.m .curtain { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; align-content: center; gap: 22px; background: #0b0b0b; animation: curtain-failsafe 0s 4s forwards; }
-.curtain__logo { width: clamp(92px, 12vw, 140px); height: auto; }
-.curtain__bar { display: block; width: clamp(92px, 12vw, 140px); height: 1px; background: rgba(255, 255, 255, .8); transform: scaleX(0); transform-origin: 0 50%; }
+/* Loader: the wordmark is "built" floor by floor behind a rising laser level, over a blueprint grid,
+   while a dimension line measures it out. --p (0 → 1) is driven by motion.js. */
+.curtain { --p: 0; overflow: hidden; }
+.curtain__grid { position: absolute; inset: 0; opacity: .5; background-image: linear-gradient(rgba(255, 255, 255, .06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .06) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .025) 1px, transparent 1px); background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px; background-position: center; -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 70%); mask-image: radial-gradient(ellipse at center, #000 20%, transparent 70%); }
+.curtain__stage { position: relative; display: grid; justify-items: center; gap: clamp(22px, 3vw, 36px); }
+.curtain__mark { position: relative; width: clamp(220px, 36vw, 540px); }
+.curtain__mark img { display: block; width: 100%; height: auto; }
+.curtain__ghost { opacity: .1; }
+.curtain__logo { position: absolute; inset: 0; clip-path: inset(calc((1 - var(--p)) * 100%) 0 0 0); }
+.curtain__level { position: absolute; left: -8%; right: -8%; bottom: calc(var(--p) * 100%); height: 1px; background: #d9b98c; box-shadow: 0 0 12px 1px rgba(217, 185, 140, .75); opacity: calc(1 - var(--p) * var(--p)); }
+.curtain__dim { position: relative; display: flex; align-items: center; width: clamp(220px, 36vw, 540px); height: 14px; color: rgba(255, 255, 255, .6); }
+.curtain__tick { width: 1px; height: 14px; background: currentColor; opacity: calc(.3 + var(--p)); }
+.curtain__line { flex: 1; height: 1px; background: currentColor; transform: scaleX(var(--p)); }
+.curtain__count { position: absolute; left: 50%; top: 20px; transform: translateX(-50%); font: 500 .72rem var(--font-head); letter-spacing: .24em; font-variant-numeric: tabular-nums; }
+.curtain__count::after { content: " MM"; letter-spacing: .12em; opacity: .6; }
 @keyframes curtain-failsafe { to { visibility: hidden; } }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }

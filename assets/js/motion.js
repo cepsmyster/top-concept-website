@@ -228,12 +228,18 @@
   }
 
   /* ───────── Page transitions: the curtain drops before leaving, lifts on arrival ───────── */
+  // Loader: the wordmark rises floor by floor behind a laser level while the dimension line counts up in millimetres.
+  const count = curtain?.querySelector("[data-curtain-count]");
+  const build = { p: 0 };
+  const setP = () => { curtain.style.setProperty("--p", build.p.toFixed(4)); if (count) count.textContent = String(Math.round(build.p * 12000)).padStart(5, "0"); };
   const lift = () => {
     if (!curtain) { intro.play(); return; }
+    build.p = 0; setP();
     gsap.timeline()
-      .to(curtain.querySelector(".curtain__bar"), { scaleX: 1, duration: 0.55, ease: "power2.inOut" })
-      .to(curtain.querySelector(".curtain__logo"), { autoAlpha: 0, y: -12, duration: 0.35, ease: "power2.in" }, "-=0.1")
-      .to(curtain, { yPercent: -100, duration: 1.05, ease: "expo.inOut", onComplete: () => { curtain.style.visibility = "hidden"; } }, "-=0.15")
+      .from(curtain.querySelector(".curtain__grid"), { autoAlpha: 0, scale: 1.08, duration: 0.9, ease: "power2.out" }, 0)
+      .to(build, { p: 1, duration: 1.35, ease: "power3.inOut", onUpdate: setP }, 0.1)
+      .to(curtain.querySelector(".curtain__stage"), { autoAlpha: 0, y: -24, duration: 0.45, ease: "power2.in" }, "+=0.12")
+      .to(curtain, { yPercent: -100, duration: 1.05, ease: "expo.inOut", onComplete: () => { curtain.style.visibility = "hidden"; } }, "-=0.2")
       .add(() => intro.play(), "-=0.7");
   };
   document.addEventListener("click", (e) => {
@@ -247,8 +253,7 @@
     e.preventDefault();
     gsap.killTweensOf(curtain);
     gsap.set(curtain, { visibility: "visible", yPercent: 100 });
-    gsap.set(curtain.querySelector(".curtain__logo"), { autoAlpha: 0, y: 0 });
-    gsap.set(curtain.querySelector(".curtain__bar"), { scaleX: 0 });
+    gsap.set(curtain.querySelector(".curtain__stage"), { autoAlpha: 0, y: 0 });
     gsap.to(curtain, { yPercent: 0, duration: 0.75, ease: "expo.inOut", onComplete: () => { location.href = url.href; } });
   });
   window.addEventListener("pageshow", (e) => { if (e.persisted && curtain) { gsap.set(curtain, { visibility: "hidden" }); } });

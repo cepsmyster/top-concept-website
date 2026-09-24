@@ -72,7 +72,8 @@ const MENU = [
 
 // Floating header (after thirdway.com): theme switch left · logo + menu button in a card, centred · "Let’s talk" right.
 // The menu grows out of the card: the same links, set large, then a strip of the latest blogs.
-const brandLogos = (h = "") => `<img class="logo--on-light" src="assets/img/logo-dark.png" alt="" width="${META["logo-dark"].w}" height="${META["logo-dark"].h}"${h}><img class="logo--on-dark" src="assets/img/logo-light.png" alt="" width="${META["logo-light"].w}" height="${META["logo-light"].h}"${h}>`;
+// TCI wordmark only (the full logo with "Architects · Engineers · Designers" stays in the footer)
+const brandLogos = (h = "") => `<img class="logo--on-light" src="assets/img/wordmark-dark.png" alt="" width="${META["wordmark-dark"].w}" height="${META["wordmark-dark"].h}"${h}><img class="logo--on-dark" src="assets/img/wordmark-light.png" alt="" width="${META["wordmark-light"].w}" height="${META["wordmark-light"].h}"${h}>`;
 const themeToggle = (cls = "") => `<button class="theme-toggle${cls}" type="button" data-theme-toggle aria-label="Switch to light theme" title="Switch theme">
         <span class="theme-toggle__sun">${ICON.sun}</span><span class="theme-toggle__moon">${ICON.moon}</span>
       </button>`;
@@ -182,9 +183,9 @@ function contactForm() {
       <label class="field field--icon"><span class="sr-only">Phone</span><input name="phone" type="tel" placeholder="+971" autocomplete="tel">${ICON.phone}</label>
       <label class="field field--icon"><span class="sr-only">Email</span><input name="email" type="email" placeholder="Email" autocomplete="email" required>${ICON.mail}</label>
     </div>
-    <label class="field"><span class="sr-only">Message</span><textarea name="message" placeholder="Message" rows="4" required></textarea></label>
+    <label class="field"><span class="sr-only">Message</span><textarea name="message" placeholder="Tell us about your project" rows="4" required></textarea></label>
     <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <button class="btn" type="submit">Submit</button>
+    <button class="btn" type="submit">Send my enquiry</button>
     <p class="form__status" role="status" aria-live="polite"></p>
   </form>`;
 }
@@ -195,10 +196,10 @@ function cta({ title, text, tracked = false } = {}) {
   const fixed = title !== undefined;
   const h = fixed
     ? esc(title)
-    : `<span class="t-light">Let’s bring your vision to life</span><span class="t-dark">Design begins with a conversation.</span>`;
+    : `<span class="t-light">Tell us about your project</span><span class="t-dark">Start with a conversation</span>`;
   const p = fixed
     ? esc(text)
-    : `<span class="t-light">Connect with Top Concept International to explore innovative and tailored design solutions for your next project. Our team is ready to guide you from concept to completion with professionalism and expertise.</span><span class="t-dark">Share your vision with us. We’ll help shape it into something real.</span>`;
+    : `<span class="t-light">Send a few lines about your site, brief or idea. Our team will reply with clear next steps.</span><span class="t-dark">Share your idea. We’ll help you shape it into something you can build.</span>`;
   return `
 <section class="cta${tracked ? " cta--tracked" : ""}" id="connect" aria-labelledby="cta-title">
   <div class="container cta__grid">
@@ -238,7 +239,17 @@ ${cfg.siteUrl ? `<link rel="canonical" href="${url(file === "index.html" ? "" : 
 ${head}
 </head>
 <body${[solid ? "has-solid-header" : "", bodyClass].filter(Boolean).length ? ` class="${[solid ? "has-solid-header" : "", bodyClass].filter(Boolean).join(" ")}"` : ""}>
-<div class="curtain" data-curtain aria-hidden="true"><img class="curtain__logo" src="assets/img/logo-light.png" alt="" width="${META["logo-light"].w}" height="${META["logo-light"].h}"><span class="curtain__bar"></span></div>
+<div class="curtain" data-curtain aria-hidden="true">
+  <div class="curtain__grid"></div>
+  <div class="curtain__stage">
+    <div class="curtain__mark">
+      <img class="curtain__ghost" src="assets/img/wordmark-light.png" alt="" width="${META["wordmark-light"].w}" height="${META["wordmark-light"].h}">
+      <img class="curtain__logo" src="assets/img/wordmark-light.png" alt="" width="${META["wordmark-light"].w}" height="${META["wordmark-light"].h}">
+      <span class="curtain__level"></span>
+    </div>
+    <div class="curtain__dim"><span class="curtain__tick"></span><span class="curtain__line"></span><span class="curtain__tick"></span><span class="curtain__count" data-curtain-count>000</span></div>
+  </div>
+</div>
 ${header({ solid, current })}
 <main id="main">
 ${body}
@@ -449,12 +460,12 @@ ${clientsSection()}
     <article class="panel__item reveal">
       <h2><a href="culture.html">Culture</a></h2>
       <a class="panel__media" href="culture.html" tabindex="-1" aria-hidden="true">${img("culture-meeting", { alt: "", sizes: "(min-width: 900px) 45vw, 92vw" })}</a>
-      <p>Our culture comes from the heart at Top Concept International, where we stand together, work with honesty and give our best to create spaces that truly matter.</p>
+      <p>One team that stands together, works honestly and gives its best to every project.</p>
     </article>
     <article class="panel__item reveal" style="--d:100ms">
       <h2><a href="careers.html">Careers</a></h2>
       <a class="panel__media" href="careers.html" tabindex="-1" aria-hidden="true">${img("careers-office", { alt: "", sizes: "(min-width: 900px) 45vw, 92vw" })}</a>
-      <p>Our careers begin with opportunity at Top Concept International, where we grow together, welcome ambition and support people to build meaningful futures that truly matter.</p>
+      <p>Grow with a team that backs your ambition and trusts you with real projects.</p>
     </article>
   </div>
 </section>
@@ -472,7 +483,7 @@ ${clientsSection()}
 <section class="section section--expertise" id="expertise" aria-labelledby="ex-title">
   <div class="container">
     <div class="section__head"><h2 id="ex-title" class="section__title"><span class="t-light">Fields of expertise</span><span class="t-dark">Our expertise</span></h2><a class="link-caps" href="expertise.html">Explore our expertise</a></div>
-    <p class="section__lead dark-only">Our culture comes from the heart at Top Concept International, where we stand together, work with honesty and give our best to create spaces that truly matter.</p>
+    <p class="section__lead dark-only">Ten fields, one team. Pick a field to see the work.</p>
     <div class="ex-grid">${expertiseCards}</div>
   </div>
 </section>
@@ -678,18 +689,19 @@ page({
   description: "Meet the architects, engineers and designers behind Top Concept International.",
   current: "team",
   body: `
-${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>team</em>", current: "team", openBand: true })}
-  <section class="leadership leadership--flip" id="leadership" aria-labelledby="team-lead-title">
-    <div class="container leadership__grid">
-      <h2 id="team-lead-title" class="leadership__title">Leadership</h2>
-      <div class="leadership__text reveal">
-        ${paras(D.teamLeadership.paragraphs)}
-        <ul class="signatures">${D.teamLeadership.people.map((p) => `<li><strong>${esc(p.name)}</strong><span>${esc(p.role)}</span></li>`).join("")}</ul>
-      </div>
-      <div class="leadership__media reveal">${img("founders", { alt: "Nawaf Al Falasi and Engr. Ragheed Al-Tahhan", sizes: "(min-width: 900px) 40vw, 90vw" })}</div>
+${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>team</em>", current: "team" })}
+<section class="leaders" id="leadership" aria-labelledby="team-lead-title">
+  <div class="container">
+    <h2 id="team-lead-title" class="leaders__title">Leadership</h2>
+    <div class="leaders__people">
+      ${D.teamLeadership.people.map((p, i) => `<figure class="leader reveal" style="--d:${i * 120}ms">
+        <div class="leader__media">${img(p.img, { alt: `Portrait of ${p.name}`, sizes: "(min-width: 900px) 360px, 44vw" })}<span class="leader__smoke" aria-hidden="true"></span></div>
+        <figcaption><strong class="leader__name">${esc(p.name)}</strong><span class="leader__role">${esc(p.role)}</span></figcaption>
+      </figure>`).join("")}
     </div>
-  </section>
-</div>
+    <div class="leaders__text reveal">${paras(D.teamLeadership.paragraphs)}</div>
+  </div>
+</section>
 <section class="container team" aria-label="Team members">
   <ul class="team-grid">
     ${D.team
@@ -703,7 +715,7 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
       .join("")}
   </ul>
 </section>
-${cta({ title: "Design begins with a conversation.", text: "Share your vision with us. We’ll help shape it into something real.", tracked: true })}`,
+${cta({ title: "Start with a conversation", text: "Share your idea. We’ll help you shape it into something you can build.", tracked: true })}`,
 });
 
 // CULTURE
@@ -755,7 +767,7 @@ ${cta()}`,
 page({
   file: "careers.html",
   title: "Careers",
-  description: "Build inspiring spaces and a rewarding future at Top Concept International. Send us your CV.",
+  description: "Join the architects, engineers and designers at Top Concept International. Send us your CV.",
   current: "careers",
   body: `
 ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together", title: "Meet the <em>team</em>", current: "careers" })}
@@ -767,18 +779,18 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
   <div class="container kickstart__grid">
     <div class="kickstart__copy">
       <h2 id="kick-title">Kickstart your journey with us</h2>
-      <p>Connect with Top Concept International and discover thoughtful design solutions tailored to your vision. Our team is here to guide you from concept to completion with creativity, precision, and trusted expertise.</p>
+      <p>Send your CV and the role you want. If your skills match an opening, our HR team will contact you.</p>
       <form class="form form--careers" method="post" enctype="multipart/form-data" novalidate ${formAttrs("careers", "Career application")}>
-        <label class="line-field"><span>Full Name:</span><input name="name" type="text" placeholder="Enter your full name..." autocomplete="name" required></label>
-        <label class="line-field"><span>Position:</span><input name="position" type="text" placeholder="Enter your desired position..." required></label>
+        <label class="line-field"><span>Full Name:</span><input name="name" type="text" placeholder="Your full name" autocomplete="name" required></label>
+        <label class="line-field"><span>Position:</span><input name="position" type="text" placeholder="The role you want" required></label>
         <label class="line-field line-field--file"><span>CV:</span>
           <input name="cv" type="file" accept=".pdf,.doc,.docx" required>
           <em data-file-name>Upload… (PDF or Word, max 5 MB)</em>
         </label>
         <label class="check"><input type="checkbox" name="emirati" value="yes"><span>I am Emirati</span></label>
-        <label class="line-field"><span>Email:</span><input name="email" type="email" placeholder="Enter your email..." autocomplete="email" required></label>
+        <label class="line-field"><span>Email:</span><input name="email" type="email" placeholder="Your email address" autocomplete="email" required></label>
         <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <button class="btn btn--light" type="submit">Submit</button>
+        <button class="btn btn--light" type="submit">Send my application</button>
         <p class="form__status" role="status" aria-live="polite"></p>
       </form>
     </div>
@@ -799,7 +811,7 @@ page({
 <section class="contact-intro container">
   <h1>Contact us</h1>
   <div id="offices" class="reveal">${mapFigure()}</div>
-  <p class="prose prose--lg">Top Concept International connects clients across the UAE, India and London, bringing creative expertise and trusted support across every stage of the journey. Wherever your project begins, our team is ready to turn ideas into meaningful spaces with quality, care and precision.</p>
+  <p class="prose prose--lg">We work with clients across the UAE, India and London. Tell us where your project is and what you need. One team will guide it from the first idea to handover.</p>
   ${cfg.contactEmail || cfg.whatsapp ? `<p class="contact-direct">${cfg.contactEmail ? `<a href="mailto:${esc(cfg.contactEmail)}">${esc(cfg.contactEmail)}</a>` : ""}${cfg.whatsapp ? `<a href="https://wa.me/${esc(cfg.whatsapp)}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : ""}</p>` : ""}
 </section>
 ${cta()}`,
