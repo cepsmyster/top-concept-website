@@ -434,14 +434,14 @@ function clientsSection() {
   const hero = META["hero"];
   const featured = D.projects.filter((p) => p.featured);
 
-  const slides = featured
-    .map(
-      (p, i) => `<li class="slide${i === 0 ? " is-active" : ""}" id="slide-${i}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${featured.length}" data-label="${esc(p.label)}" data-title="${esc(p.title)}" data-href="project-${p.slug}.html">
-        <a href="project-${p.slug}.html" tabindex="${i === 0 ? 0 : -1}" aria-label="${esc(p.title)} — ${esc(p.label)}">${img(p.img, { alt: p.alt, sizes: "(min-width: 900px) 62vw, 82vw", eager: false })}</a>
-      </li>`
-    )
+  // Projects: a full-screen ring of the featured projects that turns as you scroll (motion.js "Projects ring").
+  // Without the motion layer the cards sit in a row that scrolls sideways.
+  const n = featured.length;
+  const ring = featured
+    .map((p, i) => `<li class="orbit__item" style="--i:${i}" data-label="${esc(p.label)}" data-title="${esc(p.title)}" data-href="project-${p.slug}.html">
+        <a class="orbit__card" href="project-${p.slug}.html" aria-label="${esc(p.title)}, ${esc(p.label)}">${img(p.img, { alt: p.alt, sizes: "(min-width: 900px) 58vw, 80vw" })}</a>
+      </li>`)
     .join("");
-  const dots = featured.map((p, i) => `<button type="button" class="dot${i === 0 ? " is-active" : ""}" data-slide="${i}" aria-label="Show ${esc(p.title)}"${i === 0 ? ' aria-current="true"' : ""}></button>`).join("");
 
   // same cards as the Expertise page; the description and hover image come from its data, matched by slug
   const exBySlug = Object.fromEntries([...D.expertisePage.rows, ...D.expertisePage.carousel].map((c) => [c.slug, c]));
@@ -482,19 +482,19 @@ function clientsSection() {
 </section>
 
 
-<section class="section section--projects" id="projects" aria-labelledby="projects-title">
-  <div class="container">
-    <div class="section__head"><h2 id="projects-title">Projects</h2><a class="link-caps" href="projects.html">See all projects</a></div>
-  </div>
-  <div class="carousel" data-carousel aria-roledescription="carousel" aria-label="Featured projects">
-    <ul class="carousel__track" data-track>${slides}</ul>
-    <button class="carousel__nav carousel__nav--prev" type="button" data-prev aria-label="Previous project">${ICON.arrow}</button>
-    <button class="carousel__nav carousel__nav--next" type="button" data-next aria-label="Next project">${ICON.arrow}</button>
-    <div class="carousel__caption" aria-live="polite">
-      <span class="carousel__label" data-cap-label>${esc(featured[0].label)}</span>
-      <a class="carousel__title" data-cap-title href="project-${featured[0].slug}.html">${esc(featured[0].title)}</a>
+<section class="orbit" id="projects" data-orbit aria-labelledby="projects-title" style="--n:${n}">
+  <div class="orbit__stage">
+    <div class="orbit__head">
+      <h2 id="projects-title">Projects</h2>
+      <a class="link-caps" href="projects.html">See all projects</a>
     </div>
-    <div class="carousel__dots" role="group" aria-label="Choose project">${dots}</div>
+    <ul class="orbit__ring" data-orbit-ring>${ring}</ul>
+    <div class="orbit__caption" aria-live="polite">
+      <span class="orbit__count"><span data-orbit-num>01</span> / ${String(n).padStart(2, "0")}</span>
+      <span class="orbit__label" data-orbit-label>${esc(featured[0].label)}</span>
+      <a class="orbit__title" data-orbit-title href="project-${featured[0].slug}.html">${esc(featured[0].title)}</a>
+    </div>
+    <div class="orbit__bar" aria-hidden="true"><span data-orbit-progress></span></div>
   </div>
 </section>
 

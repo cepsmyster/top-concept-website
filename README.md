@@ -12,7 +12,7 @@ Built from the design files in `New Website/`.
 
 | Page | File |
 |---|---|
-| Home (full-screen interactive concept → completion hero, about us, projects carousel, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
+| Home (full-screen interactive concept → completion hero, about us, rotating projects ring, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
 | Expertise (ten fields as big cards, two per row) | `expertise.html` |
 | Projects ("View the Work" hero, showcase, filterable grid) + one page per project | `projects.html`, `project-*.html` |
 | Blogs + one page per article | `blogs.html`, `blog-*.html` |
@@ -65,6 +65,10 @@ Every page has scroll-driven animation in the spirit of award-style sites: smoot
 
 - It lives in `assets/js/motion.js` and uses GSAP, ScrollTrigger, SplitText and Lenis, self-hosted in `assets/js/vendor/` (about 140 KB together).
 - Visitors with "reduce motion" switched on get the static site. If the scripts fail to load, the curtain hides itself after 4 seconds.
+
+## Projects ring (home page)
+
+The Projects section fills the screen and stays in place while the featured projects (`featured: true` in `projects`, `src/data.mjs`) turn past on a 3D ring as you scroll, one project per step. The front project is lit, its neighbours angle away and dim, and the caption (number, type, name) follows the front project. When scrolling stops between two projects it glides on to the nearest whole one, the same lock the Retail Park section uses (`lockSteps()` in `assets/js/motion.js`). Phones get taller portrait cards. Visitors with reduced motion get the cards in a row that scrolls sideways. The markup is in the `index.html` page in `src/build.mjs`, the motion in “Projects ring” in `motion.js`, the styles under “Home: Projects ring” in `styles.css`.
 
 ## Retail Park showcase (home page)
 

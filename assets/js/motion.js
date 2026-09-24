@@ -79,6 +79,37 @@
       .add(() => { split.revert(); title.classList.remove("is-draft"); });
   };
 
+  // Pinned, scrubbed sections that move in steps (the showcase photos, the projects ring): when scrolling stops
+  // between two steps, glide on to the next one in the direction of travel (or back, if it had barely moved),
+  // so the section always rests on one whole step. dur() = timeline length in steps; last = index of the final step.
+  const lockSteps = (st, dur, last) => {
+    let dir = 1, idle = 0, snapping = false, lastY = window.scrollY;
+    const snap = () => {
+      if (!st.isActive || snapping) return;
+      const t = st.progress * dur();
+      if (t >= last) return;
+      const base = Math.floor(t), f = t - base;
+      if (f < 0.01 || f > 0.99) return;
+      const to = dir > 0 ? (f > 0.15 ? base + 1 : base) : (f < 0.85 ? base : base + 1);
+      const y = st.start + (to / dur()) * (st.end - st.start);
+      snapping = true;
+      const done = () => { snapping = false; };
+      setTimeout(done, 1200); // in case the visitor interrupts the glide
+      if (lenis) lenis.scrollTo(y, { duration: 0.9, easing: (x) => 1 - Math.pow(1 - x, 3), onComplete: done });
+      else window.scrollTo({ top: y, behavior: "smooth" });
+    };
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y !== lastY) dir = y > lastY ? 1 : -1;
+      lastY = y;
+      if (snapping) return;
+      clearTimeout(idle);
+      idle = setTimeout(snap, 180);
+    };
+    if (lenis) lenis.on("scroll", onScroll);
+    else window.addEventListener("scroll", onScroll, { passive: true });
+  };
+
   /* ───────── Hero ───────── */
   const hero = $(".hero");
   const intro = gsap.timeline({ defaults: { ease: EASE }, paused: true });
@@ -159,6 +190,48 @@
     const foot = $(".site-footer__grid");
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
+    /* Projects ring: full screen and pinned; the featured projects sit on a 3D ring that turns one step per project
+       as you scroll. The front card is lit, the neighbours angle away and dim; the caption follows the front card. */
+    const orbit = $("[data-orbit]");
+    if (orbit) {
+      const ring = $("[data-orbit-ring]", orbit);
+      const items = $$(".orbit__item", orbit), n = items.length, step = 360 / n;
+      const num = $("[data-orbit-num]", orbit), label = $("[data-orbit-label]", orbit), title = $("[data-orbit-title]", orbit);
+      const bar = $("[data-orbit-progress]", orbit);
+      orbit.classList.add("is-3d");
+      const size = () => { ring.style.setProperty("--r", ((ring.offsetWidth / 2) / Math.tan(Math.PI / n) * (window.innerWidth < 761 ? 1.3 : 1.08)).toFixed(1) + "px"); };
+      size();
+      window.addEventListener("resize", size);
+      let active = -1;
+      const turn = (t) => { // t = position in steps (0 … n-1)
+        ring.style.setProperty("--a", (-t * step).toFixed(3) + "deg");
+        items.forEach((it, i) => {
+          const d = Math.abs(i - t);
+          it.style.setProperty("--o", Math.min(1, Math.max(0, 1.5 - d)).toFixed(3)); // solid until half a step past the front
+          it.style.setProperty("--dim", Math.min(1, d).toFixed(3));
+          it.classList.toggle("is-front", d < 0.5);
+        });
+        const k = Math.min(n - 1, Math.max(0, Math.round(t)));
+        if (k !== active) {
+          active = k;
+          const it = items[k];
+          num.textContent = String(k + 1).padStart(2, "0");
+          label.textContent = it.dataset.label;
+          title.textContent = it.dataset.title;
+          title.href = it.dataset.href;
+          gsap.fromTo([label, title], { yPercent: 60, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.6, ease: EASE, stagger: 0.05, overwrite: true });
+        }
+      };
+      turn(0);
+      const ost = ScrollTrigger.create({
+        trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.85), pin: true, scrub: 0.6,
+        onUpdate: (st) => { turn(st.progress * (n - 1)); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
+      });
+      lockSteps(ost, () => n - 1, n - 1);
+      // on arrival the cards rise and settle into the ring (the ring itself is left to the scroll rotation)
+      gsap.from($(".orbit__card", orbit), { yPercent: 25, scale: 0.85, autoAlpha: 0, duration: 1.6, stagger: 0.08, ease: EASE, scrollTrigger: { trigger: orbit, start: "top 70%", once: true } });
+    }
+
     /* Project showcase film: pinned; each chapter wipes up over the last as you scroll */
     const film = $("[data-film]");
     if (film) {
@@ -186,34 +259,7 @@
         },
       });
 
-      // Lock onto whole chapters: when scrolling stops mid-wipe, glide on to the next chapter in the direction
-      // of travel (or back, if it had barely moved), so two clips are never left half on screen.
-      let dir = 1, idle = 0, snapping = false;
-      const snap = () => {
-        if (!st.isActive || snapping) return;
-        const t = st.progress * tl.duration(); // chapter i is fully in at t = i
-        if (t >= n - 1) return; // on the last chapter: nothing is half-way
-        const base = Math.floor(t), f = t - base;
-        if (f < 0.01 || f > 0.99) return;
-        const to = dir > 0 ? (f > 0.15 ? base + 1 : base) : (f < 0.85 ? base : base + 1);
-        const y = st.start + (to / tl.duration()) * (st.end - st.start);
-        snapping = true;
-        const done = () => { snapping = false; };
-        setTimeout(done, 1200); // in case the visitor interrupts the glide
-        if (lenis) lenis.scrollTo(y, { duration: 0.9, easing: (x) => 1 - Math.pow(1 - x, 3), onComplete: done });
-        else window.scrollTo({ top: y, behavior: "smooth" });
-      };
-      let lastY = window.scrollY;
-      const onScroll = () => {
-        const y = window.scrollY;
-        if (y !== lastY) dir = y > lastY ? 1 : -1;
-        lastY = y;
-        if (snapping) return;
-        clearTimeout(idle);
-        idle = setTimeout(snap, 180);
-      };
-      if (lenis) lenis.on("scroll", onScroll);
-      else window.addEventListener("scroll", onScroll, { passive: true });
+      lockSteps(st, () => tl.duration(), n - 1);
       const head = $(".film__head", film);
       if (head) {
         gsap.from($$(".film__kicker, .film__tag", head), { autoAlpha: 0, y: 20, duration: 1, stagger: 0.15, ease: EASE, scrollTrigger: { trigger: film, start: "top 75%", once: true } });
@@ -281,7 +327,7 @@
     window.addEventListener("scroll", queue, { passive: true });
     document.addEventListener("pointerleave", () => cad.classList.remove("is-on"));
     const LABELS = [
-      [".proj-card, .blog-card, .ex-card, .xp__media, .showcase__media, .menu-blog", "View"],
+      [".proj-card, .blog-card, .ex-card, .xp__media, .orbit__card, .showcase__media, .menu-blog", "View"],
       ["[data-track]", "Drag"],
       ["[data-model-stage] canvas", "Explore"],
       ["[data-film] .film__stack", "Scroll"],

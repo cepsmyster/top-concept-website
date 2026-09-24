@@ -952,3 +952,37 @@ main .prose .hd .hbr { display: none; }
 .xp-head .section__lead { margin: 14px 0 0; }
 /* About us runs to the same edges as the expertise cards: lead text level with the left card edge, the paragraphs on the right level with the right card edge */
 .about { padding-inline: clamp(12px, 1.7vw, 24px); }
+
+/* ---------- Home: Projects ring ----------
+   Full screen. With the motion layer (.is-3d, motion.js) the featured projects sit on a 3D ring that turns as you
+   scroll: --r is the ring radius and --a its angle, both set by the script; --o / --dim fade the cards turned away.
+   Without it the cards sit in a row that scrolls sideways. */
+.orbit { position: relative; overflow: hidden; background: var(--bg); color: var(--fg); }
+.orbit__stage { position: relative; min-height: 100vh; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto auto; gap: clamp(16px, 2.5vh, 28px);
+  padding: calc(var(--header-h) + clamp(8px, 2vh, 24px)) clamp(12px, 1.7vw, 24px) clamp(18px, 4vh, 40px); }
+.orbit__head { position: relative; z-index: 3; display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
+.orbit__ring { display: flex; gap: clamp(12px, 2vw, 28px); margin: 0; padding: 0; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; align-self: center; }
+.orbit__item { flex: 0 0 min(80vw, 900px); scroll-snap-align: center; }
+.orbit__card { display: block; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 4px; background: var(--shot-bg); }
+.orbit__card img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.orbit__card:hover img { transform: scale(1.04); }
+.orbit__caption { position: relative; z-index: 3; display: grid; justify-items: center; gap: 6px; text-align: center; }
+.orbit__count { font: 500 .72rem var(--font-head); letter-spacing: .2em; color: var(--muted); }
+.orbit__label { font: 400 .68rem var(--font-head); letter-spacing: .12em; text-transform: uppercase; }
+.orbit__title { font: 500 clamp(1.3rem, 1rem + 1.2vw, 2.2rem)/1.15 var(--font-display); letter-spacing: var(--track-small); }
+.orbit__caption > * { display: block; }
+.orbit__caption { overflow: hidden; }
+.orbit__bar { position: relative; z-index: 3; justify-self: center; width: min(320px, 60vw); height: 1px; background: var(--line); overflow: hidden; }
+.orbit__bar span { display: block; height: 100%; background: var(--fg); transform: scaleX(0); transform-origin: 0 50%; }
+.orbit:not(.is-3d) .orbit__bar { display: none; }
+
+.orbit.is-3d .orbit__stage { height: 100vh; height: 100svh; perspective: 2200px; perspective-origin: 50% 45%; }
+.orbit.is-3d .orbit__ring { --cw: min(58vw, 62svh * 1.6); position: absolute; left: 50%; top: 47%; display: block; width: var(--cw); aspect-ratio: 16 / 10; overflow: visible;
+  transform: translate(-50%, -50%) translateZ(calc(var(--r, 900px) * -1)) rotateY(var(--a, 0deg)); transform-style: preserve-3d; }
+.orbit.is-3d .orbit__item { position: absolute; inset: 0; transform: rotateY(calc(var(--i) * 360deg / var(--n))) translateZ(var(--r, 900px));
+  backface-visibility: hidden; opacity: var(--o, 1); pointer-events: none; }
+.orbit.is-3d .orbit__item.is-front { pointer-events: auto; }
+.orbit.is-3d .orbit__card { width: 100%; height: 100%; aspect-ratio: auto; box-shadow: 0 30px 80px rgba(0, 0, 0, .35); filter: brightness(calc(1 - var(--dim, 0) * .45)); }
+.orbit.is-3d .orbit__caption, .orbit.is-3d .orbit__bar { grid-row: 3; }
+.orbit.is-3d .orbit__bar { grid-row: 4; }
+@media (max-width: 760px) { .orbit.is-3d .orbit__ring { --cw: 74vw; top: 47%; aspect-ratio: 4 / 5; } }
