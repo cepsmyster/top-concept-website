@@ -913,7 +913,7 @@ main :is(h1, h2, h3).hd {
   font-weight: var(--hd-light);
   letter-spacing: var(--hd-track);
   line-height: var(--hd-lead);
-  text-transform: capitalize;
+  text-transform: none; /* the capitals are written into the text by the build (capWords in build.mjs) */
   text-align: left;
   overflow-wrap: break-word;
 }

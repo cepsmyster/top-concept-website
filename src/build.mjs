@@ -60,10 +60,16 @@ function boldLast(inner) {
   }
   return inner;
 }
+// Each Word Capitalised, written into the text itself rather than by CSS text-transform: the scroll animations split
+// headings into pieces for a moment, and "capitalize" would then capitalise every piece (a flash of ALL CAPS).
+const capWords = (inner) => inner.split(/(<[^>]+>)/).map((part, i) => (i % 2 ? part : part.replace(/(^|[\s(])(\p{Ll})/gu, (m, a, c) => a + c.toUpperCase()))).join("");
 function displayHeadings(html) {
-  return html.replace(/<(h[123])(\s[^>]*)?>([\s\S]*?)<\/\1>/g, (all, tag, attrs = "", inner) => {
+  return html.replace(/<(h[123])(\s[^>]*)?>([\s\S]*?)<\/\1>/g, (all, tag, attrs = "", inner, at) => {
     const cls = (attrs.match(/class="([^"]*)"/) || [, ""])[1];
     if (/\bfilm__kicker\b/.test(cls) || (tag === "h3" && !/\b(film__title|hd)\b/.test(cls))) return all;
+    // subheads inside article / policy text keep their sentence case
+    const inProse = html.lastIndexOf(" prose", at) > html.lastIndexOf("</div>", at);
+    if (!inProse) inner = capWords(inner);
     // theme-specific wording: each variant gets its own bold word
     const body = /class="t-(light|dark)"/.test(inner)
       ? inner.replace(/(<span class="t-(?:light|dark)">)([\s\S]*?)(<\/span>)/g, (m, a, t, b) => a + boldLast(t) + b)
