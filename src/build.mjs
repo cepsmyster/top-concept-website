@@ -364,9 +364,12 @@ function clientsSection() {
   const C = D.clients;
   const cols = [[], [], []];
   C.logos.forEach((l, i) => cols[i % 3].push(l));
+  // columns 1 and 3 move in step, so they need the same number of tiles: pad the short ones by repeating a logo from another column
+  const most = Math.max(...cols.map((c) => c.length));
+  cols.forEach((c, k) => { for (let j = 0; c.length < most; j++) c.push(cols[(k + 1) % 3][j]); });
   const tile = (l, hidden) => `<li class="clients__tile"><img src="assets/img/clients/${l.file}.webp" alt="${hidden ? "" : esc(l.name)}" width="${l.w}" height="${l.h}" loading="lazy" decoding="async"></li>`;
   const col = (list, k) => `
-      <div class="clients__col" style="--dur:${[46, 38, 52][k]}s">
+      <div class="clients__col" style="--dur:44s">
         <ul class="clients__track">${list.map((l) => tile(l)).join("")}${list.map((l) => tile(l, true).replace("<li ", '<li aria-hidden="true" ')).join("")}</ul>
       </div>`;
   return `<section class="clients" id="clients" aria-labelledby="clients-title">

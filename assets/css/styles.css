@@ -240,7 +240,8 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
   -webkit-mask-image: linear-gradient(transparent, #000 16%, #000 84%, transparent); mask-image: linear-gradient(transparent, #000 16%, #000 84%, transparent);
 }
 .clients__track { display: grid; gap: var(--gap); animation: clients-up var(--dur, 44s) linear infinite; will-change: transform; }
-.clients__col:nth-child(2) .clients__track { margin-top: calc(var(--tile) / -2); }
+/* columns 1 and 3 rise together; the middle column runs the other way */
+.clients__col:nth-child(2) .clients__track { margin-top: calc(var(--tile) / -2); animation-direction: reverse; }
 .clients__wall:hover .clients__track { animation-play-state: paused; }
 @keyframes clients-up { to { transform: translateY(calc(-50% - var(--gap) / 2)); } }
 .clients__tile { width: var(--tile); aspect-ratio: 1; display: grid; place-items: center; padding: 20%; background: #efece6; border-radius: 2px; }
