@@ -49,6 +49,36 @@
   };
   const skip = (el) => el.closest("[data-model3d], [data-film], .film-dialog, .menu-overlay, .site-header, .carousel__caption, form");
 
+  // Home hero headline: the light words rise letter by letter; the bold word is drafted in outline along a
+  // dimension line, then fills in solid as the finished building sweeps in behind it.
+  const draftTitle = (title) => {
+    const bold = $(".hb", title), br = $("br.hbr", title);
+    if (!SplitText || !bold || !br) return null;
+    // bake the capitals into the text: CSS "capitalize" would capitalise every letter once they are split apart
+    const walk = document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
+    for (let t; (t = walk.nextNode()); ) t.nodeValue = t.nodeValue.replace(/(^|\s)(\p{L})/gu, (m, a, c) => a + c.toUpperCase());
+    title.style.textTransform = "none";
+    const light = document.createElement("span");
+    light.className = "hl";
+    while (title.firstChild !== br) light.appendChild(title.firstChild);
+    title.insertBefore(light, br);
+    bold.dataset.text = bold.textContent;
+    const dim = document.createElement("span");
+    dim.className = "hero__dim";
+    dim.setAttribute("aria-hidden", "true");
+    bold.appendChild(dim);
+    title.classList.add("is-draft");
+    gsap.set(title, { autoAlpha: 1 });
+    gsap.set(bold, { "--draw": "0%", "--fill": "0%" });
+    const split = SplitText.create(light, { type: "words,chars", mask: "words" });
+    return gsap.timeline()
+      .from(split.chars, { yPercent: 110, duration: 1.1, stagger: 0.03, ease: EASE }, 0)
+      .to(bold, { "--draw": "100%", duration: 1.2, ease: "power2.inOut" }, 0.45)
+      .to(bold, { "--fill": "100%", duration: 1.3, ease: "power2.inOut" }, 1.7)
+      .to(dim, { autoAlpha: 0.35, duration: 0.8, ease: "none" }, 2.9)
+      .add(() => { split.revert(); title.classList.remove("is-draft"); });
+  };
+
   /* ───────── Hero ───────── */
   const hero = $(".hero");
   const intro = gsap.timeline({ defaults: { ease: EASE }, paused: true });
@@ -57,7 +87,9 @@
     const title = $(".hero__title", hero);
     gsap.set(media, { scale: 1.22, transformOrigin: "50% 60%" });
     intro.to(media, { scale: 1, duration: 2.6, ease: "power3.out" }, 0);
-    if (title) {
+    const drafted = title && hero.matches(".hero--compare") && draftTitle(title);
+    if (drafted) intro.add(drafted, 0.35);
+    else if (title) {
       gsap.set(title, { autoAlpha: 1 });
       const split = SplitText && SplitText.create(title, { type: "lines,words", mask: "lines", aria: "auto" });
       if (split) intro.from(split.words, { yPercent: 115, duration: 1.5, stagger: 0.07, onComplete: () => split.revert() }, 0.35);

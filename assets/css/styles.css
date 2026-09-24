@@ -836,6 +836,12 @@ html.lenis, html.lenis body { height: auto; }
 html:not(.js) .hero__split, html:not(.js) .hero__knob { display: none; }
 
 .hero--compare .hero__title { position: relative; z-index: 2; padding-bottom: clamp(72px, 12vh, 132px); font-size: clamp(2.2rem, 1.1rem + 4.8vw, 6.4rem); text-shadow: 0 2px 30px rgba(0, 0, 0, .3); pointer-events: none; }
+/* headline animation (motion.js draftTitle): the bold word is outlined as it is drawn (--draw), then filled (--fill) */
+.hero--compare .hero__title .hb { position: relative; display: inline-block; }
+.hero__title.is-draft .hb { color: transparent; -webkit-text-stroke: 1px rgba(220, 234, 255, .95); text-shadow: none; clip-path: inset(-20% calc(100% - var(--draw, 100%)) -45% -2px); }
+.hero__title.is-draft .hb::after { content: attr(data-text); position: absolute; left: 0; top: 0; color: #fff; -webkit-text-stroke: 0; clip-path: inset(-20% calc(100% - var(--fill, 100%)) -45% 0); }
+.hero__dim { position: absolute; left: 0; right: 0; bottom: -.2em; height: 9px; border-inline: 1px solid rgba(220, 234, 255, .9); }
+.hero__dim::before { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 1px; background: rgba(220, 234, 255, .9); }
 .hero__sheet { position: absolute; right: var(--gutter); bottom: clamp(24px, 4vh, 40px); z-index: 2; display: grid; border: 1px solid rgba(255, 255, 255, .55); font: 500 .62rem var(--font-head); letter-spacing: .16em; text-transform: uppercase; color: rgba(255, 255, 255, .88); background: rgba(8, 18, 34, .35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); pointer-events: none; }
 .hero__sheet span { padding: 7px 12px; } .hero__sheet span + span { border-top: 1px solid rgba(255, 255, 255, .35); }
 @media (max-width: 700px) {
@@ -898,17 +904,16 @@ html:not(.js) .hero__split, html:not(.js) .hero__knob { display: none; }
 }
 
 /* ---------- Display headings ----------
-   Every page and section heading: Inter Light caps, the last word on its own line in Bold, left-aligned
-   (after daqconsulting.com's "ENGINEERED FOR / SCALE."). The build adds .hd and wraps the bold word in .hb.
-   The reference sets −0.05em on a Thin (100) cut; at Light (300) that makes capitals touch, so caps use −0.03em.
-   Line-height .92 stacks the lines tight, as in the reference. */
-:root { --hd-light: 300; --hd-bold: 700; --hd-lead: .92; --hd-track: -.03em; }
+   Every page and section heading: Inter Light with Each Word Capitalised, the last word on its own line in Bold,
+   left-aligned (after daqconsulting.com's "Engineered for / Scale."). The build adds .hd and wraps the bold word in .hb.
+   Tracking −0.03em (the reference's −0.05em is for a Thin cut). Line-height 1 leaves room for descenders (p, g, y). */
+:root { --hd-light: 300; --hd-bold: 700; --hd-lead: 1; --hd-track: -.03em; }
 main :is(h1, h2, h3).hd {
   font-family: var(--font-display);
   font-weight: var(--hd-light);
   letter-spacing: var(--hd-track);
   line-height: var(--hd-lead);
-  text-transform: uppercase;
+  text-transform: capitalize;
   text-align: left;
   overflow-wrap: break-word;
 }
