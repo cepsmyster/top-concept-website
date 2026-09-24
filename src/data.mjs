@@ -202,7 +202,7 @@ export const culture = {
     "We also believe that a quick break, a friendly game or a good coffee can go a long way in recharging the mind and bringing people together. When people feel happy, trusted and inspired, great things happen.",
   ],
   voices: [
-    { quote: "Leading the Architecture Department at Top Concept International has been a truly rewarding journey. Every project gives us the opportunity to shape spaces that inspire people, improve everyday experiences, and leave a lasting impact through thoughtful design, collaboration, and innovation.", name: "Maria Corazon", role: "Head of Department (Architecture)", img: "voice-maria" },
+    { quote: "Leading the Architecture Department at Top Concept International has been a truly rewarding journey. Every project gives us the opportunity to shape spaces that inspire people, improve everyday experiences, and leave a lasting impact through thoughtful design, collaboration, and innovation.", name: "Maria Gomez", role: "Head of Department (Architecture)", img: "voice-maria" },
     { quote: "Being part of the Interior Design Department at Top Concept International means creating spaces that people feel connected to, comfortable in, and proud of. It’s a journey shaped by creativity, care, and a team that brings passion into every detail.", name: "Lobna Elsawy", role: "Head of Department (Interiors)", img: "voice-lobna" },
   ],
 };
