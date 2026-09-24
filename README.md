@@ -86,7 +86,7 @@ After the Retail Park showcase, "In trusted company" shows the client logos in t
 
 ## Layout
 
-Pages sit in a centred column (`--container`, 1350px) with side margins (`--gutter`). Two sections run end to end instead: the Fields of expertise cards on the home page (landscape cards; a lone card on the last row spans it as a panorama) and the Expertise page card grid.
+Pages sit in a centred column (`--container`, 1350px) with side margins (`--gutter`). Two sections run end to end instead, and both use the same big cards, two at a time (`xpCard()` in `src/build.mjs`): the Fields of expertise section on the home page and the Expertise page grid. Each card shows the image, the field name on the left and a one-line description on the right that slides right to left on hover while a second image wipes in. The home cards take their description and hover image from `expertisePage` in `src/data.mjs`, matched by slug. The CEO quote no longer appears on the home page.
 
 **Home page order:** the hero fills exactly one screen, so it is all a visitor sees on arrival. Right after it comes **About us** (layout after madamepolare.com): a lead paragraph on the left, two short paragraphs on the right and a “Meet the team” button to the Team page. The copy is in `about` in `src/data.mjs`, written to the web-copywriter skill; it uses only facts already on the site (offices in the UAE, India and London; the disciplines; approvals and site supervision).
 

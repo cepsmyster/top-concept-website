@@ -945,16 +945,5 @@ main .prose .hd .hbr { display: none; }
 /* ---------- Home hero fills exactly one screen ---------- */
 .hero--compare { height: 100vh; height: 100svh; min-height: 420px; }
 
-/* ---------- Home: Fields of expertise runs end to end, with landscape cards ---------- */
-.section--expertise > .container { width: calc(100% - 2 * clamp(12px, 1.7vw, 24px)); max-width: none; }
-:root .section--expertise .ex-card .ex-card__media { aspect-ratio: 3 / 2; } /* :root outranks the dark-theme card rule */
-:root:not([data-theme="dark"]) .section--expertise .ex-card--lg .ex-card__media { aspect-ratio: 16 / 9; }
-.section--expertise .ex-card__media img { object-position: var(--pos, 50% 50%); }
-/* a lone card on the last row of three spans the row as a panorama instead of leaving a gap */
-@media (min-width: 721px) {
-  :root[data-theme="dark"] .section--expertise .ex-card:last-child:nth-child(3n + 1) { grid-column: 1 / -1; }
-  :root[data-theme="dark"] .section--expertise .ex-card:last-child:nth-child(3n + 1) .ex-card__media { aspect-ratio: 16 / 5; }
-}
-@media (max-width: 560px) {
-  :root[data-theme="dark"] .section--expertise .ex-card h3 { padding: 36px 10px 9px; font-size: .9rem; line-height: 1.2; }
-}
+/* ---------- Home: Fields of expertise uses the Expertise page cards (.xp), two at a time, end to end ---------- */
+.xp-grid--home { padding-top: 0; padding-bottom: 0; }

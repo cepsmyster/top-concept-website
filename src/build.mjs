@@ -433,7 +433,6 @@ function clientsSection() {
 {
   const hero = META["hero"];
   const featured = D.projects.filter((p) => p.featured);
-  const L = D.leadership;
 
   const slides = featured
     .map(
@@ -444,14 +443,16 @@ function clientsSection() {
     .join("");
   const dots = featured.map((p, i) => `<button type="button" class="dot${i === 0 ? " is-active" : ""}" data-slide="${i}" aria-label="Show ${esc(p.title)}"${i === 0 ? ' aria-current="true"' : ""}></button>`).join("");
 
+  // same cards as the Expertise page; the description and hover image come from its data, matched by slug
+  const exBySlug = Object.fromEntries([...D.expertisePage.rows, ...D.expertisePage.carousel].map((c) => [c.slug, c]));
   const expertiseCards = D.expertise
-    .map(
-      (e, i) => `<a class="ex-card ex-card--${e.size} reveal" style="--d:${(i % 3) * 70}ms;--pos:${e.pos || "50% 50%"}" href="projects.html?cat=${e.slug}">
-      <div class="ex-card__media">${img(e.img, { alt: e.alt, sizes: e.size === "lg" ? "(min-width: 900px) 46vw, 92vw" : "(min-width: 900px) 30vw, 92vw" })}</div>
-      <h3><span class="t-light">${esc(e.title)}</span><span class="t-dark">${esc(e.darkTitle || e.title)}</span></h3>
-    </a>`
-    )
-    .join("");
+    .map((e) => {
+      const x = exBySlug[e.slug];
+      // when the home photo is the Expertise page's hover photo, hover shows that page's main photo instead
+      const hover = x.hover && x.hover !== e.img ? x.hover : x.img !== e.img ? x.img : null;
+      return xpCard({ ...x, title: e.darkTitle || e.title, img: e.img, alt: e.alt, pos: e.pos, hover }, { id: false });
+    })
+    .join("\n  ");
 
   page({
     file: "index.html",
@@ -516,21 +517,13 @@ ${clientsSection()}
   </div>
 </section>
 
-<section class="quote-block dark-only" aria-label="Words from our CEO">
-  <div class="container quote-block__grid">
-    <div class="quote-block__media reveal">${img("ceo-desk", { alt: "Ragheed Al Tahhan reviewing drawings at his desk", sizes: "(min-width: 900px) 30vw, 70vw" })}</div>
-    <figure class="quote-block__text reveal">
-      <blockquote><p>“${esc(L.quote)}”</p></blockquote>
-      <figcaption>${esc(L.quoteBy)} - <span>${esc(L.quoteRole)}</span></figcaption>
-    </figure>
-  </div>
-</section>
-
 <section class="section section--expertise" id="expertise" aria-labelledby="ex-title">
   <div class="container">
     <div class="section__head"><h2 id="ex-title" class="section__title"><span class="t-light">Fields of expertise</span><span class="t-dark">Our expertise</span></h2><a class="link-caps" href="expertise.html">Explore our expertise</a></div>
     <p class="section__lead dark-only">Ten fields, one team. Pick a field to see the work.</p>
-    <div class="ex-grid">${expertiseCards}</div>
+  </div>
+  <div class="xp-grid xp-grid--home">
+  ${expertiseCards}
   </div>
 </section>
 
@@ -587,17 +580,14 @@ ${cta()}`,
   });
 }
 
-// EXPERTISE
-{
-  const E = D.expertisePage;
-  // Two big cards per row (after madamepolare.com's Featured Projects): image, then the name on the left and a
-  // one-line description on the right that runs as a marquee on hover. A second image (hover) wipes in over the first.
-  const cards = [...E.rows, ...E.carousel]
-    .map((c) => {
-      const line = c.text.split(/(?<=\.)\s/)[0];
-      const media = img(c.img, { alt: c.alt, sizes: "(min-width: 700px) 49vw, 96vw", attrs: `style="object-position:${c.pos || "50% 50%"}"` });
-      const alt = c.hover ? img(c.hover, { alt: "", sizes: "(min-width: 700px) 49vw, 96vw", attrs: 'class="xp__alt" aria-hidden="true"' }) : "";
-      return `<article class="xp reveal${c.hover ? "" : " xp--zoom"}" id="${c.slug}">
+// Expertise card, used on the Expertise page and in the home "Fields of expertise" section. Two big cards per row
+// (after madamepolare.com's Featured Projects): image, then the name on the left and a one-line description on the
+// right that runs right to left as a marquee on hover. A second image (hover) wipes in over the first.
+function xpCard(c, { id = true } = {}) {
+  const line = c.text.split(/(?<=\.)\s/)[0];
+  const media = img(c.img, { alt: c.alt, sizes: "(min-width: 700px) 49vw, 96vw", attrs: `style="object-position:${c.pos || "50% 50%"}"` });
+  const alt = c.hover ? img(c.hover, { alt: "", sizes: "(min-width: 700px) 49vw, 96vw", attrs: 'class="xp__alt" aria-hidden="true"' }) : "";
+  return `<article class="xp reveal${c.hover ? "" : " xp--zoom"}"${id ? ` id="${c.slug}"` : ""}>
     <a class="xp__link" href="projects.html?cat=${c.slug}">
       <div class="xp__media">${media}${alt}</div>
       <div class="xp__meta">
@@ -606,8 +596,12 @@ ${cta()}`,
       </div>
     </a>
   </article>`;
-    })
-    .join("\n  ");
+}
+
+// EXPERTISE
+{
+  const E = D.expertisePage;
+  const cards = [...E.rows, ...E.carousel].map((c) => xpCard(c)).join("\n  ");
   page({
     file: "expertise.html",
     title: "Expertise",

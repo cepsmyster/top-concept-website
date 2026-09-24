@@ -152,7 +152,7 @@ export const labelBlurbs = {
   "Landscape": "A landscape that turns outdoor space into a usable part of the building.",
 };
 
-// CEO quote shown on the home page (the full Leadership section now lives on the Team page: see teamLeadership).
+// CEO quote: no longer shown on the home page (removed); kept here in case it is used again.
 export const leadership = {
   quote: "At Top Concept, we are driven by people who care deeply about design, execution and the lasting impact of the spaces we create.",
   quoteBy: "Ragheed Al Tahhan",
