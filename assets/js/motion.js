@@ -177,7 +177,7 @@
       });
       tl.to({}, { duration: 0.35 }); // linger on the last chapter
       let active = 0;
-      ScrollTrigger.create({
+      const st = ScrollTrigger.create({
         trigger: film, start: "top top", end: () => "+=" + Math.round((n - 0.65) * window.innerHeight), pin: true, scrub: 0.5, animation: tl,
         onUpdate: (st) => {
           if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")";
@@ -185,6 +185,35 @@
           if (i !== active) { active = i; film.dispatchEvent(new CustomEvent("film:chapter", { detail: i })); }
         },
       });
+
+      // Lock onto whole chapters: when scrolling stops mid-wipe, glide on to the next chapter in the direction
+      // of travel (or back, if it had barely moved), so two clips are never left half on screen.
+      let dir = 1, idle = 0, snapping = false;
+      const snap = () => {
+        if (!st.isActive || snapping) return;
+        const t = st.progress * tl.duration(); // chapter i is fully in at t = i
+        if (t >= n - 1) return; // on the last chapter: nothing is half-way
+        const base = Math.floor(t), f = t - base;
+        if (f < 0.01 || f > 0.99) return;
+        const to = dir > 0 ? (f > 0.15 ? base + 1 : base) : (f < 0.85 ? base : base + 1);
+        const y = st.start + (to / tl.duration()) * (st.end - st.start);
+        snapping = true;
+        const done = () => { snapping = false; };
+        setTimeout(done, 1200); // in case the visitor interrupts the glide
+        if (lenis) lenis.scrollTo(y, { duration: 0.9, easing: (x) => 1 - Math.pow(1 - x, 3), onComplete: done });
+        else window.scrollTo({ top: y, behavior: "smooth" });
+      };
+      let lastY = window.scrollY;
+      const onScroll = () => {
+        const y = window.scrollY;
+        if (y !== lastY) dir = y > lastY ? 1 : -1;
+        lastY = y;
+        if (snapping) return;
+        clearTimeout(idle);
+        idle = setTimeout(snap, 180);
+      };
+      if (lenis) lenis.on("scroll", onScroll);
+      else window.addEventListener("scroll", onScroll, { passive: true });
       const head = $(".film__head", film);
       if (head) {
         gsap.from($$(".film__kicker, .film__tag", head), { autoAlpha: 0, y: 20, duration: 1, stagger: 0.15, ease: EASE, scrollTrigger: { trigger: film, start: "top 75%", once: true } });
