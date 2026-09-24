@@ -356,7 +356,8 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
 
 /* Project showcase (Retail Park): scroll film + interactive 3D */
 .feature { --bronze: #d9b98c; position: relative; background: #07080c; color: #f5efe6; }
-.film { position: relative; }
+/* Soft black at the top (title) and bottom (captions, controls) so the text reads over bright footage */
+.film { position: relative; --film-shade: linear-gradient(to bottom, rgba(0, 0, 0, .55) 0%, rgba(0, 0, 0, .3) 30%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, .35) 78%, rgba(0, 0, 0, .68) 100%); }
 .film__chapter { position: relative; isolation: isolate; height: 100vh; height: 100svh; min-height: 520px; margin: 0; overflow: hidden; background: #07080c; }
 .film__media { position: absolute; inset: 0; }
 .film__media video { width: 100%; height: 100%; object-fit: cover; display: block; background: #07080c center / cover no-repeat; }
@@ -364,7 +365,8 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
 .film__num { font: 500 .76rem var(--font-head); letter-spacing: .2em; color: var(--bronze); }
 .film__caption strong { font: 500 clamp(1.9rem, 1.2rem + 2.6vw, 3.6rem) var(--font-display); letter-spacing: var(--track-head); line-height: 1.02; }
 .film__caption span:last-child { font-size: 1.06rem; line-height: 1.5; color: rgba(245, 239, 230, .82); }
-.film__scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, .7) 100%); z-index: 1; }
+/* each chapter carries its own shade, between the footage and its caption, so the caption stays bright */
+.film__chapter::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: var(--film-shade); }
 .film__head, .film__foot { position: absolute; left: var(--gutter); right: var(--gutter); z-index: 3; pointer-events: none; }
 .film__head { top: calc(var(--header-h) + clamp(14px, 3vh, 40px)); }
 .film__kicker { margin: 0; font: 500 1.1rem var(--font-display) !important; letter-spacing: var(--track-small) !important; color: var(--bronze); }

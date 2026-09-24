@@ -365,7 +365,6 @@ function projectShowcase() {
   <div class="film" data-film>
     <div class="film__stack">${chapters}
     </div>
-    <div class="film__scrim" aria-hidden="true"></div>
     <header class="film__head">
       <h2 id="showcase-title" class="film__kicker">Project showcase</h2>
       <h3 class="film__title">Retail Park</h3>
