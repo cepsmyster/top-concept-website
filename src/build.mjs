@@ -346,19 +346,22 @@ const paras = (arr, cls = "") => arr.map((t) => `<p${cls ? ` class="${cls}"` : "
 
 // ───────────────────────── pages ─────────────────────────
 // Retail Park showcase: a scroll-driven film of the project's walkthrough, then the interactive 3D model.
+// Retail Park photos (from the "Retail Park" folder, saved as rp-01…08 in assets/img). pos = focal point for tall phone screens.
 const SHOWCASE_CHAPTERS = [
-  { d: "d1", m: "m1", title: "Arrival", text: "At dusk the glazed front glows behind its lattice screen." },
-  { d: "d2", m: "m2", title: "From above", text: "A long solar roof shelters the shops, with a garden court at its heart." },
-  { d: "d3", m: "m3", title: "The atrium", text: "A tall glass hall where cafés spill out beside planted terraces." },
-  { d: "d4", m: "m4", title: "The arcade", text: "A brick-lined street of shopfronts, lit warm after dark." },
-  { d: "d5", m: "m5", title: "Kiosks", text: "Small kiosks give local makers and young brands a place to start." },
-  { d: "d6", m: "m6", title: "The grove", text: "A shaded plaza of trees and seating for families and friends." },
+  { img: "rp-01", pos: "50% 50%", title: "Arrival", text: "The Retail Park sign and a shaded forecourt welcome visitors in from the road.", alt: "Entrance forecourt with the Retail Park sign and a terracotta building" },
+  { img: "rp-02", pos: "40% 50%", title: "From above", text: "One long retail spine, the market court and the pavilion, set against the dunes.", alt: "Aerial view of the retail park with its market court and pavilion beside the desert" },
+  { img: "rp-03", pos: "35% 50%", title: "The retail spine", text: "Shopfronts face a planted car park, with a cycle track along the front.", alt: "Row of shopfronts behind a landscaped car park and a red cycle track" },
+  { img: "rp-04", pos: "50% 50%", title: "The market court", text: "White shade sails cover a brick-paved court of market stalls.", alt: "Market stalls under white shade sails on a brick-paved court" },
+  { img: "rp-05", pos: "45% 50%", title: "The brick pavilion", text: "A perforated brick screen wraps the pavilion and keeps it cool by day.", alt: "Pavilion wrapped in a perforated brick screen above a glazed ground floor" },
+  { img: "rp-06", pos: "50% 50%", title: "The grove", text: "Rows of trees shade a plaza of terraces and seating.", alt: "Tree-shaded plaza with stepped terraces" },
+  { img: "rp-07", pos: "60% 50%", title: "Food pods", text: "Food pods line the promenade, with seating in the open air.", alt: "Food pods and outdoor seating along a paved promenade" },
+  { img: "rp-08", pos: "55% 50%", title: "The café", text: "A terracotta café opens straight onto the gardens.", alt: "Terracotta café kiosk with a coffee counter beside planting" },
 ];
 function projectShowcase() {
   const n = SHOWCASE_CHAPTERS.length;
   const chapters = SHOWCASE_CHAPTERS.map((c, i) => `
       <figure class="film__chapter" data-chapter="${i}">
-        <div class="film__media"><video muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-d="assets/video/retail/${c.d}.mp4" data-m="assets/video/retail/${c.m}.mp4" data-poster-d="assets/video/retail/${c.d}.jpg" data-poster-m="assets/video/retail/${c.m}.jpg"></video></div>
+        <div class="film__media">${img(c.img, { alt: c.alt, attrs: `style="object-position: ${c.pos}"` })}</div>
         <figcaption class="film__caption"><span class="film__num">${String(i + 1).padStart(2, "0")} / ${String(n).padStart(2, "0")}</span><strong>${esc(c.title)}</strong><span>${esc(c.text)}</span></figcaption>
       </figure>`).join("");
   return `<section class="feature" id="showcase" aria-labelledby="showcase-title">
@@ -372,13 +375,8 @@ function projectShowcase() {
     </header>
     <div class="film__foot">
       <div class="film__bar" aria-hidden="true"><span data-film-progress></span></div>
-      <button class="film__play" type="button" data-film-open><span class="film__play-icon" aria-hidden="true"></span>Watch the film</button>
     </div>
   </div>
-  <dialog class="film-dialog" data-film-dialog aria-label="Retail Park film">
-    <button class="film-dialog__close" type="button" data-film-close aria-label="Close film">${ICON.close}</button>
-    <video controls playsinline preload="none" poster="assets/video/retail/film.jpg" data-src="assets/video/retail/film.mp4"></video>
-  </dialog>
 
   <div class="showcase3d" data-model3d data-src="assets/js/model3d.js?v=${V}" data-assets="assets/model/">
     <div class="model__stage" data-model-stage>
@@ -398,7 +396,6 @@ function projectShowcase() {
           <button class="model__btn model__btn--icon" type="button" data-model-zoom-in aria-label="Zoom in">+</button>
           <button class="model__btn model__btn--icon" type="button" data-model-zoom-out aria-label="Zoom out">−</button>
           <button class="model__btn" type="button" data-model-reset>Reset view</button>
-          <button class="model__btn" type="button" data-film-open>Watch the film</button>
         </div>
       </div>
       <p class="model__hint" data-model-hint>Hold Ctrl (⌘ on Mac) and scroll to zoom · drag to rotate</p>

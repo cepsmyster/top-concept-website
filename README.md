@@ -69,13 +69,13 @@ Every page has scroll-driven animation in the spirit of award-style sites: smoot
 
 After Projects, the home page shows Retail Park (Sharjah) in two parts, built from the project walkthrough and renders in `Retail Park/`:
 
-1. **The film.** A full-screen section that stays in place while six clips from the walkthrough wipe over each other as you scroll: arrival at dusk, the solar roof from above, the atrium, the brick arcade, the kiosks and the grove. Wide screens get the landscape cuts (`assets/video/retail/d1–d6.mp4`) and phones get the portrait cuts (`m1–m6.mp4`). When scrolling stops half-way through a wipe, the section glides on to the next clip in the direction of travel (or back, if it had barely moved), so it always rests on one whole clip. Only the clip on screen plays, and each clip loads just before it's needed. "Watch the film" opens the full 45-second walkthrough (`film.mp4`, with sound) in a popup.
+1. **The photo story.** A full-screen section that stays in place while eight renders from the `Retail Park` folder wipe over each other as you scroll: arrival, from above, the retail spine, the market court, the brick pavilion, the grove, the food pods and the café (`assets/img/rp-01…08.webp`, from `22f, 1f, 20f, 6f, 18f, 8f, 12f, 5f`). When scrolling stops half-way through a wipe, the section glides on to the next photo in the direction of travel (or back, if it had barely moved), so it always rests on one whole photo. The captions, photo order and phone focal points (`pos`) are in `SHOWCASE_CHAPTERS` in `src/build.mjs`. To swap a photo, save it as a ~1920px WebP (plus a ~960px `-md` copy) under the same name.
 2. **Interactive 3D.** A golden-hour model of the final design, laid out from the aerial renders: the long retail spine with parking on its roof, the two-storey west block, the shade-sail market court, the terracotta Games hall, the tree plaza with its timber terraces, the pavilion wrapped in a perforated brick screen, the food pods along the promenade, the front parking, the road and cycle track, and the jogging trail running through the dunes behind. Scrolling cranes the camera from street level across the road up to the aerial view. Visitors can drag to rotate, zoom with Ctrl/⌘ + scroll (or pinch on phones), and switch labels on or off.
 
 - The 3D model is built by hand from the renders, so it shows the massing and materials rather than exact dimensions. For an exact match, export the scene from the 3D software as FBX or glTF and it can replace the hand-built model.
-- The film clips come from the dusk walkthrough (`Retail Park video.mp4`). The second video (`Retail park.mp4`) isn't used because it has Arabic subtitles burned in and includes stock footage.
+- The two walkthrough videos in `Retail Park/` are no longer used on the site (the earlier clips are in the git history).
 - To keep it smooth, the model merges its geometry into a few dozen draw calls, draws shadows once, only renders while something moves, and lowers its resolution on slower devices.
-- The viewer (`assets/js/model3d.js`, about 0.9 MB) and its textures and sky (`assets/model/`, about 5 MB) only download when a visitor scrolls near the section. The scroll clips add about 13 MB in total, loaded one at a time. The popup film is about 8 MB and loads only when someone presses play.
+- The viewer (`assets/js/model3d.js`, about 0.9 MB) and its textures and sky (`assets/model/`, about 5 MB) only download when a visitor scrolls near the section. The eight photos add about 2.4 MB on wide screens and 0.8 MB on phones.
 - Textures and the sky are CC0 assets from [Poly Haven](https://polyhaven.com).
 - The captions and text are in `projectShowcase()` in `src/build.mjs`. The model is in `src/model3d.mjs`. After editing the model, rebuild it from the `src/` folder: `npm install` (only the first time), then `npm run model`. This is the only part of the site that needs `npm`.
 
@@ -120,7 +120,6 @@ assets/js/motion.js                 scroll animation, page transitions, cursor
 assets/js/model3d.js                3D showcase (built from src/model3d.mjs)
 assets/js/vendor/                   GSAP, ScrollTrigger, SplitText, Lenis
 assets/model/                       3D textures, sky lighting
-assets/video/retail/                Retail Park film clips + posters
 assets/img/                         optimized images (WebP), logos, icons
 assets/fonts/                       self-hosted Montserrat + Inter
 src/config.mjs                      site settings (forms, socials, map pins)

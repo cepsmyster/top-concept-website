@@ -47,7 +47,7 @@
     });
     return split;
   };
-  const skip = (el) => el.closest("[data-model3d], [data-film], .film-dialog, .menu-overlay, .site-header, .carousel__caption, form");
+  const skip = (el) => el.closest("[data-model3d], [data-film], .menu-overlay, .site-header, .carousel__caption, form");
 
   // Home hero headline: the light words rise letter by letter; the bold word is drafted in outline along a
   // dimension line, then fills in solid as the finished building sweeps in behind it.
