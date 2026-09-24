@@ -503,7 +503,7 @@ ${projectShowcase()}
 ${clientsSection()}
 
 <section class="panel" id="culture-careers" aria-label="Culture and careers">
-  <div class="container panel__grid">
+  <div class="panel__grid">
     <article class="panel__item reveal">
       <h2><a href="culture.html">Culture</a></h2>
       <a class="panel__media" href="culture.html" tabindex="-1" aria-hidden="true">${img("culture-meeting", { alt: "", sizes: "(min-width: 900px) 45vw, 92vw" })}</a>

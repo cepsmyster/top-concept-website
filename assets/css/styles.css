@@ -986,3 +986,23 @@ main .prose .hd .hbr { display: none; }
 .orbit.is-3d .orbit__caption, .orbit.is-3d .orbit__bar { grid-row: 3; }
 .orbit.is-3d .orbit__bar { grid-row: 4; }
 @media (max-width: 760px) { .orbit.is-3d .orbit__ring { --cw: 74vw; top: 47%; aspect-ratio: 4 / 5; } }
+
+/* ---------- Home: Culture & Careers ----------
+   Full screen. Two landscape cards side by side, one big and one small; hovering (or tabbing into) the small one
+   makes it the big one. The picture, heading and description all grow and shrink together. */
+.panel { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding-block: calc(var(--header-h) + 8px) clamp(24px, 5vh, 56px); }
+.panel__grid { width: 100%; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(12px, 1.7vw, 24px); align-items: end; padding-inline: clamp(12px, 1.7vw, 24px);
+  transition: grid-template-columns .9s cubic-bezier(.65, 0, .35, 1); }
+.panel__grid:has(.panel__item:nth-child(2):is(:hover, :focus-within)) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); }
+.panel__media { aspect-ratio: 16 / 10; max-height: calc(100svh - var(--header-h) - 230px); width: 100%; }
+.panel__item { --k: 0; }
+.panel__item:nth-child(1), .panel__grid:has(.panel__item:nth-child(2):is(:hover, :focus-within)) .panel__item:nth-child(2) { --k: 1; }
+.panel__grid:has(.panel__item:nth-child(2):is(:hover, :focus-within)) .panel__item:nth-child(1) { --k: 0; }
+.panel .panel__item h2 { font-size: calc(1.5rem + var(--k) * clamp(.4rem, .2rem + 1.2vw, 1.4rem)); transition: font-size .9s cubic-bezier(.65, 0, .35, 1); }
+.panel .panel__item p { max-width: 46ch; font-size: calc(.95rem + var(--k) * .3rem); opacity: calc(.7 + var(--k) * .3); transition: font-size .9s cubic-bezier(.65, 0, .35, 1), opacity .6s; }
+@media (max-width: 760px) {
+  .panel { min-height: 0; padding-block: var(--section-y); }
+  .panel__grid, .panel__grid:has(.panel__item:nth-child(2):is(:hover, :focus-within)) { grid-template-columns: 1fr; gap: 40px; }
+  .panel__item, .panel__grid:has(.panel__item:nth-child(2):is(:hover, :focus-within)) .panel__item:nth-child(1) { --k: .6; }
+  .panel__media { max-height: none; }
+}

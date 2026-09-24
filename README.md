@@ -66,6 +66,10 @@ Every page has scroll-driven animation in the spirit of award-style sites: smoot
 - It lives in `assets/js/motion.js` and uses GSAP, ScrollTrigger, SplitText and Lenis, self-hosted in `assets/js/vendor/` (about 140 KB together).
 - Visitors with "reduce motion" switched on get the static site. If the scripts fail to load, the curtain hides itself after 4 seconds.
 
+## Culture & Careers (home page)
+
+A full-screen section with two landscape cards side by side. Culture starts big and Careers small; hovering (or tabbing into) Careers makes it the big one, and moving back swaps them again. The picture, heading and description grow and shrink together. On phones the two stack at the same size. Styles are under “Home: Culture & Careers” in `styles.css`.
+
 ## Projects ring (home page)
 
 The Projects section fills the screen and stays in place while the featured projects (`featured: true` in `projects`, `src/data.mjs`) turn past on a 3D ring as you scroll, one project per step. The front project is lit, its neighbours angle away and dim, and the caption (number, type, name) follows the front project. When scrolling stops between two projects it glides on to the nearest whole one, the same lock the Retail Park section uses (`lockSteps()` in `assets/js/motion.js`). Phones get taller portrait cards. Visitors with reduced motion get the cards in a row that scrolls sideways. The markup is in the `index.html` page in `src/build.mjs`, the motion in “Projects ring” in `motion.js`, the styles under “Home: Projects ring” in `styles.css`.
