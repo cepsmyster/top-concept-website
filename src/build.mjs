@@ -475,7 +475,7 @@ function clientsSection() {
   <a class="hero__scroll" href="#about" aria-label="Scroll to content"><span></span></a>
 </section>
 
-<section class="about container" id="about" aria-label="About us">
+<section class="about" id="about" aria-label="About us">
   <p class="about__lead">${esc(D.about.lead)}</p>
   <div class="about__more">${D.about.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}</div>
   <a class="about__btn" href="${D.about.href}"><span class="about__label">${esc(D.about.cta)}</span><span class="about__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>

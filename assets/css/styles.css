@@ -950,3 +950,5 @@ main .prose .hd .hbr { display: none; }
 /* heading and line on the left, level with the left card edge; the link on the right, level with the right card edge */
 .xp-head { align-items: flex-end; padding-inline: clamp(12px, 1.7vw, 24px); }
 .xp-head .section__lead { margin: 14px 0 0; }
+/* About us runs to the same edges as the expertise cards: lead text level with the left card edge, the paragraphs on the right level with the right card edge */
+.about { padding-inline: clamp(12px, 1.7vw, 24px); }
