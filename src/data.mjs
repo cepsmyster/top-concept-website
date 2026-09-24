@@ -156,8 +156,8 @@ export const teamLeadership = {
     "Thank you to everyone who has been part of our journey. Together, we will keep creating spaces built with purpose, integrity and lasting value.",
   ],
   people: [
-    { name: "Nawaf Al Falasi", role: "Founder", img: "leader-nawaf" },
-    { name: "Engr. Ragheed Al-Tahhan", role: "CEO & Co-Founder", img: "leader-ragheed" },
+    { name: "Nawaf Al Falasi", role: "Founder", img: "founder-nawaf" },
+    { name: "Engr. Ragheed Al-Tahhan", role: "CEO & Co-Founder", img: "founder-ragheed" },
   ],
 };
 
