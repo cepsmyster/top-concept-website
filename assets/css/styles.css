@@ -264,26 +264,26 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
 }
 
 /* Leadership (Team page): two portraits side by side, names under them, the letter below.
-   Portraits are transparent; the smoke is painted in the page colour, so it melts into dark and light alike. */
-.leaders { padding-block: clamp(48px, 7vw, 110px) clamp(40px, 6vw, 90px); }
-.leaders__people { display: flex; justify-content: center; gap: clamp(20px, 6vw, 110px); margin-top: clamp(28px, 4vw, 56px); }
-.leader { margin: 0; width: min(360px, 44vw); text-align: center; }
-.leader__media { position: relative; aspect-ratio: 1174 / 1123; isolation: isolate; }
-.leader__media img { width: 100%; height: 100%; object-fit: contain; }
-:root[data-theme="dark"] .leader__media img { filter: brightness(.9) contrast(1.04); }
-.leader__smoke {
-  position: absolute; left: -14%; right: -14%; bottom: -2px; height: 46%; pointer-events: none;
-  background: var(--bg); transition: background-color .3s;
-  -webkit-mask: url("../img/smoke.webp") 0 100% / 200% 100% no-repeat; mask: url("../img/smoke.webp") 0 100% / 200% 100% no-repeat;
-  animation: smoke-drift 38s ease-in-out infinite alternate;
+   Sits on a fixed white-grey backdrop (Leadership/Update/Company Profile) that stays the same in dark and light mode,
+   so its colours are set here rather than taken from the theme. */
+.leaders {
+  --lead-fg: #151515; --lead-muted: #5b5b5b;
+  position: relative; padding-block: clamp(56px, 8vw, 120px);
+  color: var(--lead-fg);
+  background: #d4d4d4 url("../img/leaders-bg.webp") center / cover no-repeat fixed;
 }
-@keyframes smoke-drift { to { -webkit-mask-position: 100% 100%; mask-position: 100% 100%; } }
-@media (prefers-reduced-motion: reduce) { .leader__smoke { animation: none; } }
-.leader figcaption { position: relative; margin-top: -12%; display: grid; gap: 4px; }
+.leaders h2, .leaders p, .leaders strong { color: var(--lead-fg); }
+@media (max-width: 900px), (hover: none) { .leaders { background-image: url("../img/leaders-bg-md.webp"); background-attachment: scroll; } } /* iOS ignores "fixed" backgrounds */
+.leaders__people { display: flex; justify-content: center; gap: clamp(20px, 6vw, 110px); margin-top: clamp(28px, 4vw, 56px); }
+.leader { margin: 0; width: min(380px, 44vw); text-align: center; }
+.leader__media { position: relative; aspect-ratio: 1174 / 1123; }
+.leader__media img { width: 100%; height: 100%; object-fit: contain; -webkit-mask-image: linear-gradient(#000 72%, transparent 97%); mask-image: linear-gradient(#000 72%, transparent 97%); }
+.leader figcaption { position: relative; margin-top: -4%; display: grid; gap: 4px; }
 .leader__name { font: italic 500 clamp(1.05rem, .95rem + .4vw, 1.3rem) var(--font-display); letter-spacing: var(--track-small); }
-.leader__role { font-size: .9rem; color: var(--muted); }
+.leader__role { font-size: .9rem; color: var(--lead-muted); }
 .leaders__text { max-width: 980px; margin: clamp(36px, 5vw, 72px) auto 0; }
 .leaders__text p { font-size: clamp(1rem, .95rem + .3vw, 1.2rem); line-height: 1.55; margin-bottom: 1.2em; }
+.leaders__text p:last-child { margin-bottom: 0; }
 .leaders__text p:first-child { font: 500 clamp(1.3rem, 1.05rem + .9vw, 1.9rem)/1.3 var(--font-display); letter-spacing: var(--track-small); }
 @media (max-width: 560px) { .leaders__people { gap: 14px; } .leader__name { font-size: .98rem; } .leader__role { font-size: .8rem; } }
 

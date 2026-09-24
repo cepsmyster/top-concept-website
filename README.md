@@ -85,7 +85,7 @@ All headings are Inter Medium with −50 tracking (`--track-head: -.05em`), in s
 
 ## Leadership, logo and loader
 
-- **Leadership (Team page):** the two founders side by side, names under them, the letter below. The portraits (`assets/img/leader-*.webp`) are transparent: each person sits in a soft oval of light cut from the photos in `Leadership/`, and a slow-drifting smoke layer (`assets/img/smoke.webp`, used as a mask) is painted in the page colour, so it melts into the dark and the light theme alike. Names, roles and the letter are in `teamLeadership` in `src/data.mjs`.
+- **Leadership (Team page):** the two founders side by side, names under them, the letter below. The portraits (`assets/img/leader-*.webp`) are the transparent cut-outs from `Leadership/Update/`. The section sits on a fixed white-grey backdrop (`assets/img/leaders-bg.webp`, from the same folder) that stays put while the page scrolls and looks the same in dark and light mode: its text colours are set in `.leaders` rather than taken from the theme. Phones get the backdrop without the fixed effect, since iOS does not support it. Names, roles and the letter are in `teamLeadership` in `src/data.mjs`.
 - **Logo:** the header, menu and loader use the TCI wordmark only (`assets/img/wordmark-*.png`). The footer keeps the full logo with "Architects · Engineers · Designers".
 - **Loader:** on a blueprint grid, the wordmark is built up floor by floor behind a gold laser level while a dimension line measures it out in millimetres. It lives in `lift()` in `assets/js/motion.js` and the `.curtain` styles.
 

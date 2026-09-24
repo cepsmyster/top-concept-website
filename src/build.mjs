@@ -696,7 +696,7 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
     <h2 id="team-lead-title" class="leaders__title">Leadership</h2>
     <div class="leaders__people">
       ${D.teamLeadership.people.map((p, i) => `<figure class="leader reveal" style="--d:${i * 120}ms">
-        <div class="leader__media">${img(p.img, { alt: `Portrait of ${p.name}`, sizes: "(min-width: 900px) 360px, 44vw" })}<span class="leader__smoke" aria-hidden="true"></span></div>
+        <div class="leader__media">${img(p.img, { alt: `Portrait of ${p.name}`, sizes: "(min-width: 900px) 360px, 44vw" })}</div>
         <figcaption><strong class="leader__name">${esc(p.name)}</strong><span class="leader__role">${esc(p.role)}</span></figcaption>
       </figure>`).join("")}
     </div>
