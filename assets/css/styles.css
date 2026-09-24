@@ -198,13 +198,21 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
 .menu-blogs__dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .menu-blogs__all { font: 500 .85rem var(--font-head); text-decoration: underline; text-underline-offset: 4px; color: var(--card-muted); }
 .menu-blogs__all:hover { color: var(--card-fg); }
-.menu-blogs__track { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 20px; padding: 0 20px 6px; scrollbar-width: thin; }
+/* Blog strip: drifts slowly to the right on a loop (the cards are listed twice, so the loop has no seam).
+   Runs only while the menu is open; pauses on hover or keyboard focus; still for reduced motion. */
+.menu-blogs__viewport { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
+.menu-blogs__track { --gap: 12px; display: flex; gap: var(--gap); width: max-content; padding-bottom: 6px; animation: blogs-drift 90s linear infinite; animation-play-state: paused; will-change: transform; }
+.menu-overlay.is-open .menu-blogs__track { animation-play-state: running; }
+.menu-blogs__viewport:hover .menu-blogs__track, .menu-blogs__viewport:focus-within .menu-blogs__track { animation-play-state: paused; }
+@keyframes blogs-drift { from { transform: translateX(calc(-50% - var(--gap) / 2)); } to { transform: translateX(0); } }
 /* blog cards glide in slowly from the left, one after another, when the menu opens */
-.menu-blog { --i: 0; flex: 0 0 min(236px, 68vw); scroll-snap-align: start; opacity: 0; transform: translateX(-90px); transition: opacity .9s, transform 1.6s var(--ease); }
-.menu-blog:nth-child(2) { --i: 1; } .menu-blog:nth-child(3) { --i: 2; } .menu-blog:nth-child(4) { --i: 3; }
-.menu-blog:nth-child(5) { --i: 4; } .menu-blog:nth-child(6) { --i: 5; } .menu-blog:nth-child(n + 7) { --i: 6; }
-.menu-overlay.is-open .menu-blog { opacity: 1; transform: none; transition-delay: calc(.45s + var(--i) * .16s); }
-@media (prefers-reduced-motion: reduce) { .menu-blog { transform: none; transition: opacity .3s; } }
+.menu-blog { flex: 0 0 min(236px, 68vw); opacity: 0; transition: opacity .8s .35s; }
+.menu-overlay.is-open .menu-blog { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .menu-blogs__track { animation: none; }
+  .menu-blogs__viewport { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .menu-blog[aria-hidden="true"] { display: none; }
+}
 .menu-blog a { display: block; }
 .menu-blog__media { aspect-ratio: 4 / 3; overflow: hidden; border-radius: 3px; background: var(--card-chip); margin-bottom: 10px; }
 .menu-blog__media img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
@@ -228,7 +236,7 @@ h1 em, h2 em, h3 em, .hero__title em { font-style: italic; font-weight: 500; }
   .menu-overlay__head { height: 56px; padding-left: 16px; }
   .menu-overlay nav { padding: 18px 16px 22px; }
   .menu-blogs__head, .menu-overlay__foot { padding-inline: 16px; }
-  .menu-blogs__track { padding-inline: 16px; scroll-padding-inline: 16px; }
+  .menu-blogs__track { --gap: 10px; }
 }
 
 /* Clients: copy left, logo tiles drifting upwards right (pauses on hover; static for reduced motion) */

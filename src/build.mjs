@@ -77,8 +77,9 @@ const brandLogos = (h = "") => `<img class="logo--on-light" src="assets/img/word
 const themeToggle = (cls = "") => `<button class="theme-toggle${cls}" type="button" data-theme-toggle aria-label="Switch to light theme" title="Switch theme">
         <span class="theme-toggle__sun">${ICON.sun}</span><span class="theme-toggle__moon">${ICON.moon}</span>
       </button>`;
-function menuBlogCard(b) {
-  return `<li class="menu-blog"><a href="blog-${b.slug}.html">
+// `copy` = the second set in the looping strip: hidden from screen readers and keyboard
+function menuBlogCard(b, copy = false) {
+  return `<li class="menu-blog"${copy ? ' aria-hidden="true"' : ""}><a href="blog-${b.slug}.html"${copy ? ' tabindex="-1"' : ""}>
           <div class="menu-blog__media">${img(b.img, { alt: "", sizes: "240px" })}</div>
           <time datetime="${b.date}">${fmtDate(b.date)}</time>
           <h3>${esc(b.title)}</h3>
@@ -124,7 +125,7 @@ function header({ solid, current }) {
         <h2 id="menu-blogs-title"><span class="menu-blogs__dot" aria-hidden="true"></span>Latest blogs</h2>
         <a class="menu-blogs__all" href="blogs.html"${cur === "blogs" ? ' aria-current="page"' : ""}>See all blogs</a>
       </div>
-      <ul class="menu-blogs__track">${D.blogs.map(menuBlogCard).join("")}</ul>
+      <div class="menu-blogs__viewport"><ul class="menu-blogs__track">${D.blogs.map((x) => menuBlogCard(x)).join("")}${D.blogs.map((x) => menuBlogCard(x, true)).join("")}</ul></div>
     </section>
     <div class="menu-overlay__foot">
       <small>© TCI ${new Date().getFullYear()}</small>
