@@ -618,7 +618,7 @@ function xpCard(c, { id = true } = {}) {
     current: "expertise",
     body: `
 ${simpleHero({ img: "hero-expertise", alt: E.heroAlt, title: E.heroTitle })}
-<section class="intro container" id="intro">
+<section class="intro intro--edge" id="intro">
   <h2>${esc(E.heading)}</h2>
   <p>${esc(E.intro)}</p>
 </section>

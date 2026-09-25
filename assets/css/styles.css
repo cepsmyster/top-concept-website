@@ -952,6 +952,8 @@ main .prose .hd .hbr { display: none; }
 .xp-head .section__lead { margin: 14px 0 0; }
 /* About us runs to the same edges as the expertise cards: lead text level with the left card edge, the paragraphs on the right level with the right card edge */
 .about { padding-inline: clamp(12px, 1.7vw, 24px); }
+/* Expertise page intro: heading and text level with the left edge of the cards below */
+.intro--edge { padding-inline: clamp(12px, 1.7vw, 24px); }
 
 /* ---------- Home: Projects ring ----------
    Full screen. With the motion layer (.is-3d, motion.js) the featured projects sit on a 3D ring that turns as you
