@@ -81,14 +81,13 @@
 
   // Pinned, scrubbed sections that move in steps (the showcase photos, the projects ring): when scrolling stops
   // between two steps, glide on to the next one in the direction of travel (or back, if it had barely moved),
-  // so the section always rests on one whole step. dur() = timeline length in steps; last = index of the final step
-  // (a number, or a function when the number of steps can change).
+  // so the section always rests on one whole step. dur() = timeline length in steps; last = index of the final step.
   const lockSteps = (st, dur, last) => {
     let dir = 1, idle = 0, snapping = false, lastY = window.scrollY;
     const snap = () => {
       if (!st.isActive || snapping) return;
       const t = st.progress * dur();
-      if (t >= (typeof last === "function" ? last() : last)) return;
+      if (t >= last) return;
       const base = Math.floor(t), f = t - base;
       if (f < 0.01 || f > 0.99) return;
       const to = dir > 0 ? (f > 0.15 ? base + 1 : base) : (f < 0.85 ? base : base + 1);
@@ -233,43 +232,17 @@
       gsap.from($(".orbit__card", orbit), { yPercent: 25, scale: 0.85, autoAlpha: 0, duration: 1.6, stagger: 0.08, ease: EASE, scrollTrigger: { trigger: orbit, start: "top 70%", once: true } });
     }
 
-    /* Projects page reel: full screen and pinned like the home Projects ring, but straight: each project slides
-       up into place as you scroll, one project per step, and rests there. The filters rebuild it for the projects shown. */
-    const reel = $("[data-reel]");
-    if (reel) {
-      const list = $("[data-projects]", reel);
-      const num = $("[data-reel-num]", reel), bar = $("[data-reel-progress]", reel);
-      reel.classList.add("is-live");
-      let items = [], n = 0, active = -1;
-      const place = (t) => { // t = position in steps (0 … n-1)
-        items.forEach((it, i) => {
-          const d = i - t, a = Math.abs(d);
-          it.style.setProperty("--d", d.toFixed(4));
-          it.style.setProperty("--o", (d < 0 ? Math.max(0, 1 + d * 1.6) : 1).toFixed(3)); // the one leaving fades as it goes
-          it.style.setProperty("--dim", Math.min(1, a).toFixed(3));
-          it.classList.toggle("is-front", a < 0.5);
-        });
-        const k = Math.min(n - 1, Math.max(0, Math.round(t)));
-        if (k !== active && n) { active = k; num.textContent = String(k + 1).padStart(2, "0"); }
-      };
-      const collect = () => {
-        $$(".reel__item", list).forEach((it) => it.classList.remove("is-front"));
-        items = $$(".reel__item:not([hidden])", list);
-        n = items.length; active = -1;
-        place(0);
-      };
-      collect();
-      const rst = ScrollTrigger.create({
-        trigger: reel, start: "top top", end: () => "+=" + Math.max(1, Math.round((n - 1) * window.innerHeight * 0.85)), pin: true, scrub: 0.6,
-        onUpdate: (st) => { place(st.progress * Math.max(0, n - 1)); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
+    /* Project page, more views: pinned; the row of photos slides from right to left as you scroll down */
+    const hs = $("[data-hshots]");
+    if (hs) {
+      const track = $("[data-hshots-track]", hs), bar = $("[data-hshots-progress]", hs);
+      hs.classList.add("is-live");
+      const dist = () => Math.max(0, track.scrollWidth - hs.clientWidth);
+      gsap.to(track, {
+        x: () => -dist(), ease: "none",
+        scrollTrigger: { trigger: hs, start: "top top", end: () => "+=" + Math.max(1, dist()), pin: true, scrub: 0.6, invalidateOnRefresh: true,
+          onUpdate: (st) => { if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; } },
       });
-      lockSteps(rst, () => Math.max(1, n - 1), () => Math.max(0, n - 1));
-      list.addEventListener("projects:filter", (e) => {
-        collect();
-        ScrollTrigger.refresh();
-        if (e.detail?.push) { if (lenis) lenis.scrollTo(rst.start, { immediate: true }); else window.scrollTo(0, rst.start); }
-      });
-      gsap.from($$(".reel__head, .reel__filters", reel), { y: 30, autoAlpha: 0, duration: 1.2, stagger: 0.1, ease: EASE, scrollTrigger: { trigger: reel, start: "top 75%", once: true } });
     }
 
     /* Project showcase film: pinned; each chapter wipes up over the last as you scroll */
@@ -367,7 +340,7 @@
     window.addEventListener("scroll", queue, { passive: true });
     document.addEventListener("pointerleave", () => cad.classList.remove("is-on"));
     const LABELS = [
-      [".proj-card, .reel__card, .blog-card, .ex-card, .xp__media, .orbit__card, .showcase__media, .menu-blog", "View"],
+      [".proj-card, .blog-card, .ex-card, .xp__media, .orbit__card, .showcase__media, .menu-blog", "View"],
       ["[data-track]", "Drag"],
       ["[data-model-stage] canvas", "Explore"],
       ["[data-film] .film__stack", "Scroll"],

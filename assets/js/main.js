@@ -233,7 +233,7 @@
   (() => {
     const grid = $("[data-projects]");
     if (!grid) return;
-    const cards = $$(".reel__item", grid);
+    const cards = $$(".proj-card", grid);
     const chips = $$("[data-chips] .chip");
     const note = $("[data-filter-note]");
     const empty = $("[data-empty]");
@@ -252,8 +252,6 @@
       });
       chips.forEach((c) => { const on = c.dataset.filter === type; c.classList.toggle("is-active", on); c.setAttribute("aria-pressed", String(on)); });
       if (empty) empty.hidden = shown > 0;
-      const total = $("[data-reel-total]");
-      if (total) total.textContent = String(shown).padStart(2, "0");
       if (note) {
         if (cat) {
           note.hidden = false;
@@ -271,7 +269,6 @@
         if (cat) p.set("cat", cat);
         history.replaceState(null, "", location.pathname + (p.toString() ? "?" + p : ""));
       }
-      grid.dispatchEvent(new CustomEvent("projects:filter", { detail: { push } })); // motion.js rebuilds the reel
     };
     chips.forEach((c) => c.addEventListener("click", () => { type = c.dataset.filter; cat = ""; apply(true); }));
     apply(false);
