@@ -331,6 +331,16 @@ function projectCard(p, i = 0) {
   </a>`;
 }
 
+// Projects page: one project per screen. The card holds the image with the type and name underneath.
+function reelItem(p) {
+  return `<li class="reel__item" data-type="${p.type}" data-cat="${p.cat}">
+        <a class="reel__card" href="project-${p.slug}.html">
+          <span class="reel__media">${img(p.img, { alt: p.alt, sizes: "(min-width: 900px) 60vw, 90vw" })}</span>
+          <span class="reel__meta"><span class="reel__label">${esc(p.label)}</span><span class="reel__title">${esc(p.title)}</span></span>
+        </a>
+      </li>`;
+}
+
 function pageHero({ img: name, alt, title, current, openBand = false }) {
   // openBand: the tabs sit inside a black band that the caller must close with </div>
   return `
@@ -577,13 +587,22 @@ ${simpleHero({ img: "hero-projects", alt: P.heroAlt, title: P.heroTitle })}
     <a class="link-caps" href="project-${show.slug}.html">View project</a>
   </div>
 </section>
-<section class="container projects-all" id="all-projects" aria-label="All projects">
-  <div class="chips" role="group" aria-label="Filter projects" data-chips>${chips}</div>
-  <p class="filter-note" data-filter-note hidden></p>
-  <div class="proj-grid" data-projects>
-    ${D.projects.map(projectCard).join("")}
+<section class="reel" id="all-projects" data-reel aria-labelledby="reel-title">
+  <div class="reel__stage">
+    <div class="reel__head">
+      <h2 id="reel-title">All projects</h2>
+      <span class="reel__count" aria-live="polite"><span data-reel-num>01</span> / <span data-reel-total>${String(D.projects.length).padStart(2, "0")}</span></span>
+    </div>
+    <div class="reel__filters">
+      <div class="chips" role="group" aria-label="Filter projects" data-chips>${chips}</div>
+      <p class="filter-note" data-filter-note hidden></p>
+    </div>
+    <ol class="reel__list" data-projects>
+      ${D.projects.map(reelItem).join("")}
+    </ol>
+    <p class="empty" data-empty hidden>No projects match this filter yet.</p>
+    <div class="reel__bar" aria-hidden="true"><span data-reel-progress></span></div>
   </div>
-  <p class="empty" data-empty hidden>No projects match this filter yet.</p>
 </section>
 ${cta()}`,
   });
@@ -641,7 +660,7 @@ for (const p of D.projects) {
   page({
     file: `project-${p.slug}.html`,
     title: p.title,
-    description: `${p.title} — ${p.label} project by Top Concept International. ${D.labelBlurbs[p.label] || ""}`.trim(),
+    description: `${p.title} — ${p.label} project by Top Concept International. ${p.text || D.labelBlurbs[p.label] || ""}`.trim(),
     solid: true,
     ogImage: `${p.img}-md.webp`,
     body: `
@@ -650,14 +669,15 @@ for (const p of D.projects) {
     <p class="crumbs"><a href="projects.html">Projects</a><span aria-hidden="true">/</span><a href="projects.html?type=${p.type}">${esc(typeLabel)}</a></p>
     <p class="project__label">${esc(p.label)}</p>
     <h1>${esc(p.title)}</h1>
-    <p class="project__blurb">${esc(D.labelBlurbs[p.label] || "")}</p>
+    <p class="project__blurb">${esc(p.text || D.labelBlurbs[p.label] || "")}</p>
   </header>
   <div class="container">
     <div class="project__gallery${gallery.length > 1 ? " project__gallery--multi" : ""}${tall ? " is-tall" : ""}">
       ${gallery
         .map((g, i) => {
-          const alt = i === 0 ? p.alt : `${p.title} — view ${i + 1}`;
-          return `<a class="project__shot${i === 0 ? " project__shot--lead" : ""}" href="assets/img/${g}.webp" data-lightbox data-caption="${esc(p.title)}">${img(g, { alt, eager: i === 0, sizes: i === 0 ? "(min-width: 1000px) 1200px, 96vw" : "(min-width: 900px) 30vw, 92vw" })}</a>`;
+          const plan = p.drawings?.includes(g);
+          const alt = i === 0 ? p.alt : `${p.title} — ${plan ? "drawing" : "view"} ${i + 1}`;
+          return `<a class="project__shot${i === 0 ? " project__shot--lead" : ""}${plan ? " project__shot--plan" : ""}" href="assets/img/${g}.webp" data-lightbox data-caption="${esc(p.title)}">${img(g, { alt, eager: i === 0, sizes: i === 0 ? "(min-width: 1000px) 1200px, 96vw" : "(min-width: 900px) 30vw, 92vw" })}</a>`;
         })
         .join("")}
     </div>
