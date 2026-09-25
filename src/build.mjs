@@ -631,7 +631,8 @@ ${cta()}`,
 
 // PROJECT DETAIL
 for (const p of D.projects) {
-  const shots = p.gallery || []; // { img, cap }: shown in a row that slides sideways as you scroll
+  // With more photos, the main image and the rest ({ img, cap }) sit side by side in one row that slides sideways as you scroll
+  const shots = p.gallery ? [{ img: p.img, cap: p.alt }, ...p.gallery] : [];
   const meta = META[p.img];
   const related = [...D.projects.filter((x) => x.slug !== p.slug && x.type === p.type), ...D.projects.filter((x) => x.slug !== p.slug && x.type !== p.type)].slice(0, 3);
   const idx = D.projects.findIndex((x) => x.slug === p.slug);
@@ -652,17 +653,17 @@ for (const p of D.projects) {
     <h1>${esc(p.title)}</h1>
     <p class="project__blurb">${esc(p.text || D.labelBlurbs[p.label] || "")}</p>
   </header>
-  <div class="container">
+  ${shots.length ? "" : `<div class="container">
     <div class="project__gallery${tall ? " is-tall" : ""}">
       <a class="project__shot project__shot--lead" href="assets/img/${p.img}.webp" data-lightbox data-caption="${esc(p.title)}">${img(p.img, { alt: p.alt, eager: true, sizes: "(min-width: 1000px) 1200px, 96vw" })}</a>
     </div>
-  </div>${shots.length ? `
-  <section class="hshots" data-hshots aria-label="More views of ${esc(p.title)}">
+  </div>`}${shots.length ? `
+  <section class="hshots" data-hshots aria-label="Photos of ${esc(p.title)}">
     <div class="hshots__stage">
       <div class="hshots__track" data-hshots-track>
         ${shots
           .map((g, i) => `<figure class="hshots__item">
-          <a class="hshots__shot" href="assets/img/${g.img}.webp" data-lightbox data-caption="${esc(g.cap)}">${img(g.img, { alt: g.cap, sizes: "(min-width: 900px) 60vw, 85vw" })}</a>
+          <a class="hshots__shot" href="assets/img/${g.img}.webp" data-lightbox data-caption="${esc(g.cap)}">${img(g.img, { alt: g.cap, eager: i === 0, sizes: "(min-width: 900px) 60vw, 85vw" })}</a>
           <figcaption><span class="hshots__num">${String(i + 1).padStart(2, "0")} / ${String(shots.length).padStart(2, "0")}</span>${esc(g.cap)}</figcaption>
         </figure>`)
           .join("")}

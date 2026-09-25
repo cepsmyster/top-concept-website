@@ -232,7 +232,7 @@
       gsap.from($(".orbit__card", orbit), { yPercent: 25, scale: 0.85, autoAlpha: 0, duration: 1.6, stagger: 0.08, ease: EASE, scrollTrigger: { trigger: orbit, start: "top 70%", once: true } });
     }
 
-    /* Project page, more views: pinned; the row of photos slides from right to left as you scroll down */
+    /* Project page photos: pinned; the main image and the other photos sit in one row that slides from right to left as you scroll down */
     const hs = $("[data-hshots]");
     if (hs) {
       const track = $("[data-hshots-track]", hs), bar = $("[data-hshots-progress]", hs);
@@ -240,7 +240,7 @@
       const dist = () => Math.max(0, track.scrollWidth - hs.clientWidth);
       gsap.to(track, {
         x: () => -dist(), ease: "none",
-        scrollTrigger: { trigger: hs, start: "top top", end: () => "+=" + Math.max(1, dist()), pin: true, scrub: 0.6, invalidateOnRefresh: true,
+        scrollTrigger: { trigger: hs, start: "center center", end: () => "+=" + Math.max(1, dist()), pin: true, scrub: 0.6, invalidateOnRefresh: true,
           onUpdate: (st) => { if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; } },
       });
     }

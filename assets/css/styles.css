@@ -1006,10 +1006,10 @@ main .prose .hd .hbr { display: none; }
 }
 
 
-/* ---------- Project page: more views ----------
-   The other photos sit in one row with a short caption under each. With the script (.is-live) the section is pinned
+/* ---------- Project page: photo row ----------
+   The main image and the other photos sit side by side in one row, a short caption under each. With the script (.is-live) the section is pinned
    and the row slides from right to left as you scroll down; without it the row scrolls sideways by hand. */
-.hshots { --sh: min(58svh, 44vw); margin-top: clamp(24px, 3vw, 44px); overflow: hidden; }
+.hshots { --sh: min(58svh, 44vw); margin-top: clamp(12px, 2vw, 28px); overflow: hidden; }
 .hshots__stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(18px, 3vh, 32px); }
 .hshots__track { display: flex; align-items: flex-start; gap: clamp(12px, 1.7vw, 24px); padding-inline: var(--gutter); overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: none; }
 .hshots__item { flex: none; margin: 0; scroll-snap-align: start; }
@@ -1021,6 +1021,6 @@ main .prose .hd .hbr { display: none; }
 .hshots__bar { justify-self: center; width: min(320px, 60vw); height: 1px; background: var(--line); overflow: hidden; }
 .hshots__bar span { display: block; height: 100%; background: var(--fg); transform: scaleX(0); transform-origin: 0 50%; }
 .hshots:not(.is-live) .hshots__bar { display: none; }
-.hshots.is-live .hshots__stage { height: 100vh; height: 100svh; align-content: center; padding-top: var(--header-h); }
+.hshots.is-live .hshots__stage { padding-block: clamp(8px, 2vh, 24px); }
 .hshots.is-live .hshots__track { overflow: visible; width: max-content; will-change: transform; }
 @media (max-width: 760px) { .hshots { --sh: min(46svh, 70vw); } }
