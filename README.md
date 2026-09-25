@@ -14,7 +14,7 @@ Built from the design files in `New Website/`.
 |---|---|
 | Home (full-screen interactive concept → completion hero, about us, rotating projects ring, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
 | Expertise (ten fields as big cards, two per row) | `expertise.html` |
-| Projects ("View the Work" hero, showcase, filterable grid) + one page per project | `projects.html`, `project-*.html` |
+| Projects ("View the Work" hero, showcase, then all projects one per screen as you scroll, with filters; styles under "Projects page: reel", motion under "Projects page reel" in `motion.js`) + one page per project | `projects.html`, `project-*.html` |
 | Blogs + one page per article | `blogs.html`, `blog-*.html` |
 | Team · Culture · Careers | `team.html`, `culture.html`, `careers.html` |
 | Contact · Privacy · 404 | `contact.html`, `privacy.html`, `404.html` |
