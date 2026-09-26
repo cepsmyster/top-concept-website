@@ -79,7 +79,7 @@
       .add(() => { split.revert(); title.classList.remove("is-draft"); });
   };
 
-  // Pinned, scrubbed sections that move in steps (the showcase photos, the projects ring): when scrolling stops
+  // Pinned, scrubbed sections that move in steps (the showcase photos, the projects drum): when scrolling stops
   // between two steps, glide on to the next one in the direction of travel (or back, if it had barely moved),
   // so the section always rests on one whole step. dur() = timeline length in steps; last = index of the final step.
   const lockSteps = (st, dur, last) => {
@@ -207,7 +207,7 @@
       const size = () => { R = (ring.offsetWidth * (1 + GAP) / 2) / Math.tan((S / 2) * Math.PI / 180); ring.style.setProperty("--r", R.toFixed(1) + "px"); };
       size();
       window.addEventListener("resize", size);
-      const from = -0.6, to = n - 1 + 0.6; // in cards: the first project starts just right of the middle, the last ends just left of it
+      const from = -0.8; // in cards: while the section scrolls in, the first project comes in from just right of the middle
       const clamp = (v, a) => Math.max(-a, Math.min(a, v));
       let target = from;
       // one spring per card; the leading cards answer a little faster than the trailing ones, so the row stretches and gathers
@@ -217,20 +217,23 @@
           c.v = (c.v + (target - c.x) * c.k) * 0.8; // spring + damping (a touch of overshoot)
           c.x += c.v;
           const d = c.i - c.x; // 0 = in the middle, positive = to the right
+          const u = Math.min(d * d, 4) * ring.offsetWidth * 0.09, lean = clamp(-d * 5, 12); // the row dips like a U: cards rise and lean as they leave the middle
           const flap = clamp(-c.v * 420, 22), sway = clamp(c.v * 50, 3); // bend away from the direction of travel, like paper through air
           const bob = Math.sin(time * 0.9 + c.seed) * 5, tilt = Math.sin(time * 0.7 + c.seed * 1.3) * 1.2, drift = Math.sin(time * 0.55 + c.seed * 2.1) * 1.6;
-          c.el.style.transform = `rotateY(${(d * S).toFixed(3)}deg) translateZ(${R.toFixed(1)}px) translateY(${bob.toFixed(2)}px) rotateY(${(flap + drift).toFixed(2)}deg) rotateX(${tilt.toFixed(2)}deg) rotateZ(${(sway).toFixed(2)}deg)`;
+          c.el.style.transform = `rotateY(${(d * S).toFixed(3)}deg) translateZ(${R.toFixed(1)}px) translateY(${(bob - u).toFixed(2)}px) rotateY(${(flap + drift).toFixed(2)}deg) rotateX(${tilt.toFixed(2)}deg) rotateZ(${(lean + sway).toFixed(2)}deg)`;
           c.el.style.setProperty("--px", (clamp(d, 1.5) * 4).toFixed(2) + "%");
           c.el.style.pointerEvents = Math.abs(d) < 3 ? "" : "none";
         }
       };
       frame(0);
       const tick = (time) => frame(time);
-      const pin = ScrollTrigger.create({ trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.6), pin: true });
-      ScrollTrigger.create({
-        trigger: orbit, start: "top 80%", end: () => pin.end, invalidateOnRefresh: true,
-        onUpdate: (st) => { target = from + (to - from) * gsap.parseEase("power1.inOut")(st.progress); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
+      // pinned: one project per step, and when scrolling stops between two it glides on to the nearest whole one
+      const pin = ScrollTrigger.create({
+        trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.8), pin: true,
+        onUpdate: (st) => { target = st.progress * (n - 1); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
       });
+      lockSteps(pin, () => n - 1, n - 1);
+      ScrollTrigger.create({ trigger: orbit, start: "top 80%", end: "top top", onUpdate: (st) => { if (!pin.isActive) target = from * (1 - st.progress); } });
       // the springs only run while the section is on screen
       ScrollTrigger.create({ trigger: orbit, start: "top bottom", end: () => pin.end + window.innerHeight, onToggle: (st) => (st.isActive ? gsap.ticker.add(tick) : gsap.ticker.remove(tick)) });
     }
