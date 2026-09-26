@@ -167,7 +167,7 @@ export const projects = [
     { img: "rp-08", cap: "A terracotta café opens straight onto the gardens." },
   ] },
   { slug: "residential-interior", title: "Residential interior", label: "Interior Design", cat: "interior-design", type: "interior", img: "p-residential-interior", alt: "Living room with a modern pendant light and garden views" },
-  { slug: "minsk-villa", text: "A villa interior in soft neutrals: an open living room, kitchen and dining space under linear lights, with dark timber shelving and a double-sided fire.", title: "Minsk Villa", label: "Interior Design", cat: "interior-design", type: "interior", img: "p-minsk-villa", alt: "Open living room of the Minsk Villa with cream sofas and timber floors", gallery: [
+  { slug: "minsk-villa", text: "A villa interior in Minsk, Belarus, finished in soft neutrals: an open living room, kitchen and dining space under linear lights, with dark timber shelving and a double-sided fire.", title: "Minsk Villa", label: "Interior Design", cat: "interior-design", type: "interior", img: "p-minsk-villa", alt: "Open living room of the Minsk Villa with cream sofas and timber floors", gallery: [
     { img: "p-minsk-villa-2", cap: "Lounge chairs in front of the timber shelving" },
     { img: "p-minsk-villa-3", cap: "The living room, open to the kitchen bar" },
     { img: "p-minsk-villa-4", cap: "The TV lounge, with sea views through the glass" },
@@ -178,7 +178,7 @@ export const projects = [
     { img: "p-minsk-villa-9", cap: "A quiet corner by the curtains" },
     { img: "p-minsk-villa-10", cap: "A tall mirror and flowers in the entrance hall" },
   ] },
-  { slug: "classical-interior", text: "A classical living and dining room: deep green walls, white panelling, crystal chandeliers and a marble floor with a chequered inlay.", title: "Classical interior", label: "Interior Design", cat: "interior-design", type: "interior", img: "p-classical-interior", alt: "Classical living room with green walls, crystal chandelier and white sofas", gallery: [
+  { slug: "classical-interior", text: "A classical living and dining room in London: deep green walls, white panelling, crystal chandeliers and a marble floor with a chequered inlay.", title: "Classical interior", label: "Interior Design", cat: "interior-design", type: "interior", img: "p-classical-interior", alt: "Classical living room with green walls, crystal chandelier and white sofas", gallery: [
     { img: "p-classical-interior-2", cap: "The living room, looking through to the dining room" },
     { img: "p-classical-interior-3", cap: "Armchairs around the marble fireplace" },
     { img: "p-classical-interior-4", cap: "The view from the sofa to the dining room" },
