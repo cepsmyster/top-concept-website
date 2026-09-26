@@ -47,7 +47,7 @@
     });
     return split;
   };
-  const skip = (el) => el.closest("[data-model3d], [data-film], .menu-overlay, .site-header, .carousel__caption, form");
+  const skip = (el) => el.closest("[data-model3d], [data-film], .menu-overlay, .site-header, .carousel__caption, .orbit__info, form"); // .orbit__info: its text changes while scrolling
 
   // Home hero headline: the light words rise letter by letter; the bold word is drafted in outline along a
   // dimension line, then fills in solid as the finished building sweeps in behind it.
@@ -79,7 +79,7 @@
       .add(() => { split.revert(); title.classList.remove("is-draft"); });
   };
 
-  // Pinned, scrubbed sections that move in steps (the showcase photos): when scrolling stops
+  // Pinned, scrubbed sections that move in steps (the showcase photos, Our Projects): when scrolling stops
   // between two steps, glide on to the next one in the direction of travel (or back, if it had barely moved),
   // so the section always rests on one whole step. dur() = timeline length in steps; last = index of the final step.
   const lockSteps = (st, dur, last) => {
@@ -191,20 +191,52 @@
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
     /* Our Projects: full screen and pinned; the big square project cards sit in a row beside the heading and slide
-       right to left as you scroll, until the last card is in view. */
+       right to left as you scroll, one project per step. When scrolling stops between two it glides on to the nearest
+       one (lockSteps). The front project is the one next to the column: it stays lit while the others dim, and the
+       column's number, name and description change to match it. Once the row has run out of room, the last steps
+       only move the highlight. */
     const orbit = $("[data-orbit]");
     if (orbit) {
       const view = $(".orbit__view", orbit), ring = $("[data-orbit-ring]", orbit);
+      const items = $$(".orbit__item", orbit), n = items.length;
+      const num = $("[data-orbit-num]", orbit), name = $("[data-orbit-name]", orbit), text = $("[data-orbit-text]", orbit);
       const bar = $("[data-orbit-progress]", orbit);
       orbit.classList.add("is-live");
-      const dist = () => Math.max(0, ring.scrollWidth - view.clientWidth);
-      gsap.to(ring, {
-        x: () => -dist(), ease: "none",
-        scrollTrigger: {
-          trigger: orbit, start: "top top", end: () => "+=" + Math.max(1, dist()), pin: true, scrub: 0.8, invalidateOnRefresh: true,
-          onUpdate: (st) => { if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
-        },
+      let step = 0, dist = 0;
+      const size = () => {
+        step = n > 1 ? items[1].offsetLeft - items[0].offsetLeft : 0;
+        dist = Math.max(0, ring.scrollWidth - view.clientWidth);
+      };
+      size();
+      window.addEventListener("resize", size);
+      let target = 0, pos = 0, active = 0;
+      const show = (k) => {
+        active = k;
+        items.forEach((it, i) => it.classList.toggle("is-active", i === k));
+        const it = items[k];
+        num.textContent = String(k + 1).padStart(2, "0");
+        gsap.to([name, text], {
+          autoAlpha: 0, y: -12, duration: 0.25, ease: "power2.in", overwrite: true,
+          onComplete: () => {
+            name.textContent = it.dataset.name; name.href = it.dataset.href; text.textContent = it.dataset.text;
+            gsap.fromTo([name, text], { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.55, ease: EASE, stagger: 0.06 });
+          },
+        });
+      };
+      const frame = () => {
+        pos += (target - pos) * 0.12; // smooth follow
+        if (Math.abs(target - pos) < 1e-4) pos = target;
+        ring.style.transform = "translate3d(" + (-Math.min(pos * step, dist)).toFixed(1) + "px,0,0)";
+        const k = Math.min(n - 1, Math.max(0, Math.round(pos)));
+        if (k !== active) show(k);
+      };
+      const st = ScrollTrigger.create({
+        trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.8), pin: true,
+        invalidateOnRefresh: true, onRefresh: size,
+        onUpdate: (self) => { target = self.progress * (n - 1); if (bar) bar.style.transform = "scaleX(" + self.progress.toFixed(3) + ")"; },
       });
+      lockSteps(st, () => n - 1, n - 1);
+      ScrollTrigger.create({ trigger: orbit, start: "top bottom", end: () => st.end + window.innerHeight, onToggle: (self) => (self.isActive ? gsap.ticker.add(frame) : gsap.ticker.remove(frame)) });
     }
 
     /* Project page photos: pinned; the main image and the other photos sit in one row that slides from right to left as you scroll down */

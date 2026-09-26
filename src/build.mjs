@@ -65,7 +65,7 @@ function boldLast(inner) {
 const capWords = (inner) => inner.split(/(<[^>]+>)/).map((part, i) => (i % 2 ? part : part.replace(/(^|[\s(])(\p{Ll})/gu, (m, a, c) => a + c.toUpperCase()))).join("");
 // Every heading on the page (h1–h6, including card, menu and article subheads) and every subheader (kickers, labels,
 // roles, the project names on the home Projects drum) get Each Word Capitalised.
-const SUBHEADS = "orbit__title|orbit__label|project__label|showcase__label|film__kicker|film__tag|model__kicker|about__label|leader__role|member__role|link-caps";
+const SUBHEADS = "orbit__name|orbit__title|orbit__label|project__label|showcase__label|film__kicker|film__tag|model__kicker|about__label|leader__role|member__role|link-caps";
 const capAllHeadings = (html) => html
   .replace(/<(h[1-6])(\s[^>]*)?>([\s\S]*?)<\/\1>/g, (all, tag, attrs = "", inner) => `<${tag}${attrs}>${capWords(inner)}</${tag}>`)
   .replace(new RegExp(`(<[a-z]+\\s[^>]*class="[^"]*\\b(?:${SUBHEADS})\\b[^"]*"[^>]*>)([^<]*)`, "g"), (all, a, t) => a + capWords(t));
@@ -446,11 +446,12 @@ function clientsSection() {
   const hero = META["hero"];
   const featured = D.projects.filter((p) => p.featured);
 
-  // Our Projects: heading and description on the left, the featured projects as big square cards in a row on the right
-  // that slides right to left as you scroll (motion.js "Our Projects"). Without the motion layer the row scrolls sideways.
+  // Our Projects: heading and the front project's number, name and description on the left; the featured projects as big
+  // square cards in a row on the right that slides right to left as you scroll, stopping on each project, while the
+  // left column changes to match (motion.js "Our Projects"). Without the motion layer the row scrolls sideways.
   const n = featured.length;
   const ring = featured
-    .map((p, i) => `<li class="orbit__item" style="--i:${i}">
+    .map((p, i) => `<li class="orbit__item${i ? "" : " is-active"}" style="--i:${i}" data-name="${esc(capWords(p.title))}" data-text="${esc(p.text || "")}" data-href="project-${p.slug}.html">
         <a class="orbit__card" href="project-${p.slug}.html">${img(p.img, { alt: p.alt, sizes: "(min-width: 900px) 46vw, 80vw" })}<span class="orbit__cap"><span class="orbit__label">${esc(p.label)}</span><strong class="orbit__title">${esc(p.title)}</strong></span></a>
       </li>`)
     .join("");
@@ -498,7 +499,11 @@ function clientsSection() {
   <div class="orbit__stage">
     <div class="orbit__intro">
       <h2 id="projects-title">Our Projects</h2>
-      <p class="orbit__text">${esc(D.projectsPage.homeIntro)}</p>
+      <div class="orbit__info" aria-live="polite">
+        <span class="orbit__count"><span data-orbit-num>01</span> / ${String(n).padStart(2, "0")}</span>
+        <a class="orbit__name" data-orbit-name href="project-${featured[0].slug}.html">${esc(featured[0].title)}</a>
+        <p class="orbit__text" data-orbit-text>${esc(featured[0].text || "")}</p>
+      </div>
       <a class="link-caps" href="projects.html">See all projects</a>
     </div>
     <div class="orbit__view"><ul class="orbit__ring" data-orbit-ring>${ring}</ul></div>

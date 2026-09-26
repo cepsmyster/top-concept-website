@@ -71,8 +71,6 @@ export const projectsPage = {
   heroAlt: "Aerial view of a retail park with a solar roof in a desert landscape",
   heading: "Ambitious ideas, built for real.",
   intro: "From waterfront masterplans to boardroom fit-outs, these are projects we took from first sketch to finished space. Filter by type to find work like yours.",
-  // home page Projects section, beside the cards
-  homeIntro: "From waterfront masterplans to boardroom fit-outs, these are projects we took from first sketch to finished space. One team stays with each one the whole way, so the design you approve is the building you get.",
   showcase: {
     slug: "retail-park",
     label: "Retail Park",
@@ -115,11 +113,11 @@ export const projectTypes = [
 // Project titles that were not in the design files are descriptive placeholders —
 // replace with the real project names when you have them.
 export const projects = [
-  { slug: "alrams-urban-development", title: "Alrams Urban Development", label: "Masterplan", cat: "urban-design", type: "masterplan", img: "p-alrams-urban-development", alt: "Aerial view of the Alrams waterfront urban development", featured: true },
-  { slug: "azizi-city-of-arabia", title: "Azizi City of Arabia", label: "Commercial", cat: "community", type: "architecture", img: "p-azizi-city-of-arabia", alt: "Azizi City of Arabia towers with sculpted white façade fins", featured: true },
-  { slug: "al-manara-center", title: "Al Manara Center", label: "Commercial", cat: "interior-design", type: "interior", img: "p-al-manara-center", alt: "Boardroom interior with a long dark table and glass partitions", featured: true },
-  { slug: "wadi-retreat", title: "Wadi retreat", label: "Hospitality", cat: "hospitality", type: "hospitality", img: "p-wadi-retreat", alt: "Retreat set in a mountain wadi with an infinity pool", featured: true },
-  { slug: "rox-showroom", title: "Rox Showroom", label: "Commercial Interior", cat: "interior-design", type: "interior", img: "p-rox-reception", alt: "Rox showroom reception desk", gallery: [
+  { slug: "alrams-urban-development", text: "A waterfront masterplan built around connected public space, easy movement and a clear sense of place, from the marina to the streets behind it.", title: "Alrams Urban Development", label: "Masterplan", cat: "urban-design", type: "masterplan", img: "p-alrams-urban-development", alt: "Aerial view of the Alrams waterfront urban development", featured: true },
+  { slug: "azizi-city-of-arabia", text: "Towers with a sculpted façade of white fins, taken from first concept to a buildable, approved design.", title: "Azizi City of Arabia", label: "Commercial", cat: "community", type: "architecture", img: "p-azizi-city-of-arabia", alt: "Azizi City of Arabia towers with sculpted white façade fins", featured: true },
+  { slug: "al-manara-center", text: "A commercial interior: a boardroom with a long dark table, set behind glass partitions that keep it open to the space around it.", title: "Al Manara Center", label: "Commercial", cat: "interior-design", type: "interior", img: "p-al-manara-center", alt: "Boardroom interior with a long dark table and glass partitions", featured: true },
+  { slug: "wadi-retreat", text: "A retreat set in a mountain wadi, where the landscape, the architecture and the infinity pool are designed together.", title: "Wadi retreat", label: "Hospitality", cat: "hospitality", type: "hospitality", img: "p-wadi-retreat", alt: "Retreat set in a mountain wadi with an infinity pool", featured: true },
+  { slug: "rox-showroom", text: "A showroom fit-out designed around the Rox brand and the way people move through the space, starting at the reception desk.", title: "Rox Showroom", label: "Commercial Interior", cat: "interior-design", type: "interior", img: "p-rox-reception", alt: "Rox showroom reception desk", gallery: [
     { img: "p-rox-showroom-1", cap: "SUVs on display in front of a curved screen" },
     { img: "p-rox-showroom-2", cap: "The display floor, with the lounge behind" },
     { img: "p-rox-showroom-3", cap: "Customer lounge and service counter" },
@@ -127,7 +125,7 @@ export const projects = [
     { img: "p-rox-showroom-5", cap: "The vehicle line-up under linear ceiling lights" },
     { img: "p-automotive-showroom", cap: "The full showroom floor" },
   ], featured: true },
-  { slug: "high-end-villa", title: "High-end villa", label: "Villas", cat: "villas", type: "architecture", img: "p-high-end-villa", alt: "Two-storey contemporary villa glowing at sunset", featured: true },
+  { slug: "high-end-villa", text: "A two-storey contemporary villa designed for light, privacy and a strong connection to its setting.", title: "High-end villa", label: "Villas", cat: "villas", type: "architecture", img: "p-high-end-villa", alt: "Two-storey contemporary villa glowing at sunset", featured: true },
   { slug: "classical-villa", title: "Classical high-end villa", label: "Villas", cat: "villas", type: "architecture", img: "p-classical-villa", alt: "Classical white villa with a colonnaded entrance and a reflecting pool at sunset", text: "A private estate in Sheikha Ohood: the main villa with its formal gardens, plus a majlis, a mosque and a services building.", gallery: [
     { img: "p-classical-villa-2", cap: "The main villa across the reflecting pool" },
     { img: "p-classical-villa-3", cap: "The rear façade, facing the water" },

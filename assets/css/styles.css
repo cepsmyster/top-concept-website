@@ -954,15 +954,19 @@ main .prose .hd .hbr { display: none; }
 .intro--edge { padding-inline: clamp(12px, 1.7vw, 24px); }
 
 /* ---------- Home: Our Projects ----------
-   Full screen. Heading, description and link sit in a column on the left, as tall as the cards; the featured projects
-   are big square cards in a row on the right. With the motion layer (.is-live, motion.js) the section is pinned and
-   the row slides right to left as you scroll; without it the row scrolls sideways. --cs is the card size. */
+   Full screen. Heading, the front project's number, name and description, and the link sit in a column on the left,
+   as tall as the cards; the featured projects are big square cards in a row on the right. With the motion layer
+   (.is-live, motion.js) the section is pinned, the row slides right to left as you scroll and stops on each project,
+   the other cards dim and the column changes to match; without it the row scrolls sideways. --cs is the card size. */
 .orbit { position: relative; overflow: hidden; background: var(--bg); color: var(--fg); }
 .orbit__stage { --cs: min(66svh, 46vw); position: relative; min-height: 100vh; min-height: 100svh; display: grid; grid-template-columns: clamp(240px, 24vw, 420px) minmax(0, 1fr);
   grid-template-rows: 1fr auto; align-items: center; column-gap: clamp(20px, 3vw, 56px); row-gap: clamp(16px, 3vh, 32px);
   padding: calc(var(--header-h) + clamp(8px, 2vh, 24px)) 0 clamp(18px, 4vh, 40px) clamp(12px, 1.7vw, 24px); }
 .orbit__intro { position: relative; z-index: 2; height: var(--cs); display: flex; flex-direction: column; align-items: flex-start; gap: clamp(16px, 2.4vh, 28px); }
 .orbit__intro h2 { margin: 0; }
+.orbit__info { display: grid; gap: 10px; justify-items: start; }
+.orbit__count { font: 500 .72rem var(--font-head); letter-spacing: .2em; color: var(--muted); }
+.orbit__name { font: 500 clamp(1.2rem, 1rem + .9vw, 1.9rem)/1.15 var(--font-display); letter-spacing: var(--track-small); }
 .orbit__text { margin: 0; max-width: 34ch; color: var(--muted); font-size: clamp(.95rem, .85rem + .35vw, 1.15rem); line-height: 1.55; }
 .orbit__intro .link-caps { margin-top: auto; }
 .orbit__view { min-width: 0; overflow: hidden; }
@@ -981,6 +985,8 @@ main .prose .hd .hbr { display: none; }
 .orbit:not(.is-live) .orbit__bar { display: none; }
 .orbit.is-live .orbit__stage { height: 100vh; height: 100svh; }
 .orbit.is-live .orbit__ring { overflow: visible; scroll-snap-type: none; will-change: transform; }
+.orbit.is-live .orbit__card { transition: opacity .6s var(--ease); }
+.orbit.is-live .orbit__item:not(.is-active) .orbit__card { opacity: .45; }
 @media (max-width: 760px) {
   .orbit__stage { --cs: 78vw; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; align-content: center; padding-right: clamp(12px, 1.7vw, 24px); }
   .orbit__intro { height: auto; }
