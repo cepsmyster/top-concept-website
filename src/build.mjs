@@ -440,12 +440,12 @@ function clientsSection() {
   const hero = META["hero"];
   const featured = D.projects.filter((p) => p.featured);
 
-  // Projects: a full-screen ring of the featured projects that turns as you scroll (motion.js "Projects ring").
-  // Without the motion layer the cards sit in a row that scrolls sideways.
+  // Projects: a pinned, gently curved drum of the featured projects that turns left to right as you scroll
+  // (motion.js "Projects drum", after bloom3d.studio). Without the motion layer the cards sit in a row that scrolls sideways.
   const n = featured.length;
   const ring = featured
-    .map((p, i) => `<li class="orbit__item" style="--i:${i}" data-label="${esc(p.label)}" data-title="${esc(p.title)}" data-href="project-${p.slug}.html">
-        <a class="orbit__card" href="project-${p.slug}.html" aria-label="${esc(p.title)}, ${esc(p.label)}">${img(p.img, { alt: p.alt, sizes: "(min-width: 900px) 58vw, 80vw" })}</a>
+    .map((p, i) => `<li class="orbit__item" style="--i:${i}">
+        <a class="orbit__card" href="project-${p.slug}.html">${img(p.img, { alt: p.alt, sizes: "(min-width: 900px) 34vw, 70vw" })}<span class="orbit__cap"><span class="orbit__label">${esc(p.label)}</span><strong class="orbit__title">${esc(p.title)}</strong></span></a>
       </li>`)
     .join("");
 
@@ -495,11 +495,6 @@ function clientsSection() {
       <a class="link-caps" href="projects.html">See all projects</a>
     </div>
     <ul class="orbit__ring" data-orbit-ring>${ring}</ul>
-    <div class="orbit__caption" aria-live="polite">
-      <span class="orbit__count"><span data-orbit-num>01</span> / ${String(n).padStart(2, "0")}</span>
-      <span class="orbit__label" data-orbit-label>${esc(featured[0].label)}</span>
-      <a class="orbit__title" data-orbit-title href="project-${featured[0].slug}.html">${esc(featured[0].title)}</a>
-    </div>
     <div class="orbit__bar" aria-hidden="true"><span data-orbit-progress></span></div>
   </div>
 </section>

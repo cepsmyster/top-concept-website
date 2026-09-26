@@ -190,46 +190,35 @@
     const foot = $(".site-footer__grid");
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
-    /* Projects ring: full screen and pinned; the featured projects sit on a 3D ring that turns one step per project
-       as you scroll. The front card is lit, the neighbours angle away and dim; the caption follows the front card. */
+    /* Projects drum (after bloom3d.studio): full screen and pinned; the featured projects sit side by side on a large,
+       gently curved drum that turns left to right as you scroll, so each project arrives from the left and passes
+       through the middle. Each photo drifts a little inside its card as it turns. */
     const orbit = $("[data-orbit]");
     if (orbit) {
       const ring = $("[data-orbit-ring]", orbit);
-      const items = $$(".orbit__item", orbit), n = items.length, step = 360 / n;
-      const num = $("[data-orbit-num]", orbit), label = $("[data-orbit-label]", orbit), title = $("[data-orbit-title]", orbit);
+      const items = $$(".orbit__item", orbit), n = items.length;
       const bar = $("[data-orbit-progress]", orbit);
+      const S = 360 / 14, GAP = 0.05; // angle between cards; gap as a share of the card width
       orbit.classList.add("is-3d");
-      const size = () => { ring.style.setProperty("--r", ((ring.offsetWidth / 2) / Math.tan(Math.PI / n) * (window.innerWidth < 761 ? 1.3 : 1.08)).toFixed(1) + "px"); };
+      ring.style.setProperty("--s", S + "deg");
+      const size = () => { ring.style.setProperty("--r", ((ring.offsetWidth * (1 + GAP) / 2) / Math.tan((S / 2) * Math.PI / 180)).toFixed(1) + "px"); };
       size();
       window.addEventListener("resize", size);
-      let active = -1;
-      const turn = (t) => { // t = position in steps (0 … n-1)
-        ring.style.setProperty("--a", (-t * step).toFixed(3) + "deg");
+      const from = -0.6, to = n - 1 + 0.6; // in cards: the first project starts just left of the middle, the last ends just right of it
+      const turn = (t) => { // t = drum position in cards
+        ring.style.setProperty("--a", (t * S).toFixed(3) + "deg");
         items.forEach((it, i) => {
-          const d = Math.abs(i - t);
-          it.style.setProperty("--o", Math.min(1, Math.max(0, 1.5 - d)).toFixed(3)); // solid until half a step past the front
-          it.style.setProperty("--dim", Math.min(1, d).toFixed(3));
-          it.classList.toggle("is-front", d < 0.5);
+          const d = t - i; // 0 = in the middle, negative = to the left
+          it.style.setProperty("--px", (Math.max(-1.5, Math.min(1.5, d)) * -4).toFixed(2) + "%");
+          it.style.pointerEvents = Math.abs(d) < 3 ? "" : "none";
         });
-        const k = Math.min(n - 1, Math.max(0, Math.round(t)));
-        if (k !== active) {
-          active = k;
-          const it = items[k];
-          num.textContent = String(k + 1).padStart(2, "0");
-          label.textContent = it.dataset.label;
-          title.textContent = it.dataset.title;
-          title.href = it.dataset.href;
-          gsap.fromTo([label, title], { yPercent: 60, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.6, ease: EASE, stagger: 0.05, overwrite: true });
-        }
       };
-      turn(0);
-      const ost = ScrollTrigger.create({
-        trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.85), pin: true, scrub: 0.6,
-        onUpdate: (st) => { turn(st.progress * (n - 1)); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
+      turn(from);
+      const pin = ScrollTrigger.create({ trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.6), pin: true });
+      ScrollTrigger.create({
+        trigger: orbit, start: "top 80%", end: () => pin.end, scrub: 0.6, invalidateOnRefresh: true,
+        onUpdate: (st) => { turn(from + (to - from) * gsap.parseEase("power1.inOut")(st.progress)); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
       });
-      lockSteps(ost, () => n - 1, n - 1);
-      // on arrival the cards rise and settle into the ring (the ring itself is left to the scroll rotation)
-      gsap.from($(".orbit__card", orbit), { yPercent: 25, scale: 0.85, autoAlpha: 0, duration: 1.6, stagger: 0.08, ease: EASE, scrollTrigger: { trigger: orbit, start: "top 70%", once: true } });
     }
 
     /* Project page photos: pinned; the main image and the other photos sit in one row that slides from right to left as you scroll down */
