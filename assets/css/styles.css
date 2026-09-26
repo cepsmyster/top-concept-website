@@ -955,7 +955,7 @@ main .prose .hd .hbr { display: none; }
 
 /* ---------- Home: Projects drum ----------
    Full screen, after bloom3d.studio. With the motion layer (.is-3d, motion.js) the featured projects sit flat in a row
-   that moves right to left as you scroll and bends into a curved U while moving; the script places each card and sets
+   that moves right to left as you scroll and bends into a clean U while moving; the script places each card and sets
    --px, which shifts each photo inside its card.
    Without it the cards sit in a row that scrolls sideways. */
 .orbit { position: relative; overflow: hidden; background: var(--bg); color: var(--fg); }
@@ -976,9 +976,9 @@ main .prose .hd .hbr { display: none; }
 .orbit:not(.is-3d) .orbit__bar { display: none; }
 
 .orbit.is-3d .orbit__stage { height: 100vh; height: 100svh; perspective: 3200px; perspective-origin: 50% 50%; }
-.orbit.is-3d .orbit__ring { --cw: min(38vw, 56svh); position: absolute; z-index: 1; left: 50%; top: 60%; display: block; width: var(--cw); aspect-ratio: 1; overflow: visible;
+.orbit.is-3d .orbit__ring { --cw: min(36vw, 54svh); position: absolute; z-index: 1; left: 50%; top: 58%; display: block; width: var(--cw); aspect-ratio: 1; overflow: visible;
   transform: translate(-50%, -50%); transform-style: preserve-3d; }
-.orbit.is-3d .orbit__item { position: absolute; inset: 0; transform: translateX(calc(var(--i) * 105%)); backface-visibility: hidden; will-change: transform; }
+.orbit.is-3d .orbit__item { position: absolute; inset: 0; transform: translateX(calc(var(--i) * 108%)); transform-origin: 50% 0; will-change: transform; }
 .orbit.is-3d .orbit__card { width: 100%; height: 100%; }
 .orbit.is-3d .orbit__bar { grid-row: 3; }
 @media (max-width: 760px) { .orbit.is-3d .orbit__ring { --cw: 76vw; aspect-ratio: 4 / 5; } .orbit.is-3d .orbit__card { aspect-ratio: auto; } }

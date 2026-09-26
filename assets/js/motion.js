@@ -190,43 +190,51 @@
     const foot = $(".site-footer__grid");
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
-    /* Projects drum (after bloom3d.studio): full screen and pinned; the featured projects move right to left as you
+    /* Projects row (after bloom3d.studio): full screen and pinned; the featured projects move right to left as you
        scroll, so each project arrives from the right and passes through the middle. At rest the cards sit flat in a
-       straight row; as soon as the row moves they bend onto a curved drum and dip deep like a U (the middle card lowest,
-       the others rising and leaning towards the sides), hold that shape for as long as the scrolling goes on, and ease
-       back flat a moment after it stops. Each photo
-       drifts a little inside its card as it moves. */
+       straight row; as soon as the row moves it bends into a deep, clean U: the top edges of the cards follow a curve
+       (the middle card lowest), each card is tilted square to that curve and spaced evenly along it, so the gaps stay
+       open and the cards fan apart rather than overlap. The U holds for as long as the scrolling goes on and eases back
+       flat a moment after it stops. Each photo drifts a little inside its card as it moves. */
     const orbit = $("[data-orbit]");
     if (orbit) {
       const ring = $("[data-orbit-ring]", orbit);
       const items = $$(".orbit__item", orbit), n = items.length;
       const bar = $("[data-orbit-progress]", orbit);
-      const S = 360 / 14, GAP = 0.05; // angle between cards on the drum; gap as a share of the card width
-      const RAD = Math.PI / 180;
+      const GAP = 0.08, DEPTH = 0.2; // gap as a share of the card width; how steep the U is (per card width)
       orbit.classList.add("is-3d");
-      let W = 0, R = 0;
-      const size = () => { W = ring.offsetWidth * (1 + GAP); R = (W / 2) / Math.tan((S / 2) * RAD); };
+      let cw = 0, W = 0;
+      const size = () => { cw = ring.offsetWidth; W = cw * (1 + GAP); };
       size();
       window.addEventListener("resize", size);
       const from = -0.8; // in cards: while the section scrolls in, the first project comes in from just right of the middle
       const clamp = (v, a) => Math.max(-a, Math.min(a, v));
-      let target = from, x = from, bend = 0, moved = -1;
+      // the point on the curve y = k·x² that lies a distance s along it from the bottom (Newton's method on the arc length)
+      const along = (s, k) => {
+        if (k < 1e-7) return s;
+        let x = s;
+        for (let j = 0; j < 5; j++) {
+          const q = Math.sqrt(1 + 4 * k * k * x * x);
+          x -= (x * q / 2 + Math.asinh(2 * k * x) / (4 * k) - s) / q;
+        }
+        return x;
+      };
+      let target = from, pos = from, bend = 0, moved = -1;
       const frame = (time) => {
-        x += (target - x) * 0.07; // smooth follow, no overshoot
-        if (Math.abs(target - x) < 1e-4) x = target;
-        if (Math.abs(target - x) > 0.002) moved = time;
+        pos += (target - pos) * 0.07; // smooth follow, no overshoot
+        if (Math.abs(target - pos) < 1e-4) pos = target;
+        if (Math.abs(target - pos) > 0.002) moved = time;
         // 0 = flat row, 1 = full U: bends in while moving, stays bent through the gaps between scroll steps,
         // and flattens only once the row has been still for a moment
         const want = time - moved < 0.35 ? 1 : 0;
         bend += (want - bend) * (want ? 0.06 : 0.035);
+        const k = (DEPTH / cw) * bend;
         for (let i = 0; i < n; i++) {
-          const d = i - x; // 0 = in the middle, positive = to the right
-          const a = d * S * RAD;
-          const px = d * W + (R * Math.sin(a) - d * W) * bend; // flat row → drum
-          const pz = (R * Math.cos(a) - R) * bend;
-          const py = -Math.min(d * d, 4) * ring.offsetWidth * 0.17 * bend; // the U: cards rise as they leave the middle
+          const d = i - pos; // 0 = in the middle, positive = to the right
+          const px = along(d * W, k), py = -k * px * px;
+          const tilt = Math.atan(-2 * k * px) * 180 / Math.PI;
           const it = items[i].style;
-          it.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, ${pz.toFixed(1)}px) rotateY(${(d * S * bend).toFixed(2)}deg) rotateZ(${(clamp(-d * 8, 18) * bend).toFixed(2)}deg)`;
+          it.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0) rotate(${tilt.toFixed(2)}deg)`;
           it.setProperty("--px", (clamp(d, 1.5) * 4).toFixed(2) + "%");
           it.pointerEvents = Math.abs(d) < 3 ? "" : "none";
         }
