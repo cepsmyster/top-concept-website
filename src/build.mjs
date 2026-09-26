@@ -63,6 +63,12 @@ function boldLast(inner) {
 // Each Word Capitalised, written into the text itself rather than by CSS text-transform: the scroll animations split
 // headings into pieces for a moment, and "capitalize" would then capitalise every piece (a flash of ALL CAPS).
 const capWords = (inner) => inner.split(/(<[^>]+>)/).map((part, i) => (i % 2 ? part : part.replace(/(^|[\s(])(\p{Ll})/gu, (m, a, c) => a + c.toUpperCase()))).join("");
+// Every heading on the page (h1–h6, including card, menu and article subheads) and every subheader (kickers, labels,
+// roles, the project names on the home Projects drum) get Each Word Capitalised.
+const SUBHEADS = "orbit__title|orbit__label|project__label|showcase__label|film__kicker|film__tag|model__kicker|about__label|leader__role|member__role|link-caps";
+const capAllHeadings = (html) => html
+  .replace(/<(h[1-6])(\s[^>]*)?>([\s\S]*?)<\/\1>/g, (all, tag, attrs = "", inner) => `<${tag}${attrs}>${capWords(inner)}</${tag}>`)
+  .replace(new RegExp(`(<[a-z]+\\s[^>]*class="[^"]*\\b(?:${SUBHEADS})\\b[^"]*"[^>]*>)([^<]*)`, "g"), (all, a, t) => a + capWords(t));
 function displayHeadings(html) {
   return html.replace(/<(h[123])(\s[^>]*)?>([\s\S]*?)<\/\1>/g, (all, tag, attrs = "", inner, at) => {
     const cls = (attrs.match(/class="([^"]*)"/) || [, ""])[1];
@@ -308,7 +314,7 @@ ${footer()}
 </body>
 </html>
 `;
-  fs.writeFileSync(path.join(ROOT, file), html);
+  fs.writeFileSync(path.join(ROOT, file), capAllHeadings(html));
   written.push(file);
 }
 const written = [];
