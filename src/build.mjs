@@ -205,6 +205,15 @@ function footer() {
 </footer>`;
 }
 
+function mapFigure({ id } = {}) {
+  const m = META["world-map"];
+  const pins = cfg.offices.map((o) => `<li class="pin${o.side === "left" ? " pin--left" : ""}" style="--x:${o.x}%;--y:${o.y}%" title="${esc(o.name)}"><span class="pin__head"></span><span class="pin__label">${esc(o.label || o.name)}</span></li>`).join("");
+  return `<div class="map"${id ? ` id="${id}"` : ""}>
+    <img src="assets/img/world-map.webp" alt="World map with offices in ${cfg.offices.map((o) => esc(o.name)).join(", ")}" width="${m.w}" height="${m.h}" loading="lazy">
+    <ul class="map__pins">${pins}</ul>
+  </div>`;
+}
+
 function formAttrs(kind, subject) {
   return `data-form="${kind}" data-endpoint="${esc(cfg.formEndpoint)}" data-email="${esc(cfg.contactEmail)}" data-subject="${esc(subject)}"`;
 }
@@ -235,12 +244,13 @@ function cta({ title, text, tracked = false } = {}) {
     : `<span class="t-light">Send a few lines about your site, brief or idea. Our team will reply with clear next steps.</span><span class="t-dark">Share your idea. We’ll help you shape it into something you can build.</span>`;
   return `
 <section class="cta${tracked ? " cta--tracked" : ""}" id="connect" aria-labelledby="cta-title">
-  <div class="container">
+  <div class="container cta__grid">
     <div class="cta__copy">
       <h2 id="cta-title">${h}</h2>
       <p>${p}</p>
       ${contactForm()}
     </div>
+    <div class="cta__map reveal">${mapFigure()}</div>
   </div>
 </section>`;
 }
@@ -843,7 +853,8 @@ page({
   body: `
 <section class="contact-intro container">
   <h1>Contact us</h1>
-  <p id="offices" class="prose prose--lg">We work with clients across the UAE and India. Tell us where your project is and what you need. One team will guide it from the first idea to handover.</p>
+  <div id="offices" class="reveal">${mapFigure()}</div>
+  <p class="prose prose--lg">We work with clients across the UAE and India. Tell us where your project is and what you need. One team will guide it from the first idea to handover.</p>
   ${cfg.contactEmail || cfg.whatsapp ? `<p class="contact-direct">${cfg.contactEmail ? `<a href="mailto:${esc(cfg.contactEmail)}">${esc(cfg.contactEmail)}</a>` : ""}${cfg.whatsapp ? `<a href="https://wa.me/${esc(cfg.whatsapp)}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : ""}</p>` : ""}
 </section>
 ${cta()}`,

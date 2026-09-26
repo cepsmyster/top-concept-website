@@ -36,6 +36,7 @@ Open **`src/config.mjs`** and fill in:
 2. **`contactEmail`** — the company inbox.
 3. **`social`** — the real WhatsApp / YouTube / Instagram / Facebook / LinkedIn / Pinterest links (currently point to each network's home page).
 4. **`siteUrl`** — the final web address (e.g. `https://www.yourdomain.com`). Enables share previews, canonical links and `sitemap.xml`.
+5. **`offices`** — map pin positions/labels if the offices change.
 
 Then rebuild (below).
 
@@ -136,7 +137,7 @@ assets/js/vendor/                   GSAP, ScrollTrigger, SplitText, Lenis
 assets/model/                       3D textures, sky lighting
 assets/img/                         optimized images (WebP), logos, icons
 assets/fonts/                       self-hosted Montserrat + Inter
-src/config.mjs                      site settings (forms, socials)
+src/config.mjs                      site settings (forms, socials, map pins)
 src/data.mjs                        content
 src/build.mjs                       page generator
 ```
