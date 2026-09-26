@@ -71,6 +71,8 @@ export const projectsPage = {
   heroAlt: "Aerial view of a retail park with a solar roof in a desert landscape",
   heading: "Ambitious ideas, built for real.",
   intro: "From waterfront masterplans to boardroom fit-outs, these are projects we took from first sketch to finished space. Filter by type to find work like yours.",
+  // home page Projects section, beside the cards
+  homeIntro: "From waterfront masterplans to boardroom fit-outs, these are projects we took from first sketch to finished space. One team stays with each one the whole way, so the design you approve is the building you get.",
   showcase: {
     slug: "retail-park",
     label: "Retail Park",

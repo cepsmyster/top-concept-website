@@ -12,7 +12,7 @@ Built from the design files in `New Website/`.
 
 | Page | File |
 |---|---|
-| Home (full-screen interactive concept → completion hero, about us, curved projects drum, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
+| Home (full-screen interactive concept → completion hero, about us, Our Projects row, Retail Park showcase, culture/careers, leadership, expertise, contact) | `index.html` |
 | Expertise (ten fields as big cards, two per row) | `expertise.html` |
 | Projects ("View the Work" hero, showcase, filterable grid) + one page per project | `projects.html`, `project-*.html` |
 | Blogs + one page per article | `blogs.html`, `blog-*.html` |
@@ -70,9 +70,9 @@ Every page has scroll-driven animation in the spirit of award-style sites: smoot
 
 A full-screen section with two landscape cards side by side. Culture starts big and Careers small; hovering (or tabbing into) Careers makes it the big one, and moving back swaps them again. The picture, heading and description grow and shrink together. On phones the two stack at the same size. Styles are under “Home: Culture & Careers” in `styles.css`.
 
-## Projects row (home page)
+## Our Projects (home page)
 
-After bloom3d.studio. The Projects section fills the screen and stays in place while the featured projects (`featured: true` in `projects`, `src/data.mjs`) move past as you scroll: the cards sit side by side and travel **right to left**, so each project arrives from the right and passes through the middle. At rest the cards sit flat in a straight row; while the row is moving it bends into a clean U: the top edges of the cards follow the curve (the middle card lowest), each card tilts square to it and they stay evenly spaced, so the cards fan apart and never overlap. They hold that shape for as long as the scrolling goes on, and ease back flat a moment after it stops. The U is deep: the side cards rise well above the middle one. Each card shows its photo with the type and name in the bottom-left corner, and the photo drifts slightly inside the card as it turns. Phones get taller portrait cards. Visitors with reduced motion get the cards in a row that scrolls sideways. The markup is in the `index.html` page in `src/build.mjs`, the motion in "Projects row" in `motion.js`, the styles under "Home: Projects drum" in `styles.css`. To change how deep the U is or the gap between cards, change `DEPTH` or `GAP` in `motion.js`.
+The section fills the screen. On the left, a column as tall as the cards holds the heading "Our Projects", a short description (`homeIntro` in `projectsPage`, `src/data.mjs`) and the See all projects link. On the right, the featured projects (`featured: true` in `projects`) sit as big square cards in a straight row, each with its type and name in the bottom-left corner. The section stays in place while the row slides right to left as you scroll, until the last card is in view; a thin bar below shows progress. On phones the heading and description sit above the row. Visitors with reduced motion get a row that scrolls sideways. The markup is in the `index.html` page in `src/build.mjs`, the motion in "Our Projects" in `motion.js`, the styles under "Home: Our Projects" in `styles.css` (`--cs` is the card size).
 
 ## Retail Park showcase (home page)
 

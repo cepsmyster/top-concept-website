@@ -190,64 +190,21 @@
     const foot = $(".site-footer__grid");
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
-    /* Projects row (after bloom3d.studio): full screen and pinned; the featured projects move right to left as you
-       scroll, so each project arrives from the right and passes through the middle. At rest the cards sit flat in a
-       straight row; as soon as the row moves it bends into a deep, clean U: the top edges of the cards follow a curve
-       (the middle card lowest), each card is tilted square to that curve and spaced evenly along it, so the gaps stay
-       open and the cards fan apart rather than overlap. The U holds for as long as the scrolling goes on and eases back
-       flat a moment after it stops. Each photo drifts a little inside its card as it moves. */
+    /* Our Projects: full screen and pinned; the big square project cards sit in a row beside the heading and slide
+       right to left as you scroll, until the last card is in view. */
     const orbit = $("[data-orbit]");
     if (orbit) {
-      const ring = $("[data-orbit-ring]", orbit);
-      const items = $$(".orbit__item", orbit), n = items.length;
+      const view = $(".orbit__view", orbit), ring = $("[data-orbit-ring]", orbit);
       const bar = $("[data-orbit-progress]", orbit);
-      const GAP = 0.08, DEPTH = 0.2; // gap as a share of the card width; how steep the U is (per card width)
-      orbit.classList.add("is-3d");
-      let cw = 0, W = 0;
-      const size = () => { cw = ring.offsetWidth; W = cw * (1 + GAP); };
-      size();
-      window.addEventListener("resize", size);
-      const from = -0.8; // in cards: while the section scrolls in, the first project comes in from just right of the middle
-      const clamp = (v, a) => Math.max(-a, Math.min(a, v));
-      // the point on the curve y = k·x² that lies a distance s along it from the bottom (Newton's method on the arc length)
-      const along = (s, k) => {
-        if (k < 1e-7) return s;
-        let x = s;
-        for (let j = 0; j < 5; j++) {
-          const q = Math.sqrt(1 + 4 * k * k * x * x);
-          x -= (x * q / 2 + Math.asinh(2 * k * x) / (4 * k) - s) / q;
-        }
-        return x;
-      };
-      let target = from, pos = from, bend = 0, moved = -1;
-      const frame = (time) => {
-        pos += (target - pos) * 0.07; // smooth follow, no overshoot
-        if (Math.abs(target - pos) < 1e-4) pos = target;
-        if (Math.abs(target - pos) > 0.002) moved = time;
-        // 0 = flat row, 1 = full U: bends in while moving, stays bent through the gaps between scroll steps,
-        // and flattens only once the row has been still for a moment
-        const want = time - moved < 0.35 ? 1 : 0;
-        bend += (want - bend) * (want ? 0.06 : 0.035);
-        const k = (DEPTH / cw) * bend;
-        for (let i = 0; i < n; i++) {
-          const d = i - pos; // 0 = in the middle, positive = to the right
-          const px = along(d * W, k), py = -k * px * px;
-          const tilt = Math.atan(-2 * k * px) * 180 / Math.PI;
-          const it = items[i].style;
-          it.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0) rotate(${tilt.toFixed(2)}deg)`;
-          it.setProperty("--px", (clamp(d, 1.5) * 4).toFixed(2) + "%");
-          it.pointerEvents = Math.abs(d) < 3 ? "" : "none";
-        }
-      };
-      frame(0);
-      // pinned for as long as it takes the whole row to pass through the middle
-      const pin = ScrollTrigger.create({
-        trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.8), pin: true,
-        onUpdate: (st) => { target = st.progress * (n - 1); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
+      orbit.classList.add("is-live");
+      const dist = () => Math.max(0, ring.scrollWidth - view.clientWidth);
+      gsap.to(ring, {
+        x: () => -dist(), ease: "none",
+        scrollTrigger: {
+          trigger: orbit, start: "top top", end: () => "+=" + Math.max(1, dist()), pin: true, scrub: 0.8, invalidateOnRefresh: true,
+          onUpdate: (st) => { if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
+        },
       });
-      ScrollTrigger.create({ trigger: orbit, start: "top 80%", end: "top top", onUpdate: (st) => { if (!pin.isActive) target = from * (1 - st.progress); } });
-      // the animation only runs while the section is on screen
-      ScrollTrigger.create({ trigger: orbit, start: "top bottom", end: () => pin.end + window.innerHeight, onToggle: (st) => (st.isActive ? gsap.ticker.add(frame) : gsap.ticker.remove(frame)) });
     }
 
     /* Project page photos: pinned; the main image and the other photos sit in one row that slides from right to left as you scroll down */

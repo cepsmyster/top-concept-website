@@ -446,12 +446,12 @@ function clientsSection() {
   const hero = META["hero"];
   const featured = D.projects.filter((p) => p.featured);
 
-  // Projects: a pinned, gently curved drum of the featured projects that turns left to right as you scroll
-  // (motion.js "Projects drum", after bloom3d.studio). Without the motion layer the cards sit in a row that scrolls sideways.
+  // Our Projects: heading and description on the left, the featured projects as big square cards in a row on the right
+  // that slides right to left as you scroll (motion.js "Our Projects"). Without the motion layer the row scrolls sideways.
   const n = featured.length;
   const ring = featured
     .map((p, i) => `<li class="orbit__item" style="--i:${i}">
-        <a class="orbit__card" href="project-${p.slug}.html">${img(p.img, { alt: p.alt, sizes: "(min-width: 900px) 34vw, 70vw" })}<span class="orbit__cap"><span class="orbit__label">${esc(p.label)}</span><strong class="orbit__title">${esc(p.title)}</strong></span></a>
+        <a class="orbit__card" href="project-${p.slug}.html">${img(p.img, { alt: p.alt, sizes: "(min-width: 900px) 46vw, 80vw" })}<span class="orbit__cap"><span class="orbit__label">${esc(p.label)}</span><strong class="orbit__title">${esc(p.title)}</strong></span></a>
       </li>`)
     .join("");
 
@@ -496,11 +496,12 @@ function clientsSection() {
 
 <section class="orbit" id="projects" data-orbit aria-labelledby="projects-title" style="--n:${n}">
   <div class="orbit__stage">
-    <div class="orbit__head">
-      <h2 id="projects-title">Projects</h2>
+    <div class="orbit__intro">
+      <h2 id="projects-title">Our Projects</h2>
+      <p class="orbit__text">${esc(D.projectsPage.homeIntro)}</p>
       <a class="link-caps" href="projects.html">See all projects</a>
     </div>
-    <ul class="orbit__ring" data-orbit-ring>${ring}</ul>
+    <div class="orbit__view"><ul class="orbit__ring" data-orbit-ring>${ring}</ul></div>
     <div class="orbit__bar" aria-hidden="true"><span data-orbit-progress></span></div>
   </div>
 </section>
