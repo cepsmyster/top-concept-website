@@ -79,7 +79,7 @@
       .add(() => { split.revert(); title.classList.remove("is-draft"); });
   };
 
-  // Pinned, scrubbed sections that move in steps (the showcase photos, the projects drum): when scrolling stops
+  // Pinned, scrubbed sections that move in steps (the showcase photos): when scrolling stops
   // between two steps, glide on to the next one in the direction of travel (or back, if it had barely moved),
   // so the section always rests on one whole step. dur() = timeline length in steps; last = index of the final step.
   const lockSteps = (st, dur, last) => {
@@ -191,9 +191,10 @@
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
     /* Projects drum (after bloom3d.studio): full screen and pinned; the featured projects move right to left as you
-       scroll, one project per step, so each arrives from the right and passes through the middle. At rest the cards
-       sit flat in a straight row; while the row is moving they bend onto a curved drum and dip like a U (the middle
-       card lowest, the others rising and leaning towards the sides), then ease back flat once it stops. Each photo
+       scroll, so each project arrives from the right and passes through the middle. At rest the cards sit flat in a
+       straight row; as soon as the row moves they bend onto a curved drum and dip deep like a U (the middle card lowest,
+       the others rising and leaning towards the sides), hold that shape for as long as the scrolling goes on, and ease
+       back flat a moment after it stops. Each photo
        drifts a little inside its card as it moves. */
     const orbit = $("[data-orbit]");
     if (orbit) {
@@ -209,31 +210,33 @@
       window.addEventListener("resize", size);
       const from = -0.8; // in cards: while the section scrolls in, the first project comes in from just right of the middle
       const clamp = (v, a) => Math.max(-a, Math.min(a, v));
-      let target = from, x = from, bend = 0;
-      const frame = () => {
-        const prev = x;
-        x += (target - x) * 0.1; // smooth follow, no overshoot
+      let target = from, x = from, bend = 0, moved = -1;
+      const frame = (time) => {
+        x += (target - x) * 0.07; // smooth follow, no overshoot
         if (Math.abs(target - x) < 1e-4) x = target;
-        bend += (Math.min(1, Math.abs(x - prev) * 30) - bend) * 0.08; // 0 = flat row, 1 = full U while moving
+        if (Math.abs(target - x) > 0.002) moved = time;
+        // 0 = flat row, 1 = full U: bends in while moving, stays bent through the gaps between scroll steps,
+        // and flattens only once the row has been still for a moment
+        const want = time - moved < 0.35 ? 1 : 0;
+        bend += (want - bend) * (want ? 0.06 : 0.035);
         for (let i = 0; i < n; i++) {
           const d = i - x; // 0 = in the middle, positive = to the right
           const a = d * S * RAD;
           const px = d * W + (R * Math.sin(a) - d * W) * bend; // flat row → drum
           const pz = (R * Math.cos(a) - R) * bend;
-          const py = -Math.min(d * d, 4) * ring.offsetWidth * 0.09 * bend; // the U: cards rise as they leave the middle
+          const py = -Math.min(d * d, 4) * ring.offsetWidth * 0.17 * bend; // the U: cards rise as they leave the middle
           const it = items[i].style;
-          it.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, ${pz.toFixed(1)}px) rotateY(${(d * S * bend).toFixed(2)}deg) rotateZ(${(clamp(-d * 5, 12) * bend).toFixed(2)}deg)`;
+          it.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, ${pz.toFixed(1)}px) rotateY(${(d * S * bend).toFixed(2)}deg) rotateZ(${(clamp(-d * 8, 18) * bend).toFixed(2)}deg)`;
           it.setProperty("--px", (clamp(d, 1.5) * 4).toFixed(2) + "%");
           it.pointerEvents = Math.abs(d) < 3 ? "" : "none";
         }
       };
-      frame();
-      // pinned: one project per step, and when scrolling stops between two it glides on to the nearest whole one
+      frame(0);
+      // pinned for as long as it takes the whole row to pass through the middle
       const pin = ScrollTrigger.create({
         trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.8), pin: true,
         onUpdate: (st) => { target = st.progress * (n - 1); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
       });
-      lockSteps(pin, () => n - 1, n - 1);
       ScrollTrigger.create({ trigger: orbit, start: "top 80%", end: "top top", onUpdate: (st) => { if (!pin.isActive) target = from * (1 - st.progress); } });
       // the animation only runs while the section is on screen
       ScrollTrigger.create({ trigger: orbit, start: "top bottom", end: () => pin.end + window.innerHeight, onToggle: (st) => (st.isActive ? gsap.ticker.add(frame) : gsap.ticker.remove(frame)) });
