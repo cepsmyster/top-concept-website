@@ -24,11 +24,11 @@ export default {
   // ── Social links (footer). Replace with the real company pages. ──
   social: {
     whatsapp: "https://wa.me/",
-    youtube: "https://www.youtube.com/",
-    instagram: "https://www.instagram.com/",
+    youtube: "https://www.youtube.com/@topconcept8141",
+    instagram: "https://www.instagram.com/top_concpt/?hl=en",
     facebook: "https://www.facebook.com/",
-    linkedin: "https://www.linkedin.com/",
-    pinterest: "https://www.pinterest.com/",
+    linkedin: "https://www.linkedin.com/company/topconceptae/posts/",
+    pinterest: "https://www.pinterest.com/topconcpt2/",
   },
 
   // ── Map pins: position as % of the world-map image (x from left, y from top) ──
