@@ -905,7 +905,7 @@ main .prose .hd .hbr { display: none; }
 .about { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 6vw, 140px); align-items: start; padding-block: clamp(48px, 7vw, 110px); }
 .about__lead { margin: 0; max-width: 40ch; font: 400 clamp(1.15rem, .95rem + .8vw, 1.7rem)/1.4 var(--font-display); letter-spacing: var(--track-small); }
 .about__more { justify-self: end; max-width: 60ch; }
-.about__more p { margin: 0 0 1em; font-size: clamp(.82rem, .78rem + .15vw, .92rem); line-height: 1.55; color: var(--muted); }
+.about__more p { margin: 0 0 1em; font-size: clamp(.9rem, .85rem + .2vw, 1.02rem); line-height: 1.55; color: var(--muted); }
 .about__btn { grid-column: 1; display: inline-flex; align-items: center; gap: 8px; justify-self: start; margin-top: clamp(24px, 6vw, 96px); font: 500 .9rem var(--font-body, var(--font-display)); }
 .about__label { padding: 11px 18px; background: var(--fg); color: var(--bg); border-radius: 2px; transition: background .25s, color .25s; }
 .about__arrow { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--fg); color: var(--bg); transition: transform .35s var(--ease); }
