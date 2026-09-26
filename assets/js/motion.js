@@ -191,8 +191,10 @@
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
     /* Projects drum (after bloom3d.studio): full screen and pinned; the featured projects sit side by side on a large,
-       gently curved drum that turns left to right as you scroll, so each project arrives from the left and passes
-       through the middle. Each photo drifts a little inside its card as it turns. */
+       gently curved drum that turns right to left as you scroll, so each project arrives from the right and passes
+       through the middle. The cards move like sheets of paper rather than a rigid wheel: each follows the scroll on its
+       own spring (a little late, settling with a slight overshoot), bends and sways with the speed of the scroll and keeps
+       floating gently when the page is still. Each photo drifts a little inside its card as it turns. */
     const orbit = $("[data-orbit]");
     if (orbit) {
       const ring = $("[data-orbit-ring]", orbit);
@@ -201,24 +203,36 @@
       const S = 360 / 14, GAP = 0.05; // angle between cards; gap as a share of the card width
       orbit.classList.add("is-3d");
       ring.style.setProperty("--s", S + "deg");
-      const size = () => { ring.style.setProperty("--r", ((ring.offsetWidth * (1 + GAP) / 2) / Math.tan((S / 2) * Math.PI / 180)).toFixed(1) + "px"); };
+      let R = 900;
+      const size = () => { R = (ring.offsetWidth * (1 + GAP) / 2) / Math.tan((S / 2) * Math.PI / 180); ring.style.setProperty("--r", R.toFixed(1) + "px"); };
       size();
       window.addEventListener("resize", size);
-      const from = -0.6, to = n - 1 + 0.6; // in cards: the first project starts just left of the middle, the last ends just right of it
-      const turn = (t) => { // t = drum position in cards
-        ring.style.setProperty("--a", (t * S).toFixed(3) + "deg");
-        items.forEach((it, i) => {
-          const d = t - i; // 0 = in the middle, negative = to the left
-          it.style.setProperty("--px", (Math.max(-1.5, Math.min(1.5, d)) * -4).toFixed(2) + "%");
-          it.style.pointerEvents = Math.abs(d) < 3 ? "" : "none";
-        });
+      const from = -0.6, to = n - 1 + 0.6; // in cards: the first project starts just right of the middle, the last ends just left of it
+      const clamp = (v, a) => Math.max(-a, Math.min(a, v));
+      let target = from;
+      // one spring per card; the leading cards answer a little faster than the trailing ones, so the row stretches and gathers
+      const cards = items.map((el, i) => ({ el, i, x: from, v: 0, k: 0.07 - 0.003 * i, seed: i * 1.7 }));
+      const frame = (time) => {
+        for (const c of cards) {
+          c.v = (c.v + (target - c.x) * c.k) * 0.8; // spring + damping (a touch of overshoot)
+          c.x += c.v;
+          const d = c.i - c.x; // 0 = in the middle, positive = to the right
+          const flap = clamp(-c.v * 420, 22), sway = clamp(c.v * 50, 3); // bend away from the direction of travel, like paper through air
+          const bob = Math.sin(time * 0.9 + c.seed) * 5, tilt = Math.sin(time * 0.7 + c.seed * 1.3) * 1.2, drift = Math.sin(time * 0.55 + c.seed * 2.1) * 1.6;
+          c.el.style.transform = `rotateY(${(d * S).toFixed(3)}deg) translateZ(${R.toFixed(1)}px) translateY(${bob.toFixed(2)}px) rotateY(${(flap + drift).toFixed(2)}deg) rotateX(${tilt.toFixed(2)}deg) rotateZ(${(sway).toFixed(2)}deg)`;
+          c.el.style.setProperty("--px", (clamp(d, 1.5) * 4).toFixed(2) + "%");
+          c.el.style.pointerEvents = Math.abs(d) < 3 ? "" : "none";
+        }
       };
-      turn(from);
+      frame(0);
+      const tick = (time) => frame(time);
       const pin = ScrollTrigger.create({ trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.6), pin: true });
       ScrollTrigger.create({
-        trigger: orbit, start: "top 80%", end: () => pin.end, scrub: 0.6, invalidateOnRefresh: true,
-        onUpdate: (st) => { turn(from + (to - from) * gsap.parseEase("power1.inOut")(st.progress)); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
+        trigger: orbit, start: "top 80%", end: () => pin.end, invalidateOnRefresh: true,
+        onUpdate: (st) => { target = from + (to - from) * gsap.parseEase("power1.inOut")(st.progress); if (bar) bar.style.transform = "scaleX(" + st.progress.toFixed(3) + ")"; },
       });
+      // the springs only run while the section is on screen
+      ScrollTrigger.create({ trigger: orbit, start: "top bottom", end: () => pin.end + window.innerHeight, onToggle: (st) => (st.isActive ? gsap.ticker.add(tick) : gsap.ticker.remove(tick)) });
     }
 
     /* Project page photos: pinned; the main image and the other photos sit in one row that slides from right to left as you scroll down */
