@@ -30,12 +30,4 @@ export default {
     linkedin: "https://www.linkedin.com/",
     pinterest: "https://www.pinterest.com/",
   },
-
-  // ── Map pins: position as % of the world-map image (x from left, y from top) ──
-  // `side` = which side of the pin the label sits on (avoids labels colliding).
-  offices: [
-    { name: "London", label: "London", x: 44.9, y: 25.3, side: "left" },
-    { name: "United Arab Emirates", label: "UAE", x: 60.3, y: 41.2, side: "left" },
-    { name: "India", label: "India", x: 65.6, y: 46.6, side: "right" },
-  ],
 };

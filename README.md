@@ -36,7 +36,6 @@ Open **`src/config.mjs`** and fill in:
 2. **`contactEmail`** — the company inbox.
 3. **`social`** — the real WhatsApp / YouTube / Instagram / Facebook / LinkedIn / Pinterest links (currently point to each network's home page).
 4. **`siteUrl`** — the final web address (e.g. `https://www.yourdomain.com`). Enables share previews, canonical links and `sitemap.xml`.
-5. **`offices`** — map pin positions/labels if the offices change.
 
 Then rebuild (below).
 
@@ -96,7 +95,7 @@ After the Retail Park showcase, "In trusted company" shows the client logos in t
 
 Pages sit in a centred column (`--container`, 1350px) with side margins (`--gutter`). Two sections run end to end instead, and both use the same big cards, two at a time (`xpCard()` in `src/build.mjs`): the Fields of expertise section on the home page and the Expertise page grid. Each card shows the image, the field name on the left and a one-line description on the right that slides right to left on hover while a second image wipes in. The home cards take their description and hover image from `expertisePage` in `src/data.mjs`, matched by slug. The CEO quote no longer appears on the home page.
 
-**Home page order:** the hero fills exactly one screen, so it is all a visitor sees on arrival. Right after it comes **About us** (layout after madamepolare.com): a lead paragraph on the left, two short paragraphs on the right and a “Meet the team” button to the Team page. The copy is in `about` in `src/data.mjs`, written to the web-copywriter skill; it uses only facts already on the site (offices in the UAE, India and London; the disciplines; approvals and site supervision).
+**Home page order:** the hero fills exactly one screen, so it is all a visitor sees on arrival. Right after it comes **About us** (layout after madamepolare.com): a lead paragraph on the left, two short paragraphs on the right and a “Meet the team” button to the Team page. The copy is in `about` in `src/data.mjs`, written to the web-copywriter skill; it uses only facts already on the site (offices in the UAE and India; the disciplines; approvals and site supervision).
 
 ## Typography
 
@@ -137,7 +136,7 @@ assets/js/vendor/                   GSAP, ScrollTrigger, SplitText, Lenis
 assets/model/                       3D textures, sky lighting
 assets/img/                         optimized images (WebP), logos, icons
 assets/fonts/                       self-hosted Montserrat + Inter
-src/config.mjs                      site settings (forms, socials, map pins)
+src/config.mjs                      site settings (forms, socials)
 src/data.mjs                        content
 src/build.mjs                       page generator
 ```

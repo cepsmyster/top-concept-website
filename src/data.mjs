@@ -9,7 +9,7 @@
 // Home "About us" section, right after the hero (layout after madamepolare.com): a lead paragraph on the left,
 // two short paragraphs on the right, and a button to the Team page. Written to the web-copywriter skill.
 export const about = {
-  lead: "Top Concept International (TCI) is a team of architects, engineers and designers. We work from offices in the UAE, India and London. We take projects from the first sketch to handover. One team stays with your project the whole way, so the design you approve is the building you get.",
+  lead: "Top Concept International (TCI) is a team of architects, engineers and designers. We work from offices in the UAE and India. We take projects from the first sketch to handover. One team stays with your project the whole way, so the design you approve is the building you get.",
   paragraphs: [
     "Architecture, interiors, landscape and master planning sit under one roof. Structural and MEP coordination run alongside the design, not after it. That means fewer clashes on site and fewer costly redesigns.",
     "Developers, government entities and brands across the UAE trust us with their work. We design, steer authority approvals and supervise construction. You deal with one team, and nothing gets lost between stages.",

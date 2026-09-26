@@ -561,30 +561,13 @@ html.lenis, html.lenis body { height: auto; }
 @media (max-width: 720px) { :root[data-theme="dark"] .ex-card--lg, :root[data-theme="dark"] .ex-card--sm { grid-column: span 1; } }
 
 /* ==========================================================================
-   Contact CTA + map + forms
+   Contact CTA + forms
    ========================================================================== */
 .cta { background: #e8e8e8; color: #111; padding-block: clamp(56px, 8vw, 120px); }
-.cta__grid { display: grid; grid-template-columns: minmax(300px, 470px) minmax(0, 1fr); gap: clamp(28px, 5vw, 90px); align-items: center; }
+.cta__copy { max-width: 760px; }
 .cta h2 { font-size: clamp(1.9rem, 1.35rem + 1.7vw, 2.9rem); }
 .cta__copy > p { margin: 22px 0 28px; max-width: 46ch; font-size: 1rem; line-height: 1.5; }
-@media (max-width: 900px) { .cta__grid { grid-template-columns: 1fr; } .cta__map { order: -1; max-width: 640px; } }
 
-.map { position: relative; --stem: clamp(26px, 4.6vw, 70px); }
-.map img { width: 100%; height: auto; }
-.map__pins { position: absolute; inset: 0; }
-.pin { position: absolute; left: var(--x); top: var(--y); width: 0; height: 0; }
-.pin::before { content: ""; position: absolute; left: -1px; bottom: 0; width: 2px; height: var(--stem); background: #111; transform-origin: bottom; }
-.pin__head { position: absolute; left: -8px; bottom: calc(var(--stem) - 2px); width: 16px; height: 16px; border: 3px solid #111; border-radius: 50%; background: #e8e8e8; }
-.pin__label { position: absolute; left: 14px; bottom: calc(var(--stem) - 3px); font: 600 .6rem var(--font-head); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: #111; }
-.pin--left .pin__label { left: auto; right: 14px; }
-@media (max-width: 640px) { .pin__label { display: none; } .pin__head { width: 12px; height: 12px; left: -6px; border-width: 2.5px; } }
-@media (prefers-reduced-motion: no-preference) {
-  .js .map .pin::before { transform: scaleY(0); transition: transform .9s var(--ease) calc(.4s + var(--i, 0) * .15s); }
-  .js .map .pin__head, .js .map .pin__label { opacity: 0; transition: opacity .5s ease calc(.9s + var(--i, 0) * .15s); }
-  .js .is-visible .pin::before, .js .reveal.is-visible .pin::before { transform: none; }
-  .js .is-visible .pin__head, .js .is-visible .pin__label { opacity: 1; }
-}
-.pin:nth-child(2) { --i: 1; } .pin:nth-child(3) { --i: 2; }
 
 .form { display: grid; gap: 10px; }
 .form__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -769,13 +752,7 @@ html.lenis, html.lenis body { height: auto; }
 /* Contact page */
 .contact-intro { padding-top: clamp(40px, 5vw, 80px); padding-bottom: clamp(48px, 7vw, 110px); }
 .contact-intro h1 { text-align: center; font-size: clamp(2.2rem, 1.5rem + 2.2vw, 3.4rem); }
-.contact-intro .map { width: min(100%, 860px); margin: clamp(24px, 4vw, 56px) auto clamp(40px, 6vw, 88px); --stem: clamp(32px, 6vw, 84px); }
-.contact-intro .pin__head { background: var(--bg); }
-.contact-intro .pin::before { background: var(--fg); }
-.contact-intro .pin__head { border-color: var(--fg); }
-.contact-intro .pin__label { color: var(--fg); }
-.contact-intro .map img { filter: none; }
-:root[data-theme="dark"] .contact-intro .map img { filter: brightness(.55); }
+.contact-intro .prose { margin-top: clamp(24px, 4vw, 56px); }
 .contact-direct { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 28px; font: 500 .8rem var(--font-head); letter-spacing: .06em; text-transform: uppercase; }
 .contact-direct a { border-bottom: 1px solid currentColor; padding-bottom: 2px; }
 
