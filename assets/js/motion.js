@@ -190,43 +190,44 @@
     const foot = $(".site-footer__grid");
     if (foot) gsap.from(foot, { yPercent: -25, autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".site-footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
-    /* Projects drum (after bloom3d.studio): full screen and pinned; the featured projects sit side by side on a large,
-       gently curved drum that turns right to left as you scroll, so each project arrives from the right and passes
-       through the middle. The cards move like sheets of paper rather than a rigid wheel: each follows the scroll on its
-       own spring (a little late, settling with a slight overshoot), bends and sways with the speed of the scroll and keeps
-       floating gently when the page is still. Each photo drifts a little inside its card as it turns. */
+    /* Projects drum (after bloom3d.studio): full screen and pinned; the featured projects move right to left as you
+       scroll, one project per step, so each arrives from the right and passes through the middle. At rest the cards
+       sit flat in a straight row; while the row is moving they bend onto a curved drum and dip like a U (the middle
+       card lowest, the others rising and leaning towards the sides), then ease back flat once it stops. Each photo
+       drifts a little inside its card as it moves. */
     const orbit = $("[data-orbit]");
     if (orbit) {
       const ring = $("[data-orbit-ring]", orbit);
       const items = $$(".orbit__item", orbit), n = items.length;
       const bar = $("[data-orbit-progress]", orbit);
-      const S = 360 / 14, GAP = 0.05; // angle between cards; gap as a share of the card width
+      const S = 360 / 14, GAP = 0.05; // angle between cards on the drum; gap as a share of the card width
+      const RAD = Math.PI / 180;
       orbit.classList.add("is-3d");
-      ring.style.setProperty("--s", S + "deg");
-      let R = 900;
-      const size = () => { R = (ring.offsetWidth * (1 + GAP) / 2) / Math.tan((S / 2) * Math.PI / 180); ring.style.setProperty("--r", R.toFixed(1) + "px"); };
+      let W = 0, R = 0;
+      const size = () => { W = ring.offsetWidth * (1 + GAP); R = (W / 2) / Math.tan((S / 2) * RAD); };
       size();
       window.addEventListener("resize", size);
       const from = -0.8; // in cards: while the section scrolls in, the first project comes in from just right of the middle
       const clamp = (v, a) => Math.max(-a, Math.min(a, v));
-      let target = from;
-      // one spring per card; the leading cards answer a little faster than the trailing ones, so the row stretches and gathers
-      const cards = items.map((el, i) => ({ el, i, x: from, v: 0, k: 0.07 - 0.003 * i, seed: i * 1.7 }));
-      const frame = (time) => {
-        for (const c of cards) {
-          c.v = (c.v + (target - c.x) * c.k) * 0.8; // spring + damping (a touch of overshoot)
-          c.x += c.v;
-          const d = c.i - c.x; // 0 = in the middle, positive = to the right
-          const u = Math.min(d * d, 4) * ring.offsetWidth * 0.09, lean = clamp(-d * 5, 12); // the row dips like a U: cards rise and lean as they leave the middle
-          const flap = clamp(-c.v * 420, 22), sway = clamp(c.v * 50, 3); // bend away from the direction of travel, like paper through air
-          const bob = Math.sin(time * 0.9 + c.seed) * 5, tilt = Math.sin(time * 0.7 + c.seed * 1.3) * 1.2, drift = Math.sin(time * 0.55 + c.seed * 2.1) * 1.6;
-          c.el.style.transform = `rotateY(${(d * S).toFixed(3)}deg) translateZ(${R.toFixed(1)}px) translateY(${(bob - u).toFixed(2)}px) rotateY(${(flap + drift).toFixed(2)}deg) rotateX(${tilt.toFixed(2)}deg) rotateZ(${(lean + sway).toFixed(2)}deg)`;
-          c.el.style.setProperty("--px", (clamp(d, 1.5) * 4).toFixed(2) + "%");
-          c.el.style.pointerEvents = Math.abs(d) < 3 ? "" : "none";
+      let target = from, x = from, bend = 0;
+      const frame = () => {
+        const prev = x;
+        x += (target - x) * 0.1; // smooth follow, no overshoot
+        if (Math.abs(target - x) < 1e-4) x = target;
+        bend += (Math.min(1, Math.abs(x - prev) * 30) - bend) * 0.08; // 0 = flat row, 1 = full U while moving
+        for (let i = 0; i < n; i++) {
+          const d = i - x; // 0 = in the middle, positive = to the right
+          const a = d * S * RAD;
+          const px = d * W + (R * Math.sin(a) - d * W) * bend; // flat row → drum
+          const pz = (R * Math.cos(a) - R) * bend;
+          const py = -Math.min(d * d, 4) * ring.offsetWidth * 0.09 * bend; // the U: cards rise as they leave the middle
+          const it = items[i].style;
+          it.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, ${pz.toFixed(1)}px) rotateY(${(d * S * bend).toFixed(2)}deg) rotateZ(${(clamp(-d * 5, 12) * bend).toFixed(2)}deg)`;
+          it.setProperty("--px", (clamp(d, 1.5) * 4).toFixed(2) + "%");
+          it.pointerEvents = Math.abs(d) < 3 ? "" : "none";
         }
       };
-      frame(0);
-      const tick = (time) => frame(time);
+      frame();
       // pinned: one project per step, and when scrolling stops between two it glides on to the nearest whole one
       const pin = ScrollTrigger.create({
         trigger: orbit, start: "top top", end: () => "+=" + Math.round((n - 1) * window.innerHeight * 0.8), pin: true,
@@ -234,8 +235,8 @@
       });
       lockSteps(pin, () => n - 1, n - 1);
       ScrollTrigger.create({ trigger: orbit, start: "top 80%", end: "top top", onUpdate: (st) => { if (!pin.isActive) target = from * (1 - st.progress); } });
-      // the springs only run while the section is on screen
-      ScrollTrigger.create({ trigger: orbit, start: "top bottom", end: () => pin.end + window.innerHeight, onToggle: (st) => (st.isActive ? gsap.ticker.add(tick) : gsap.ticker.remove(tick)) });
+      // the animation only runs while the section is on screen
+      ScrollTrigger.create({ trigger: orbit, start: "top bottom", end: () => pin.end + window.innerHeight, onToggle: (st) => (st.isActive ? gsap.ticker.add(frame) : gsap.ticker.remove(frame)) });
     }
 
     /* Project page photos: pinned; the main image and the other photos sit in one row that slides from right to left as you scroll down */
