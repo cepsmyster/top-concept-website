@@ -600,7 +600,7 @@ ${cta()}`,
 // (after madamepolare.com's Featured Projects): image, then the name on the left and a one-line description on the
 // right that runs right to left as a marquee on hover. A second image (hover) wipes in over the first.
 function xpCard(c, { id = true } = {}) {
-  const line = c.text.split(/(?<=\.)\s/)[0];
+  const line = c.text;
   const media = img(c.img, { alt: c.alt, sizes: "(min-width: 700px) 49vw, 96vw", attrs: `style="object-position:${c.pos || "50% 50%"}"` });
   const alt = c.hover ? img(c.hover, { alt: "", sizes: "(min-width: 700px) 49vw, 96vw", attrs: 'class="xp__alt" aria-hidden="true"' }) : "";
   return `<article class="xp reveal${c.hover ? "" : " xp--zoom"}"${id ? ` id="${c.slug}"` : ""}>

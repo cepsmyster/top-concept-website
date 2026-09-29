@@ -51,17 +51,17 @@ export const expertisePage = {
   // Carousel of the remaining fields.
   carousel: [
     { slug: "retail", title: "Retails", img: "rp-02", hover: "rp-01", alt: "Aerial view of the retail park with its market court and pavilion beside the desert",
-      text: "Retail spaces that turn a quick errand into a longer visit, and a longer visit into repeat trade." },
+      text: "Retail spaces that turn a quick errand into a longer visit, and a longer visit into repeat trade. Shops, parking, shade and places to eat are planned together. Our Retail Park in Sharjah pairs a long retail spine with a market court, a tree-shaded plaza and food pods." },
     { slug: "interior-design", title: "Interior design", img: "p-residential-interior", hover: "p-luxury-lounge", alt: "Living room with floor-to-ceiling windows",
-      text: "Interiors planned around how people really live and work, then finished with care." },
+      text: "Interiors planned around how people really live and work, then finished with care. Layout, light and materials are decided alongside the architecture, so each room feels part of the building. We design homes, lounges, lobbies and boardrooms." },
     { slug: "villas", title: "High-end villas", img: "p-high-end-villa", alt: "Contemporary villa at sunset",
-      text: "Private homes shaped by light, privacy and the view, made to feel right for decades." },
+      text: "Private homes shaped by light, privacy and the view, made to feel right for decades. Each villa is planned around how the family lives, from the arrival to the garden. Our work runs from contemporary villas to classical homes, including a villa in Minsk." },
     { slug: "townhouses", title: "Townhouses", img: "p-townhouses", alt: "Row of modern white townhouses",
-      text: "Townhouse communities built on one strong idea, with good proportions and shared outdoor space." },
+      text: "Townhouse communities built on one strong idea, with good proportions and shared outdoor space. Streets, gardens and parking are laid out together from the start. Every home in the row still feels like its own address." },
     { slug: "landscape", title: "Landscape", img: "p-podium-landscape", hover: "rp-06", alt: "Podium landscape with a pool deck",
-      text: "Podium gardens, shaded courtyards and pool decks that make outdoor space usable all year." },
+      text: "Podium gardens, shaded courtyards and pool decks that make outdoor space usable all year. Planting, shade and paving are chosen for the climate. Landscape is planned with the architecture, so the outdoors works as well as the rooms inside." },
     { slug: "hospitality", title: "Hospitality", img: "p-wadi-retreat", hover: "p-forest-resort", alt: "Mountain retreat at dusk",
-      text: "Resorts and retreats where architecture, landscape and atmosphere are designed as one guest experience." },
+      text: "Resorts and retreats where architecture, landscape and atmosphere are designed as one guest experience. Arrival, rooms and outdoor spaces are planned around how guests spend their day. Our projects range from a mountain retreat to a forest resort." },
   ],
 };
 
