@@ -50,7 +50,7 @@ export const expertisePage = {
   ],
   // Carousel of the remaining fields.
   carousel: [
-    { slug: "retail", title: "Retails", img: "p-retail-center", hover: "rp-01", alt: "Aerial view of a retail park with a solar roof",
+    { slug: "retail", title: "Retails", img: "rp-02", hover: "rp-01", alt: "Aerial view of the retail park with its market court and pavilion beside the desert",
       text: "Retail spaces that turn a quick errand into a longer visit, and a longer visit into repeat trade." },
     { slug: "interior-design", title: "Interior design", img: "p-residential-interior", hover: "p-luxury-lounge", alt: "Living room with floor-to-ceiling windows",
       text: "Interiors planned around how people really live and work, then finished with care." },
