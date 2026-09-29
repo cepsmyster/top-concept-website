@@ -25,7 +25,7 @@ export const expertise = [
   { slug: "villas", title: "High-end villas", type: "architecture", img: "p-high-end-villa", size: "sm", alt: "Contemporary luxury villa at sunset" },
   { slug: "townhouses", title: "Townhouses", type: "architecture", img: "p-townhouses", size: "sm", alt: "Row of modern white townhouses" },
   { slug: "malls", title: "Malls", type: "architecture", img: "p-shopping-mall", size: "lg", alt: "Shopping mall atrium with an ornate chandelier and escalators" },
-  { slug: "retail", title: "Retails", type: "architecture", img: "p-retail-center", size: "lg", alt: "Aerial view of a retail centre with a solar roof" },
+  { slug: "retail", title: "Retails", type: "architecture", img: "rp-02", size: "lg", alt: "Aerial view of the retail park with its market court and pavilion beside the desert" },
   { slug: "master-planning", title: "Master planning", darkTitle: "Masterplan", type: "masterplan", img: "p-resort-masterplan", size: "sm", alt: "Aerial view of a resort masterplan with lagoon pools" },
   { slug: "landscape", title: "Landscape", type: "masterplan", img: "p-podium-landscape", size: "sm", alt: "Podium landscape with a pool deck and palm trees" },
   { slug: "hospitality", title: "Hospitality", type: "hospitality", img: "p-wadi-retreat", size: "sm", alt: "Mountain retreat resort at dusk" },
