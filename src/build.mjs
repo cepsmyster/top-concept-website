@@ -733,6 +733,25 @@ ${cta()}`,
 }
 
 // TEAM
+const TEAM_VIEWS = [
+  { key: "dubai", label: "Dubai Team" },
+  { key: "india", label: "India Team" },
+  { key: "departments", label: "By Department" },
+];
+function memberGrid(people) {
+  return `<ul class="team-grid">
+    ${people
+      .map(
+        (m, i) => `<li class="member reveal" style="--d:${(i % 3) * 70}ms">
+      <div class="member__media${m.img ? "" : " is-placeholder"}">${img(m.img || "t-placeholder", { alt: m.img ? `Portrait of ${m.name}` : "", sizes: "(min-width: 900px) 25vw, 45vw" })}</div>
+      <p class="member__role">${esc(m.role)}</p>
+      <h3 class="member__name">${esc(m.name)}</h3>${m.email ? `
+      <a class="member__email" href="mailto:${esc(m.email)}">${esc(m.email)}</a>` : ""}
+    </li>`
+      )
+      .join("")}
+  </ul>`;
+}
 page({
   file: "team.html",
   title: "Meet the Team",
@@ -752,18 +771,30 @@ ${pageHero({ img: "team-hero", alt: "Two colleagues reviewing drawings together"
     <div class="leaders__text reveal">${paras(D.teamLeadership.paragraphs)}</div>
   </div>
 </section>
-<section class="container team" aria-label="Team members">
-  <ul class="team-grid">
-    ${D.team
-      .map(
-        (m, i) => `<li class="member reveal" style="--d:${(i % 3) * 70}ms">
-      <div class="member__media${m.img ? "" : " is-placeholder"}">${img(m.img || "t-placeholder", { alt: m.img ? `Portrait of ${m.name}` : "", sizes: "(min-width: 900px) 25vw, 45vw" })}</div>
-      <p class="member__role">${esc(m.role)}</p>
-      <h3 class="member__name">${esc(m.name)}</h3>
-    </li>`
-      )
+<section class="container team" id="people" aria-label="Team members" data-team>
+  <div class="team-views" role="group" aria-label="Show team">
+    ${TEAM_VIEWS.map((v, i) => `<button type="button" class="chip${i === 0 ? " is-active" : ""}" data-team-view="${v.key}" aria-pressed="${i === 0}" aria-controls="team-${v.key}">${v.label}</button>`).join("")}
+  </div>
+  <div class="team-panel" id="team-dubai" data-team-panel="dubai">
+    ${memberGrid(D.team)}
+  </div>
+  <div class="team-panel" id="team-india" data-team-panel="india" hidden>
+    ${memberGrid(D.indiaTeam)}
+  </div>
+  <div class="team-panel" id="team-departments" data-team-panel="departments" hidden>
+    <nav class="team-depts-nav" aria-label="Departments">
+      ${D.teamDepartments.map((d) => `<a class="chip" href="#dept-${d.key}">${esc(d.label)}</a>`).join("")}
+    </nav>
+    ${D.teamDepartments
+      .map((d) => {
+        const people = d.key === "india" ? D.indiaTeam : D.team.filter((m) => m.dept === d.key);
+        return `<section class="team-dept" id="dept-${d.key}" aria-labelledby="dept-${d.key}-title">
+      <div class="team-dept__head"><h2 id="dept-${d.key}-title" class="team-dept__title">${esc(d.label)}</h2><span class="team-dept__count">${people.length} ${people.length === 1 ? "person" : "people"}</span></div>
+      ${memberGrid(people)}
+    </section>`;
+      })
       .join("")}
-  </ul>
+  </div>
 </section>
 ${cta({ title: "Start with a conversation", text: "Share your idea. We’ll help you shape it into something you can build.", tracked: true })}`,
 });

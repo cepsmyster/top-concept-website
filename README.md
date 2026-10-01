@@ -45,7 +45,7 @@ Then rebuild (below).
 All text/data lives in **`src/data.mjs`**:
 
 - `projects` — add/edit projects (title, category, image, optional `gallery`). **Titles marked as descriptive placeholders (e.g. "Community Tower") should be replaced with the real project names.**
-- `team` — names, roles, photos (`img: null` shows the placeholder avatar).
+- `team` (Dubai office), `indiaTeam` (TCI India) and `teamDepartments` — names, roles, photos (`img: null` shows the placeholder avatar). The Team page has three buttons: **Dubai Team**, **India Team** and **By Department**, which splits everyone into Engineering & Architecture, Interiors, Tendering Department and TCI India Team (set by each Dubai person's `dept`; people without one, such as HR, admin, media and document control, appear only under Dubai Team). `?view=india` or `?view=departments` in the address opens that view directly. India photos (`t-in-*.webp`) were cut from `Company ID India v2.pdf`.
 - `blogs` — articles. **The six sample articles are placeholder copy — replace them with real posts.**
 - `expertisePage` — the Expertise page cards (`rows` then `carousel`, all shown as one grid, two big cards per row after madamepolare.com’s Featured Projects). Each card shows the image, the name on the left and the first sentence of `text` on the right; on hover the `hover` image wipes up over the main one (cards without one zoom slowly) and the sentence runs as a marquee.
 - `projectsPage`, `teamLeadership`, `culture`, `careers`, `leadership`, `expertise` — page copy. **On the Expertise cards, only the "Retails" line among the last six comes from the design; the other five short descriptions are placeholders to replace with approved copy.**

@@ -718,6 +718,18 @@ html.lenis, html.lenis body { height: auto; }
 .member__media.is-placeholder img { object-fit: contain; padding: 14%; opacity: .9; transform: none !important; }
 .member__role { margin-top: 12px; font: 400 .66rem var(--font-head); letter-spacing: .03em; text-transform: uppercase; color: var(--muted); line-height: 1.35; min-height: 2.7em; }
 .member__name { margin-top: 2px; font: 500 clamp(1.2rem, 1.05rem + .55vw, 1.6rem) var(--font-display); letter-spacing: var(--track-small); }
+.member__email { display: inline-block; margin-top: 6px; font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; transition: color .2s; }
+.member__email:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Team page: Dubai / India / By department switch */
+.team-views { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: clamp(32px, 4.5vw, 64px); }
+.team-views .chip { padding: 12px 22px; font-size: .74rem; }
+.team-depts-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: clamp(28px, 4vw, 56px); }
+.team-dept { scroll-margin-top: 110px; }
+.team-dept + .team-dept { margin-top: clamp(64px, 8vw, 128px); }
+.team-dept__head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-bottom: clamp(14px, 1.6vw, 22px); margin-bottom: clamp(28px, 4vw, 56px); border-bottom: 1px solid var(--line); }
+.team-dept__title { font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3.6rem); }
+.team-dept__count { flex: none; font: 400 .7rem var(--font-head); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
 .culture, .careers { padding-top: clamp(28px, 4vw, 56px); }
 .culture { padding-bottom: var(--section-y); }

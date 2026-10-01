@@ -233,27 +233,62 @@ export const teamLeadership = {
   ],
 };
 
+// Team page sections. The "By department" view groups people by `dept` (a key below);
+// people without one (HR, admin, media, document control) show in the Dubai view only.
+export const teamDepartments = [
+  { key: "eng", label: "Engineering & Architecture" },
+  { key: "interiors", label: "Interiors" },
+  { key: "tendering", label: "Tendering Department" },
+  { key: "india", label: "TCI India Team" },
+];
+
+// Dubai office (order from the "Frame 10" design).
 export const team = [
-  { name: "Maria Gomez", role: "Head of Department (Engineering & Architecture)", img: "t-maria-corazon" },
-  { name: "Lobna Elsawy", role: "Head of Department (Interior)", img: "t-lobna-elsawy" },
+  { name: "Maria Gomez", role: "Head of Department (Architecture)", img: "t-maria-corazon", dept: "eng" },
+  { name: "Lobna Elsawy", role: "Head of Department (Interior)", img: "t-lobna-elsawy", dept: "interiors" },
   { name: "Mohammad Yousseff", role: "Group HR Manager", img: "t-mohammad-yousseff" },
-  { name: "Rola Ayman", role: "Project Manager (Interior)", img: "t-rola-ayman" },
-  { name: "Marcelino Cruz", role: "Senior Architect", img: "t-marcelino-cruz" },
-  { name: "Mohammed Faizan", role: "Architect", img: "t-mohammed-faizan" },
-  { name: "Mai Gendeil", role: "Structural Engineer", img: null },
-  { name: "Shahd Allazkani", role: "Design Architect", img: "t-shahd-allazkani" },
-  { name: "Amin", role: "Design Architect", img: null },
-  { name: "Rama Qabbani", role: "Interior Designer", img: "t-rama-qabbani" },
-  { name: "Toranj Majid", role: "Interior Designer", img: "t-toranj-majid" },
-  { name: "Ahmed Ali", role: "Site Engineer", img: "t-ahmed-ali" },
-  { name: "Yorgo", role: "Site Engineer", img: null },
-  { name: "Kousai Alhaji", role: "Senior Estimator / Quantity Surveyor", img: "t-kousai-alhaji" },
-  { name: "Mohamed Hamza", role: "Quantity Surveyor Engineer", img: "t-mohamed-hamza" },
-  { name: "Muhammad Sharafat", role: "M.E.P. Engineer", img: "t-muhammad-sharafat" },
+  { name: "Rola Ayman", role: "Project Manager (Interior)", img: "t-rola-ayman", dept: "interiors" },
+  { name: "Marcelino Cruz", role: "Senior Architect", img: "t-marcelino-cruz", dept: "eng" },
+  { name: "Mohammed Faizan", role: "Senior Architect", img: "t-mohammed-faizan", dept: "eng" },
+  { name: "Rajab Ali", role: "Senior Architect", img: null, dept: "eng" },
+  { name: "Rania Osman", role: "Senior Architect", img: null, dept: "eng" },
+  { name: "Mohammad Meawod", role: "Architect", img: null, dept: "eng" },
+  { name: "Mai Gendeil", role: "Structural Engineer", img: null, dept: "eng" },
+  { name: "Shahd Allazkani", role: "Design Architect", img: "t-shahd-allazkani", dept: "eng" },
+  { name: "Amin", role: "Design Architect", img: null, dept: "eng" },
+  { name: "Rama Qabbani", role: "Interior Designer", img: "t-rama-qabbani", dept: "interiors" },
+  { name: "Toranj Majid", role: "Interior Designer", img: null, dept: "interiors" },
+  { name: "Ahmed Ali", role: "Site Engineer", img: "t-ahmed-ali", dept: "eng" },
+  { name: "Yorgo", role: "Site Engineer", img: null, dept: "eng" },
+  { name: "Heba Al Mardini", role: "Senior Estimator / Quantity Surveyor", img: null, dept: "tendering" },
+  { name: "Mohamed Hamza", role: "Quantity Surveyor Engineer", img: "t-mohamed-hamza", dept: "tendering" },
+  { name: "Muhammad Sharafat", role: "M.E.P. Engineer", img: "t-muhammad-sharafat", dept: "eng" },
   { name: "Shayeebuddin Khilji", role: "Document Controller", img: "t-shayeebuddin-khilji" },
-  { name: "Saifullah Abdulla", role: "Document Controller", img: null },
+  { name: "Varsha Vinod", role: "Draftsperson (Interior)", img: null, dept: "interiors" },
   { name: "Carl Serafin", role: "Media Department", img: null },
   { name: "Arya Akhil", role: "Admin / Receptionist", img: "t-arya-akhil" },
+];
+
+// TCI India team (from "Company ID India v2.pdf"; photos cut from the ID cards).
+export const indiaTeam = [
+  { name: "Thirumalai", role: "Senior Architect", img: "t-in-thirumalai", email: "thirumalai@topconcept.ae" },
+  { name: "M Saifulla Imran", role: "BIM Structural Engineer", img: "t-in-saifulla-imran", email: "saifullaimran@topconcept.ae" },
+  { name: "Sainath Biradar", role: "BIM Engineer", img: "t-in-sainath-biradar", email: "sainath@topconcept.ae" },
+  { name: "Kowsalya Devi", role: "BIM Engineer", img: "t-in-kowsalya-devi", email: "kowsalya@topconcept.ae" },
+  { name: "Selvakumar B", role: "Senior Structural Engineer", img: "t-in-selvakumar-b", email: "selvakumar@topconcept.ae" },
+  { name: "Albert S", role: "Office Assistant", img: "t-in-albert-s" },
+  { name: "Amit Kumar", role: "Human Resources", img: "t-in-amit-kumar", email: "amit@topconcept.ae" },
+  { name: "Ganesha BR", role: "IT Support", img: "t-in-ganesha-br", email: "itsupport@topconcept.ae" },
+  { name: "Shresth Swapna", role: "ID Draftsman", img: "t-in-shresth-swapna", email: "shresth@topconcept.ae" },
+  { name: "Vidya Shankar P", role: "Structural Draftsman", img: "t-in-vidya-shankar-p", email: "shankar@topconcept.ae" },
+  { name: "MD Shahid Asgar", role: "Junior Architect", img: "t-in-shahid-asgar", email: "shahid@topconcept.ae" },
+  { name: "MD Arif Hussain", role: "MEP Senior Design Engineer", img: "t-in-arif-hussain", email: "arif@topconcept.ae" },
+  { name: "Aarla Karteek", role: "Senior Architect (BIM)", img: "t-in-aarla-karteek", email: "karteek@topconcept.ae" },
+  { name: "Kishor Kumar S P", role: "BIM Modular", img: "t-in-kishor-kumar", email: "kishore@topconcept.ae" },
+  { name: "Avanish Kumar Sharma", role: "Draftsman", img: "t-in-avanish-kumar-sharma", email: "avanish@topconcept.ae" },
+  { name: "Golagana Sai Guru", role: "BIM Coordinator", img: "t-in-golagana-sai-guru", email: "guru@topconcept.ae" },
+  { name: "Jatoth Vinod Kumar", role: "BIM Project Manager", img: "t-in-jatoth-vinod-kumar", email: "vinod@topconcept.ae" },
+  { name: "Bhukya Ravindher", role: "BIM Architect", img: "t-in-bhukya-ravindher", email: "ravindhar@topconcept.ae" },
 ];
 
 export const culture = {

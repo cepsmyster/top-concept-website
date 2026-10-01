@@ -20,7 +20,7 @@
 <link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/styles.css?v=mumds4bl">
+<link rel="stylesheet" href="assets/css/styles.css?v=mupkxgek">
 
 </head>
 <body>
@@ -162,11 +162,15 @@
     <div class="leaders__text reveal"><p>At Top Concept, we design spaces that feel good to live in, work in and visit.</p><p>Our work goes beyond buildings. We start with people: who will use a space, and what they need from it. From architecture and interiors to engineering coordination and site supervision, one team brings the ideas, the technical knowledge and the care.</p><p>We have grown through trust, hard work and strong relationships with our clients and partners. Every project has taught us something, and each one makes the next design better.</p><p>Thank you to everyone who has been part of our journey. Together, we will keep creating spaces built with purpose, integrity and lasting value.</p></div>
   </div>
 </section>
-<section class="container team" aria-label="Team members">
-  <ul class="team-grid">
+<section class="container team" id="people" aria-label="Team members" data-team>
+  <div class="team-views" role="group" aria-label="Show team">
+    <button type="button" class="chip is-active" data-team-view="dubai" aria-pressed="true" aria-controls="team-dubai">Dubai Team</button><button type="button" class="chip" data-team-view="india" aria-pressed="false" aria-controls="team-india">India Team</button><button type="button" class="chip" data-team-view="departments" aria-pressed="false" aria-controls="team-departments">By Department</button>
+  </div>
+  <div class="team-panel" id="team-dubai" data-team-panel="dubai">
+    <ul class="team-grid">
     <li class="member reveal" style="--d:0ms">
       <div class="member__media"><img src="assets/img/t-maria-corazon.webp" alt="Portrait of Maria Gomez" width="459" height="381" loading="lazy" decoding="async"></div>
-      <p class="member__role">Head Of Department (Engineering &amp; Architecture)</p>
+      <p class="member__role">Head Of Department (Architecture)</p>
       <h3 class="member__name">Maria Gomez</h3>
     </li><li class="member reveal" style="--d:70ms">
       <div class="member__media"><img src="assets/img/t-lobna-elsawy.webp" alt="Portrait of Lobna Elsawy" width="488" height="472" loading="lazy" decoding="async"></div>
@@ -186,8 +190,20 @@
       <h3 class="member__name">Marcelino Cruz</h3>
     </li><li class="member reveal" style="--d:140ms">
       <div class="member__media"><img src="assets/img/t-mohammed-faizan.webp" alt="Portrait of Mohammed Faizan" width="484" height="429" loading="lazy" decoding="async"></div>
-      <p class="member__role">Architect</p>
+      <p class="member__role">Senior Architect</p>
       <h3 class="member__name">Mohammed Faizan</h3>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect</p>
+      <h3 class="member__name">Rajab Ali</h3>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect</p>
+      <h3 class="member__name">Rania Osman</h3>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Architect</p>
+      <h3 class="member__name">Mohammad Meawod</h3>
     </li><li class="member reveal" style="--d:0ms">
       <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
       <p class="member__role">Structural Engineer</p>
@@ -205,7 +221,7 @@
       <p class="member__role">Interior Designer</p>
       <h3 class="member__name">Rama Qabbani</h3>
     </li><li class="member reveal" style="--d:70ms">
-      <div class="member__media"><img src="assets/img/t-toranj-majid.webp" alt="Portrait of Toranj Majid" width="314" height="426" loading="lazy" decoding="async"></div>
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
       <p class="member__role">Interior Designer</p>
       <h3 class="member__name">Toranj Majid</h3>
     </li><li class="member reveal" style="--d:140ms">
@@ -217,9 +233,9 @@
       <p class="member__role">Site Engineer</p>
       <h3 class="member__name">Yorgo</h3>
     </li><li class="member reveal" style="--d:70ms">
-      <div class="member__media"><img src="assets/img/t-kousai-alhaji.webp" alt="Portrait of Kousai Alhaji" width="342" height="383" loading="lazy" decoding="async"></div>
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
       <p class="member__role">Senior Estimator / Quantity Surveyor</p>
-      <h3 class="member__name">Kousai Alhaji</h3>
+      <h3 class="member__name">Heba Al Mardini</h3>
     </li><li class="member reveal" style="--d:140ms">
       <div class="member__media"><img src="assets/img/t-mohamed-hamza.webp" alt="Portrait of Mohamed Hamza" width="327" height="428" loading="lazy" decoding="async"></div>
       <p class="member__role">Quantity Surveyor Engineer</p>
@@ -234,8 +250,8 @@
       <h3 class="member__name">Shayeebuddin Khilji</h3>
     </li><li class="member reveal" style="--d:140ms">
       <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
-      <p class="member__role">Document Controller</p>
-      <h3 class="member__name">Saifullah Abdulla</h3>
+      <p class="member__role">Draftsperson (Interior)</p>
+      <h3 class="member__name">Varsha Vinod</h3>
     </li><li class="member reveal" style="--d:0ms">
       <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
       <p class="member__role">Media Department</p>
@@ -246,6 +262,292 @@
       <h3 class="member__name">Arya Akhil</h3>
     </li>
   </ul>
+  </div>
+  <div class="team-panel" id="team-india" data-team-panel="india" hidden>
+    <ul class="team-grid">
+    <li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-thirumalai.webp" alt="Portrait of Thirumalai" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect</p>
+      <h3 class="member__name">Thirumalai</h3>
+      <a class="member__email" href="mailto:thirumalai@topconcept.ae">thirumalai@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-saifulla-imran.webp" alt="Portrait of M Saifulla Imran" width="576" height="576" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Structural Engineer</p>
+      <h3 class="member__name">M Saifulla Imran</h3>
+      <a class="member__email" href="mailto:saifullaimran@topconcept.ae">saifullaimran@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-sainath-biradar.webp" alt="Portrait of Sainath Biradar" width="604" height="604" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Engineer</p>
+      <h3 class="member__name">Sainath Biradar</h3>
+      <a class="member__email" href="mailto:sainath@topconcept.ae">sainath@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-kowsalya-devi.webp" alt="Portrait of Kowsalya Devi" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Engineer</p>
+      <h3 class="member__name">Kowsalya Devi</h3>
+      <a class="member__email" href="mailto:kowsalya@topconcept.ae">kowsalya@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-selvakumar-b.webp" alt="Portrait of Selvakumar B" width="548" height="548" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Structural Engineer</p>
+      <h3 class="member__name">Selvakumar B</h3>
+      <a class="member__email" href="mailto:selvakumar@topconcept.ae">selvakumar@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-albert-s.webp" alt="Portrait of Albert S" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">Office Assistant</p>
+      <h3 class="member__name">Albert S</h3>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-amit-kumar.webp" alt="Portrait of Amit Kumar" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">Human Resources</p>
+      <h3 class="member__name">Amit Kumar</h3>
+      <a class="member__email" href="mailto:amit@topconcept.ae">amit@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-ganesha-br.webp" alt="Portrait of Ganesha BR" width="549" height="549" loading="lazy" decoding="async"></div>
+      <p class="member__role">IT Support</p>
+      <h3 class="member__name">Ganesha BR</h3>
+      <a class="member__email" href="mailto:itsupport@topconcept.ae">itsupport@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-shresth-swapna.webp" alt="Portrait of Shresth Swapna" width="567" height="567" loading="lazy" decoding="async"></div>
+      <p class="member__role">ID Draftsman</p>
+      <h3 class="member__name">Shresth Swapna</h3>
+      <a class="member__email" href="mailto:shresth@topconcept.ae">shresth@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-vidya-shankar-p.webp" alt="Portrait of Vidya Shankar P" width="564" height="564" loading="lazy" decoding="async"></div>
+      <p class="member__role">Structural Draftsman</p>
+      <h3 class="member__name">Vidya Shankar P</h3>
+      <a class="member__email" href="mailto:shankar@topconcept.ae">shankar@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-shahid-asgar.webp" alt="Portrait of MD Shahid Asgar" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">Junior Architect</p>
+      <h3 class="member__name">MD Shahid Asgar</h3>
+      <a class="member__email" href="mailto:shahid@topconcept.ae">shahid@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-arif-hussain.webp" alt="Portrait of MD Arif Hussain" width="558" height="558" loading="lazy" decoding="async"></div>
+      <p class="member__role">MEP Senior Design Engineer</p>
+      <h3 class="member__name">MD Arif Hussain</h3>
+      <a class="member__email" href="mailto:arif@topconcept.ae">arif@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-aarla-karteek.webp" alt="Portrait of Aarla Karteek" width="567" height="567" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect (BIM)</p>
+      <h3 class="member__name">Aarla Karteek</h3>
+      <a class="member__email" href="mailto:karteek@topconcept.ae">karteek@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-kishor-kumar.webp" alt="Portrait of Kishor Kumar S P" width="576" height="576" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Modular</p>
+      <h3 class="member__name">Kishor Kumar S P</h3>
+      <a class="member__email" href="mailto:kishore@topconcept.ae">kishore@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-avanish-kumar-sharma.webp" alt="Portrait of Avanish Kumar Sharma" width="349" height="349" loading="lazy" decoding="async"></div>
+      <p class="member__role">Draftsman</p>
+      <h3 class="member__name">Avanish Kumar Sharma</h3>
+      <a class="member__email" href="mailto:avanish@topconcept.ae">avanish@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-golagana-sai-guru.webp" alt="Portrait of Golagana Sai Guru" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Coordinator</p>
+      <h3 class="member__name">Golagana Sai Guru</h3>
+      <a class="member__email" href="mailto:guru@topconcept.ae">guru@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-jatoth-vinod-kumar.webp" alt="Portrait of Jatoth Vinod Kumar" width="576" height="576" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Project Manager</p>
+      <h3 class="member__name">Jatoth Vinod Kumar</h3>
+      <a class="member__email" href="mailto:vinod@topconcept.ae">vinod@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-bhukya-ravindher.webp" alt="Portrait of Bhukya Ravindher" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Architect</p>
+      <h3 class="member__name">Bhukya Ravindher</h3>
+      <a class="member__email" href="mailto:ravindhar@topconcept.ae">ravindhar@topconcept.ae</a>
+    </li>
+  </ul>
+  </div>
+  <div class="team-panel" id="team-departments" data-team-panel="departments" hidden>
+    <nav class="team-depts-nav" aria-label="Departments">
+      <a class="chip" href="#dept-eng">Engineering &amp; Architecture</a><a class="chip" href="#dept-interiors">Interiors</a><a class="chip" href="#dept-tendering">Tendering Department</a><a class="chip" href="#dept-india">TCI India Team</a>
+    </nav>
+    <section class="team-dept" id="dept-eng" aria-labelledby="dept-eng-title">
+      <div class="team-dept__head"><h2 id="dept-eng-title" class="team-dept__title hd">Engineering &amp;<br class="hbr"><span class="hb">Architecture</span></h2><span class="team-dept__count">12 people</span></div>
+      <ul class="team-grid">
+    <li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-maria-corazon.webp" alt="Portrait of Maria Gomez" width="459" height="381" loading="lazy" decoding="async"></div>
+      <p class="member__role">Head Of Department (Architecture)</p>
+      <h3 class="member__name">Maria Gomez</h3>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-marcelino-cruz.webp" alt="Portrait of Marcelino Cruz" width="415" height="444" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect</p>
+      <h3 class="member__name">Marcelino Cruz</h3>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-mohammed-faizan.webp" alt="Portrait of Mohammed Faizan" width="484" height="429" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect</p>
+      <h3 class="member__name">Mohammed Faizan</h3>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect</p>
+      <h3 class="member__name">Rajab Ali</h3>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect</p>
+      <h3 class="member__name">Rania Osman</h3>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Architect</p>
+      <h3 class="member__name">Mohammad Meawod</h3>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Structural Engineer</p>
+      <h3 class="member__name">Mai Gendeil</h3>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-shahd-allazkani.webp" alt="Portrait of Shahd Allazkani" width="337" height="430" loading="lazy" decoding="async"></div>
+      <p class="member__role">Design Architect</p>
+      <h3 class="member__name">Shahd Allazkani</h3>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Design Architect</p>
+      <h3 class="member__name">Amin</h3>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-ahmed-ali.webp" alt="Portrait of Ahmed Ali" width="445" height="433" loading="lazy" decoding="async"></div>
+      <p class="member__role">Site Engineer</p>
+      <h3 class="member__name">Ahmed Ali</h3>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Site Engineer</p>
+      <h3 class="member__name">Yorgo</h3>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-muhammad-sharafat.webp" alt="Portrait of Muhammad Sharafat" width="410" height="410" loading="lazy" decoding="async"></div>
+      <p class="member__role">M.E.P. Engineer</p>
+      <h3 class="member__name">Muhammad Sharafat</h3>
+    </li>
+  </ul>
+    </section><section class="team-dept" id="dept-interiors" aria-labelledby="dept-interiors-title">
+      <div class="team-dept__head"><h2 id="dept-interiors-title" class="team-dept__title hd"><span class="hb">Interiors</span></h2><span class="team-dept__count">5 people</span></div>
+      <ul class="team-grid">
+    <li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-lobna-elsawy.webp" alt="Portrait of Lobna Elsawy" width="488" height="472" loading="lazy" decoding="async"></div>
+      <p class="member__role">Head Of Department (Interior)</p>
+      <h3 class="member__name">Lobna Elsawy</h3>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-rola-ayman.webp" alt="Portrait of Rola Ayman" width="409" height="442" loading="lazy" decoding="async"></div>
+      <p class="member__role">Project Manager (Interior)</p>
+      <h3 class="member__name">Rola Ayman</h3>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-rama-qabbani.webp" alt="Portrait of Rama Qabbani" width="429" height="412" loading="lazy" decoding="async"></div>
+      <p class="member__role">Interior Designer</p>
+      <h3 class="member__name">Rama Qabbani</h3>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Interior Designer</p>
+      <h3 class="member__name">Toranj Majid</h3>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Draftsperson (Interior)</p>
+      <h3 class="member__name">Varsha Vinod</h3>
+    </li>
+  </ul>
+    </section><section class="team-dept" id="dept-tendering" aria-labelledby="dept-tendering-title">
+      <div class="team-dept__head"><h2 id="dept-tendering-title" class="team-dept__title hd">Tendering<br class="hbr"><span class="hb">Department</span></h2><span class="team-dept__count">2 people</span></div>
+      <ul class="team-grid">
+    <li class="member reveal" style="--d:0ms">
+      <div class="member__media is-placeholder"><img src="assets/img/t-placeholder.webp" alt="" width="378" height="371" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Estimator / Quantity Surveyor</p>
+      <h3 class="member__name">Heba Al Mardini</h3>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-mohamed-hamza.webp" alt="Portrait of Mohamed Hamza" width="327" height="428" loading="lazy" decoding="async"></div>
+      <p class="member__role">Quantity Surveyor Engineer</p>
+      <h3 class="member__name">Mohamed Hamza</h3>
+    </li>
+  </ul>
+    </section><section class="team-dept" id="dept-india" aria-labelledby="dept-india-title">
+      <div class="team-dept__head"><h2 id="dept-india-title" class="team-dept__title hd">TCI India<br class="hbr"><span class="hb">Team</span></h2><span class="team-dept__count">18 people</span></div>
+      <ul class="team-grid">
+    <li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-thirumalai.webp" alt="Portrait of Thirumalai" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect</p>
+      <h3 class="member__name">Thirumalai</h3>
+      <a class="member__email" href="mailto:thirumalai@topconcept.ae">thirumalai@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-saifulla-imran.webp" alt="Portrait of M Saifulla Imran" width="576" height="576" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Structural Engineer</p>
+      <h3 class="member__name">M Saifulla Imran</h3>
+      <a class="member__email" href="mailto:saifullaimran@topconcept.ae">saifullaimran@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-sainath-biradar.webp" alt="Portrait of Sainath Biradar" width="604" height="604" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Engineer</p>
+      <h3 class="member__name">Sainath Biradar</h3>
+      <a class="member__email" href="mailto:sainath@topconcept.ae">sainath@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-kowsalya-devi.webp" alt="Portrait of Kowsalya Devi" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Engineer</p>
+      <h3 class="member__name">Kowsalya Devi</h3>
+      <a class="member__email" href="mailto:kowsalya@topconcept.ae">kowsalya@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-selvakumar-b.webp" alt="Portrait of Selvakumar B" width="548" height="548" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Structural Engineer</p>
+      <h3 class="member__name">Selvakumar B</h3>
+      <a class="member__email" href="mailto:selvakumar@topconcept.ae">selvakumar@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-albert-s.webp" alt="Portrait of Albert S" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">Office Assistant</p>
+      <h3 class="member__name">Albert S</h3>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-amit-kumar.webp" alt="Portrait of Amit Kumar" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">Human Resources</p>
+      <h3 class="member__name">Amit Kumar</h3>
+      <a class="member__email" href="mailto:amit@topconcept.ae">amit@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-ganesha-br.webp" alt="Portrait of Ganesha BR" width="549" height="549" loading="lazy" decoding="async"></div>
+      <p class="member__role">IT Support</p>
+      <h3 class="member__name">Ganesha BR</h3>
+      <a class="member__email" href="mailto:itsupport@topconcept.ae">itsupport@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-shresth-swapna.webp" alt="Portrait of Shresth Swapna" width="567" height="567" loading="lazy" decoding="async"></div>
+      <p class="member__role">ID Draftsman</p>
+      <h3 class="member__name">Shresth Swapna</h3>
+      <a class="member__email" href="mailto:shresth@topconcept.ae">shresth@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-vidya-shankar-p.webp" alt="Portrait of Vidya Shankar P" width="564" height="564" loading="lazy" decoding="async"></div>
+      <p class="member__role">Structural Draftsman</p>
+      <h3 class="member__name">Vidya Shankar P</h3>
+      <a class="member__email" href="mailto:shankar@topconcept.ae">shankar@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-shahid-asgar.webp" alt="Portrait of MD Shahid Asgar" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">Junior Architect</p>
+      <h3 class="member__name">MD Shahid Asgar</h3>
+      <a class="member__email" href="mailto:shahid@topconcept.ae">shahid@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-arif-hussain.webp" alt="Portrait of MD Arif Hussain" width="558" height="558" loading="lazy" decoding="async"></div>
+      <p class="member__role">MEP Senior Design Engineer</p>
+      <h3 class="member__name">MD Arif Hussain</h3>
+      <a class="member__email" href="mailto:arif@topconcept.ae">arif@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-aarla-karteek.webp" alt="Portrait of Aarla Karteek" width="567" height="567" loading="lazy" decoding="async"></div>
+      <p class="member__role">Senior Architect (BIM)</p>
+      <h3 class="member__name">Aarla Karteek</h3>
+      <a class="member__email" href="mailto:karteek@topconcept.ae">karteek@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-kishor-kumar.webp" alt="Portrait of Kishor Kumar S P" width="576" height="576" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Modular</p>
+      <h3 class="member__name">Kishor Kumar S P</h3>
+      <a class="member__email" href="mailto:kishore@topconcept.ae">kishore@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-avanish-kumar-sharma.webp" alt="Portrait of Avanish Kumar Sharma" width="349" height="349" loading="lazy" decoding="async"></div>
+      <p class="member__role">Draftsman</p>
+      <h3 class="member__name">Avanish Kumar Sharma</h3>
+      <a class="member__email" href="mailto:avanish@topconcept.ae">avanish@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:0ms">
+      <div class="member__media"><img src="assets/img/t-in-golagana-sai-guru.webp" alt="Portrait of Golagana Sai Guru" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Coordinator</p>
+      <h3 class="member__name">Golagana Sai Guru</h3>
+      <a class="member__email" href="mailto:guru@topconcept.ae">guru@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:70ms">
+      <div class="member__media"><img src="assets/img/t-in-jatoth-vinod-kumar.webp" alt="Portrait of Jatoth Vinod Kumar" width="576" height="576" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Project Manager</p>
+      <h3 class="member__name">Jatoth Vinod Kumar</h3>
+      <a class="member__email" href="mailto:vinod@topconcept.ae">vinod@topconcept.ae</a>
+    </li><li class="member reveal" style="--d:140ms">
+      <div class="member__media"><img src="assets/img/t-in-bhukya-ravindher.webp" alt="Portrait of Bhukya Ravindher" width="640" height="640" loading="lazy" decoding="async"></div>
+      <p class="member__role">BIM Architect</p>
+      <h3 class="member__name">Bhukya Ravindher</h3>
+      <a class="member__email" href="mailto:ravindhar@topconcept.ae">ravindhar@topconcept.ae</a>
+    </li>
+  </ul>
+    </section>
+  </div>
 </section>
 
 <section class="cta cta--tracked" id="connect" aria-labelledby="cta-title">
@@ -290,7 +592,7 @@
 <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/vendor/SplitText.min.js" defer></script>
 <script src="assets/js/vendor/lenis.min.js" defer></script>
-<script src="assets/js/main.js?v=mumds4bl" defer></script>
-<script src="assets/js/motion.js?v=mumds4bl" defer></script>
+<script src="assets/js/main.js?v=mupkxgek" defer></script>
+<script src="assets/js/motion.js?v=mupkxgek" defer></script>
 </body>
 </html>

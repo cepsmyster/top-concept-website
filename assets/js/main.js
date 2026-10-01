@@ -279,6 +279,31 @@
     }
   })();
 
+  /* ───────── Team page: Dubai / India / By department (?view=) ───────── */
+  (() => {
+    const root = $("[data-team]");
+    if (!root) return;
+    const btns = $$("[data-team-view]", root);
+    const panels = $$("[data-team-panel]", root);
+    const show = (view, push) => {
+      if (!btns.some((b) => b.dataset.teamView === view)) view = "dubai";
+      btns.forEach((b) => { const on = b.dataset.teamView === view; b.classList.toggle("is-active", on); b.setAttribute("aria-pressed", String(on)); });
+      panels.forEach((p) => { p.hidden = p.dataset.teamPanel !== view; });
+      if (push) {
+        // cards in a panel that was hidden missed their scroll reveal; show them straight away
+        $$(`[data-team-panel="${view}"] .reveal`, root).forEach((el) => {
+          if (window.gsap) window.gsap.killTweensOf(el);
+          el.style.opacity = ""; el.style.visibility = ""; el.style.transform = "";
+          el.classList.add("is-visible");
+        });
+        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      }
+      if (push) history.replaceState(null, "", location.pathname + (view === "dubai" ? "" : "?view=" + view) + location.hash);
+    };
+    btns.forEach((b) => b.addEventListener("click", () => show(b.dataset.teamView, true)));
+    show(new URLSearchParams(location.search).get("view") || "dubai", false);
+  })();
+
   /* ───────── Lightbox (project galleries) ───────── */
   (() => {
     const shots = $$("[data-lightbox]");
