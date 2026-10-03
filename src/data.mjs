@@ -234,11 +234,13 @@ export const teamLeadership = {
 };
 
 // Team page sections. The "By department" view groups people by `dept` (a key below);
-// people without one (HR, admin, media, document control) show in the Dubai view only.
+// people without one (document control) show in the Dubai view only.
 export const teamDepartments = [
   { key: "eng", label: "Engineering & Architecture" },
   { key: "interiors", label: "Interiors" },
   { key: "tendering", label: "Tendering Department" },
+  { key: "management", label: "Management" },
+  { key: "media", label: "Media Department" },
   { key: "india", label: "TCI India Team" },
 ];
 
@@ -246,7 +248,7 @@ export const teamDepartments = [
 export const team = [
   { name: "Maria Gomez", role: "Head of Department (Architecture)", img: "t-maria-corazon", dept: "eng" },
   { name: "Lobna Elsawy", role: "Head of Department (Interior)", img: "t-lobna-elsawy", dept: "interiors" },
-  { name: "Mohammad Yousseff", role: "Group HR Manager", img: "t-mohammad-yousseff" },
+  { name: "Mohammad Yousseff", role: "Group HR Manager", img: "t-mohammad-yousseff", dept: "management" },
   { name: "Rola Ayman", role: "Project Manager (Interior)", img: "t-rola-ayman", dept: "interiors" },
   { name: "Marcelino Cruz", role: "Senior Architect", img: "t-marcelino-cruz", dept: "eng" },
   { name: "Mohammed Faizan", role: "Senior Architect", img: "t-mohammed-faizan", dept: "eng" },
@@ -265,8 +267,8 @@ export const team = [
   { name: "Muhammad Sharafat", role: "M.E.P. Engineer", img: "t-muhammad-sharafat", dept: "eng" },
   { name: "Shayeebuddin Khilji", role: "Document Controller", img: "t-shayeebuddin-khilji" },
   { name: "Varsha Vinod", role: "Draftsperson (Interior)", img: null, dept: "interiors" },
-  { name: "Carl Serafin", role: "Media Department", img: null },
-  { name: "Arya Akhil", role: "Admin / Receptionist", img: "t-arya-akhil" },
+  { name: "Carl Serafin", role: "Media Department", img: null, dept: "media" },
+  { name: "Arya Akhil", role: "Admin / Receptionist", img: "t-arya-akhil", dept: "management" },
 ];
 
 // TCI India team (from "Company ID India v2.pdf"; photos cut from the ID cards).
