@@ -402,7 +402,7 @@ function projectShowcase() {
         <span class="model__tag">Scroll to rise over the site · drag to look around · Ctrl + scroll to zoom</span>
       </header>
       <div class="model__foot">
-        <p class="model__desc">A 300 m retail spine with parking on its roof, fronted by a shade-sail market, the Games hall, a tree-shaded plaza and a pavilion wrapped in a perforated brick screen, with food pods along the promenade and a jogging trail through the dunes behind.</p>
+        <p class="model__desc">A raised connecting roof links the retail buildings. Behind it runs a separate road. Explore the shade-sail market, Games hall, tree plaza and brick-screen pavilion, with food pods along the promenade.</p>
         <div class="model__controls" role="group" aria-label="Model view">
           <button class="model__btn" type="button" data-model-labels-toggle aria-pressed="true">Labels</button>
           <button class="model__btn model__btn--icon" type="button" data-model-zoom-in aria-label="Zoom in">+</button>

@@ -1,4 +1,4 @@
-// Interactive 3D model of Retail Park, Sharjah — the final design from the renders in /Retail Park (golden hour, desert setting).
+// Interactive 3D reconstruction of Retail Park from the supplied renders and owner corrections.
 // Source for assets/js/model3d.js — after editing, rebuild it from src/: `npm install` (once), then `npm run model`.
 //
 // Laid out by hand from the two aerial renders (1f, 3f) and the street-level views, in metres.
@@ -17,7 +17,7 @@ import { EffectComposer, RenderPass, EffectPass, SMAAEffect, ToneMappingEffect, 
 const { Vector2, Vector3, Group, Mesh, BoxGeometry, MeshStandardMaterial, MeshPhysicalMaterial, MeshBasicMaterial } = THREE;
 
 const P = (x, z) => new Vector2(x, z);
-const DECK = 6.5; // rooftop parking level on the long retail spine
+const CONNECTOR_HEIGHT = 9.4; // narrow continuous roof section; the rear road is at ground level
 
 const root = document.querySelector("[data-model3d]");
 const BASE = root?.dataset.assets || "assets/model/";
@@ -55,7 +55,7 @@ function canvasTex(w, h, paint, repeat) {
 let seed = 20261014;
 const rnd = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
 const pick = (a) => a[Math.floor(rnd() * a.length)];
-const GREENS = ["#3f5a2a", "#4d6a31", "#5b7a39", "#6a8a42", "#35502a", "#789a4b", "#48652f"];
+const GREENS = ["#37442b", "#46553a", "#596246", "#687051", "#35452f", "#78815d", "#495740"];
 const leafTexture = (flowers) => canvasTex(512, 512, (g, w, h) => {
   for (let i = 0; i < 6200; i++) {
     g.save();
@@ -99,10 +99,10 @@ const screenTexture = () => canvasTex(512, 256, (g, w, h) => {
 }, 1);
 // terracotta cladding with vertical flutes (Games hall)
 const fluteTexture = () => canvasTex(256, 256, (g, w, h) => {
-  g.fillStyle = "#9c5a40"; g.fillRect(0, 0, w, h);
+  g.fillStyle = "#a67b68"; g.fillRect(0, 0, w, h);
   for (let x = 0; x < w; x += 16) {
     const gr = g.createLinearGradient(x, 0, x + 16, 0);
-    gr.addColorStop(0, "#7e4633"); gr.addColorStop(0.4, "#b06a4c"); gr.addColorStop(1, "#8a4d37");
+    gr.addColorStop(0, "#8d6556"); gr.addColorStop(0.4, "#b68c77"); gr.addColorStop(1, "#9e7361");
     g.fillStyle = gr; g.fillRect(x, 0, 16, h);
   }
 }, 1 / 3); // 3 m per tile
@@ -137,19 +137,19 @@ const M = {
   stucco: pbr("white_stucco", { size: 3, arm: true, color: "#efe6d8", normal: 0.5 }),
   concrete: pbr("white_stucco", { size: 3, color: "#8d8a86", normal: 0.4 }),
   darkBand: plain("#2c2d30", 0.6),
-  roof: pbr("white_stucco", { size: 4, color: "#bdb7ae", normal: 0.3 }),
+  roof: pbr("white_stucco", { size: 4, color: "#d4cec6", normal: 0.3 }),
   brick: pbr("red_brick_03", { size: 1.5, color: "#e9b49a" }),
   screen: new MeshStandardMaterial({ map: screenTexture(), side: THREE.DoubleSide, roughness: 0.9 }),
   coping: new MeshStandardMaterial({ color: "#2c2d30", roughness: 0.6, side: THREE.DoubleSide }),
   flutes: new MeshStandardMaterial({ map: fluteTexture(), roughness: 0.75 }),
-  terracotta: plain("#a8603f", 0.8),
+  terracotta: plain("#a77760", 0.8),
   clay: pbr("floor_klinkers_01", { size: 2.2, arm: true, color: "#e2a58c" }),
   pavers: pbr("concrete_pavers", { size: 1.6, arm: true, color: "#d8d0c4" }),
   deck: pbr("wood_floor_deck", { size: 2.2, arm: true, color: "#c49a72" }),
   timber: pbr("wood_floor_deck", { size: 1.6, color: "#8a603f", roughness: 0.6 }),
   grass: pbr("leafy_grass", { size: 2.5, arm: true, color: "#d2dfae" }),
-  asphalt: pbr("asphalt_02", { size: 5, color: "#77736f", roughness: 0.6 }),
-  sand: pbr("sand_01", { size: 9, color: "#e7c393", normal: 0.6 }),
+  asphalt: pbr("asphalt_02", { size: 5, color: "#a59d93", roughness: 0.9 }),
+  sand: pbr("sand_01", { size: 9, color: "#dbc7ab", normal: 0.4 }),
   track: plain("#a44c3c", 0.95),
   glass: new MeshStandardMaterial({ color: "#2a2c2f", emissive: "#ffffff", emissiveMap: interiorTexture(), emissiveIntensity: 0.55, roughness: 0.05, metalness: 0.5, envMapIntensity: 1.3 }),
   darkGlass: new MeshStandardMaterial({ color: "#1b2026", roughness: 0.05, metalness: 0.6, envMapIntensity: 1.4 }),
@@ -200,6 +200,33 @@ function slab(points, top, depth, material, opts) {
   return add(geo, material, opts);
 }
 const rect = (x0, z0, x1, z1) => [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
+/** Offset an irregular convex footprint, retaining the actual angled edges. */
+function offsetPolygon(points, distance) {
+  return points.map((point, i) => {
+    const prev = points[(i + points.length - 1) % points.length], next = points[(i + 1) % points.length];
+    const incoming = P(point[0] - prev[0], point[1] - prev[1]).normalize();
+    const outgoing = P(next[0] - point[0], next[1] - point[1]).normalize();
+    const n0 = P(incoming.y, -incoming.x), n1 = P(outgoing.y, -outgoing.x);
+    const bisector = n0.clone().add(n1).normalize();
+    const shift = bisector.multiplyScalar(distance / bisector.dot(n1));
+    return [point[0] + shift.x, point[1] + shift.y];
+  });
+}
+/** Small corner curves on a traced polygon; never substitutes a rectangular footprint. */
+function roundedPolygon(points, radius) {
+  const outline = [];
+  points.forEach((point, i) => {
+    const p = P(...point), prev = P(...points[(i + points.length - 1) % points.length]), next = P(...points[(i + 1) % points.length]);
+    const cut = Math.min(radius, p.distanceTo(prev) * 0.2, p.distanceTo(next) * 0.2);
+    const a = p.clone().add(prev.sub(p).normalize().multiplyScalar(cut));
+    const b = p.clone().add(next.sub(p).normalize().multiplyScalar(cut));
+    for (let step = 0; step <= 8; step++) {
+      const t = step / 8, q = a.clone().multiplyScalar((1 - t) ** 2).addScaledVector(p, 2 * t * (1 - t)).addScaledVector(b, t * t);
+      outline.push([q.x, q.y]);
+    }
+  });
+  return outline;
+}
 /** Rounded rectangle outline (clockwise in plan). */
 function roundRect(x0, z0, x1, z1, r, seg = 8) {
   const out = [];
@@ -399,21 +426,26 @@ shrubs(scatter(120, X0, X1, 52.6, 57.4), 0.2, M.flowers, 0.55);
 for (let x = -160; x <= 160; x += 32) { palm(x, 55, 7 + rnd() * 2, 0.2); lampPost(x + 16, 55.2, 7, 0.2); }
 
 // ───────── front parking ─────────
-slab(rect(-150, 20, 150, 52), 0.06, 0.1, M.asphalt, { cast: false });
+slab(rect(-150, 20, 150, 38), 0.06, 0.1, M.asphalt, { cast: false });
+slab(rect(72, 38, 150, 52), 0.06, 0.1, M.asphalt, { cast: false });
+slab(rect(-150, 38, 28, 52), 0.18, 0.18, M.grass, { cast: false });
+shrubs(scatter(70, -148, 26, 39, 51), 0.18, M.flowers, 0.65);
 const island = (cx) => ((cx % 40) + 40) % 40 > 34; // a planted island every 40 m
-parkingRow(-148, 146, 20.5, 26, { nose: -1, skip: (cx) => island(cx) || (cx > 25 && cx < 39) }); // kiosk pavilion
-parkingRow(-148, 146, 33, 38.5, { nose: 1, skip: island });
-slab(rect(-148, 38.5, 146, 40.5), 0.18, 0.18, M.grass, { cast: false });
-shrubs(scatter(70, -146, 144, 38.8, 40.2), 0.18, M.leaf, 0.45);
-parkingRow(-148, 146, 40.5, 46, { nose: -1, skip: island });
+parkingRow(-148, 146, 20.5, 26, { nose: -1, skip: (cx) => island(cx) || (cx > 26 && cx < 72) || (cx > 111 && cx < 125) });
+parkingRow(74, 146, 33, 38.5, { nose: 1, skip: island });
+slab(rect(74, 38.5, 146, 40.5), 0.18, 0.18, M.grass, { cast: false });
+shrubs(scatter(30, 76, 144, 38.8, 40.2), 0.18, M.leaf, 0.45);
+parkingRow(74, 146, 40.5, 46, { nose: -1, skip: island });
 for (let x = -120; x < 146; x += 40) {
-  for (const [z0, z1] of [[20.5, 26], [33, 38.5], [40.5, 46]]) { slab(rect(x - 5.2, z0, x, z1), 0.2, 0.2, M.grass, { cast: false }); tree(x - 2.6, (z0 + z1) / 2, 1.3, 0.2, M.leaf); }
+  if (x > 26 && x < 72) continue;
+  for (const [z0, z1] of (x < 74 ? [[20.5, 26]] : [[20.5, 26], [33, 38.5], [40.5, 46]])) { slab(rect(x - 5.2, z0, x, z1), 0.2, 0.2, M.grass, { cast: false }); tree(x - 2.6, (z0 + z1) / 2, 1.3, 0.2, M.leaf); }
 }
 
 // ───────── front promenade & food pods ─────────
 slab(rect(-150, 12, 150, 20), 0.16, 0.16, M.pavers, { cast: false });
-block(-150, 19.8, 150, 20.1, 0, 0.3, M.concrete, { cast: false }); // kerb
-const pods = [[-68, 16], [-58, 16.4], [-26, 16], [-14, 16.2], [4, 16], [14, 16.4], [40, 16.2], [106, 16], [116, 16.3]];
+block(-150, 19.8, 26, 20.1, 0, 0.3, M.concrete, { cast: false });
+block(72, 19.8, 150, 20.1, 0, 0.3, M.concrete, { cast: false });
+const pods = [[-100, 16], [-82, 16.4], [-58, 18], [-36, 19], [-14, 18], [4, 16], [22, 23], [23, 31], [84, 16], [106, 16]];
 pods.forEach(([x, z], i) => {
   const mat = i % 2 ? M.podWhite : M.podPink;
   const b = add(new RoundedBoxGeometry(5, 2.7, 2.5, 4, 0.7), mat); b.position.set(x, 0.3 + 1.35 + 0.25, z); b.rotation.y = (rnd() - 0.5) * 0.2;
@@ -426,27 +458,25 @@ pods.forEach(([x, z], i) => {
   }
 });
 // small terracotta kiosk pavilion on the promenade
-block(28, 21, 36, 27, 0.2, 3.4, M.terracotta);
-block(27.3, 20.3, 36.7, 27.7, 3.4, 3.8, M.darkBand);
-glazing([[29, 27.05], [35, 27.05]], 0.3, 2.9);
+block(112, 21, 120, 27, 0.2, 3.4, M.terracotta);
+block(111.3, 20.3, 120.7, 27.7, 3.4, 3.8, M.darkBand);
+glazing([[113, 27.05], [119, 27.05]], 0.3, 2.9);
 
-// ───────── the long retail spine with rooftop parking (north) ─────────
-const SP = { x0: -150, x1: 150, z0: -52, z1: -22 };
-block(SP.x0, SP.z0, SP.x1, SP.z1, 0, DECK - 0.25, M.concrete);
-block(SP.x0, SP.z0, SP.x1, SP.z1, DECK - 0.25, DECK, M.asphalt, { cast: false });
-glazing([[SP.x0 + 2, SP.z1 + 0.05], [SP.x1 - 2, SP.z1 + 0.05]], 0.3, DECK - 1.6, M.glass, 3);
-block(SP.x0, SP.z1 - 0.4, SP.x1, SP.z1 + 0.9, DECK - 1.6, DECK - 0.6, M.darkBand); // shopfront canopy
-wall([[SP.x0, SP.z1], [SP.x1, SP.z1]], { base: DECK, h: 1.1, t: 0.3, material: M.concrete });
-wall([[SP.x0, SP.z0], [SP.x1, SP.z0]], { base: DECK, h: 1.1, t: 0.3, material: M.concrete });
-wall([[SP.x0, SP.z0], [SP.x0, SP.z1]], { base: DECK, h: 1.1, t: 0.3, material: M.concrete });
-wall([[SP.x1, SP.z0], [SP.x1, SP.z1]], { base: DECK, h: 1.1, t: 0.3, material: M.concrete });
-parkingRow(SP.x0 + 18, SP.x1 - 8, SP.z0 + 1, SP.z0 + 6.5, { y: DECK, nose: -1, fill: 0.5 });
-parkingRow(SP.x0 + 18, SP.x1 - 8, SP.z1 - 6.5, SP.z1 - 1, { y: DECK, nose: 1, fill: 0.35 });
-for (const [x, w] of [[-128, 9], [-40, 7], [48, 7], [118, 9]]) block(x, -42, x + w, -33, DECK, DECK + 3.4, M.concrete); // stair & lift cores
-// flat road along the back of the spine (no ramp: the roof deck is reached from the back of the site)
-slab(rect(-190, -61, 192, -53), 0.06, 0.1, M.asphalt, { cast: false });
-for (let x = -186; x < 190; x += 9) block(x, -57.1, x + 4.5, -56.9, 0.061, 0.07, M.line, { cast: false });
-slab(rect(-190, -53, 150, -52), 0.16, 0.2, M.pavers, { cast: false }); // footway at the foot of the back wall
+// ───────── continuous raised connector, with a separate rear road ─────────
+const SP = { x0: -150, x1: 150, z0: -29, z1: -22 };
+block(SP.x0, SP.z0, SP.x1, SP.z1, 0, CONNECTOR_HEIGHT - 0.55, M.concrete);
+block(SP.x0, SP.z0, SP.x1, SP.z1, CONNECTOR_HEIGHT - 0.55, CONNECTOR_HEIGHT - 0.35, M.roof);
+glazing([[SP.x0 + 2, SP.z1 + 0.05], [SP.x1 - 2, SP.z1 + 0.05]], 0.3, 5.7, M.glass, 3);
+block(SP.x0, SP.z1 - 0.4, SP.x1, SP.z1 + 0.9, 5.7, 6.3, M.darkBand);
+wall([[SP.x0, SP.z0], [SP.x1, SP.z0], [SP.x1, SP.z1], [SP.x0, SP.z1]], { base: CONNECTOR_HEIGHT - 0.35, h: 0.65, t: 0.3, material: M.concrete, closed: true });
+// Short offsets in the parapet follow the repeated bays in the aerial references.
+for (const x of [-128, -82, -36, 10, 56, 102]) block(x, -30, x + 8, -28.8, CONNECTOR_HEIGHT - 0.35, CONNECTOR_HEIGHT + 0.3, M.concrete);
+slab(rect(-190, -53, 192, -30), 0.06, 0.1, M.asphalt, { cast: false });
+parkingRow(-146, 146, -38, -32.5, { y: 0.06, nose: 1, fill: 0.38 });
+slab(rect(-190, -31.5, 150, -30), 0.16, 0.2, M.pavers, { cast: false });
+for (let x = -186; x < 190; x += 9) block(x, -46.1, x + 4.5, -45.9, 0.061, 0.07, M.line, { cast: false });
+slab(rect(-190, -61, 192, -53), 0.18, 0.18, M.grass, { cast: false });
+shrubs(scatter(70, -188, 190, -60, -54), 0.18, M.flowers, 0.6);
 // additional ground-level parking past the east end of the spine
 slab(rect(150, -53, 192, 20), 0.06, 0.1, M.asphalt, { cast: false });
 for (const [z0, z1, nose] of [[-49, -43.5, -1], [-37.5, -32, 1], [-30, -24.5, -1], [-18.5, -13, 1], [-11, -5.5, -1], [0.5, 6, 1]]) parkingRow(154, 188, z0, z1, { nose, fill: 0.45 });
@@ -522,18 +552,18 @@ shrubs(scatter(160, -188, 188, -108, -62), 0.08, M.flowers, 0.7);
   for (const x of [-100, -64]) for (const z of [-17, 7]) { slab(roundRect(x - 2.2, z - 2.2, x + 2.2, z + 2.2, 1.2, 4), 0.7, 0.5, M.concrete); shrubs(scatter(4, x - 1.5, x + 1.5, z - 1.5, z + 1.5), 0.7, M.leaf, 0.6); }
 }
 
-// ───────── the Games hall: terracotta-fluted box with a dark crown ─────────
+// ───────── Games hall: skewed four-sided footprint and shallow recessed roof ─────────
 {
-  const x0 = -58, x1 = -14, z0 = -22, z1 = 14, H = 12.5;
-  block(x0, z0, x1, z1, 0, H - 3, M.flutes);
-  block(x0, z0, x1, z1, H - 3, H - 1.1, M.flutes);
-  wall([[x0, z0], [x1, z0], [x1, z1], [x0, z1]], { base: H - 0.8, h: 0.8, t: 0.35, material: M.darkBand, closed: true });
-  block(x0 + 0.5, z0 + 0.5, x1 - 0.5, z1 - 0.5, H - 1.05, H - 0.8, M.roof, { cast: false });
-  glazing([[x0 - 0.05, z1 - 14], [x0 - 0.05, z1 - 0.05], [x0 + 12, z1 + 0.05]], 0.2, H - 3.2, M.glass, 2.4); // glazed south-west corner
-  glazing([[x1 - 10, z1 + 0.05], [x1 + 0.05, z1 + 0.05], [x1 + 0.05, z1 - 10]], 0.2, 5.4, M.glass, 2.4);
-  signBoard(M.signGames, (x0 + x1) / 2 + 6, H - 0.4, z1 + 0.4, 9);
+  const H = 10.8;
+  const outline = [[-58, -22], [-14, -22], [-10, 14], [-52, 18]];
+  const inset = outline.map(([x, z]) => [-33 + (x + 33) * 0.977, -2 + (z + 2) * 0.977]);
+  slab(outline, H - 0.85, H - 0.85, M.flutes);
+  slab(inset, H - 0.72, 0.22, M.roof);
+  wall(outline, { base: H - 0.85, h: 0.85, t: 0.32, material: M.darkBand, closed: true });
+  glazing([[-58.12, -21], [-52.12, 18.12], [-39, 16.86]], 0.2, H - 1, M.glass, 2.1);
+  glazing([[-21, 15.15], [-9.88, 14.1], [-13.88, -21]], 0.2, H - 1, M.glass, 2.1);
+  signBoard(M.signGames, -30, H - 0.4, 16.3, 8, Math.atan2(4,42));
 }
-
 // ───────── tree plaza: stepped timber terraces under a grove ─────────
 {
   const x0 = -14, x1 = 26, z0 = -22, z1 = 12;
@@ -552,10 +582,12 @@ shrubs(scatter(160, -188, 188, -108, -62), 0.08, M.flowers, 0.7);
 
 // ───────── the brick-screen pavilion: rounded box, glass ground floor, perforated brick band ─────────
 {
-  const x0 = 30, x1 = 96, z0 = -21, z1 = 13, r = 4;
-  const outline = roundRect(x0, z0, x1, z1, r, 10);
-  const ring = (d) => roundRect(x0 - d, z0 - d, x1 + d, z1 + d, r + d, 10); // outline grown by d metres
+  const x0 = 30, x1 = 73, z0 = -22, z1 = 36, r = 1.6;
+  const footprint = [[30, -22], [64, -22], [73, 32], [34, 36]];
+  const ring = (d) => roundedPolygon(offsetPolygon(footprint, d), Math.max(0.2, r + d));
+  const outline = ring(0);
   const inset = ring(-1.2);
+  slab(rect(26, -22, 78, 44), 0.17, 0.17, M.pavers, { cast: false });
   slab(outline, 0.3, 0.3, M.concrete, { cast: false });
   // recessed glass ground floor with mullions
   const loop = [...inset, inset[0]];
@@ -579,7 +611,7 @@ shrubs(scatter(160, -188, 188, -108, -62), 0.08, M.flowers, 0.7);
   for (let x = x0 + 4; x < x1; x += 11) { slab(roundRect(x - 2, z1 + 2, x + 2, z1 + 5, 1, 4), 0.7, 0.5, M.concrete); tree(x, z1 + 3.5, 1.2, 0.7); }
 }
 // east court between pavilion and the spine end
-slab(rect(96, -22, 150, 12), 0.18, 0.18, M.pavers, { cast: false });
+slab(rect(68, -22, 150, 12), 0.18, 0.18, M.pavers, { cast: false });
 slab(roundRect(110, -12, 138, 4, 6, 6), 0.7, 0.6, M.grass);
 shrubs(scatter(40, 112, 136, -10, 2), 0.7, M.flowers, 0.7);
 for (const [x, z] of [[108, -16], [140, -14], [104, 6], [142, 6]]) palm(x, z, 7.5, 0.2);
@@ -615,15 +647,15 @@ scene.add(merged);
 // ───────── viewer ─────────
 // [text, x, z, y, visible from, to] — the story range is the scroll progress (0 street level → 1 aerial)
 const LABELS = [
-  ["Brick-screen pavilion", 63, 13, 11.5, 0, 1],
-  ["Games hall", -36, 14, 14.5, 0, 1],
+  ["Brick-screen pavilion", 49, 34, 11.5, 0, 1],
+  ["Games hall", -33, 16, 12.8, 0, 1],
   ["Food pods", -20, 16, 4.6, 0, 0.55],
   ["Shade-sail market", -82, -5, 8.5, 0.3, 1],
   ["Tree plaza", 14, -8, 10.5, 0.3, 1],
-  ["Rooftop parking", -80, -37, DECK + 3, 0.45, 1],
+  ["Connecting roof", -80, -25, CONNECTOR_HEIGHT + 2, 0.45, 1],
   ["Jogging trail", -30, -84, 2.5, 0.6, 1],
   ["Additional parking", 171, -22, 3, 0.45, 1],
-  ["Back road", 110, -57, 2.5, 0.6, 1],
+  ["Rear road", 110, -45, 2.5, 0.6, 1],
 ];
 const ease = (t) => t * t * (3 - 2 * t);
 const lerp = THREE.MathUtils.lerp;
@@ -657,13 +689,13 @@ function mount() {
     hdr.mapping = THREE.EquirectangularReflectionMapping;
     scene.background = hdr;
   });
-  scene.environmentIntensity = 0.8;
+  scene.environmentIntensity = 0.7;
   scene.backgroundIntensity = 0.9;
   scene.backgroundRotation.y = 1.2;
   scene.environmentRotation.y = 1.2;
   scene.fog = new THREE.Fog("#efd6b4", 320, 1900);
-  scene.add(new THREE.HemisphereLight("#bcd0f5", "#b08a64", 1.2));
-  const sun = new THREE.DirectionalLight("#ffc890", 4.6);
+  scene.add(new THREE.HemisphereLight("#d6dfeb", "#ac967e", 0.85));
+  const sun = new THREE.DirectionalLight("#ffe0bc", 3.3);
   sun.position.set(-170, 62, 120);
   sun.castShadow = true;
   sun.shadow.mapSize.set(small ? 2048 : 4096, small ? 2048 : 4096);

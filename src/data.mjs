@@ -74,7 +74,7 @@ export const projectsPage = {
   showcase: {
     slug: "retail-park",
     label: "Retail Park",
-    text: "A retail and community destination in Sharjah. A 300 m retail spine carries its parking on the roof. In front sit a shade-sail market, the Games hall, a tree-shaded plaza and a pavilion wrapped in a perforated brick screen. It gives people a reason to stay: to eat, meet and spend the afternoon, not just to shop.",
+    text: "A retail and community destination in Sharjah. A raised connecting roof links the buildings, with a separate road behind. In front sit a shade-sail market, the Games hall, a tree-shaded plaza and a pavilion wrapped in a perforated brick screen. It gives people a reason to stay: to eat, meet and spend the afternoon, not just to shop.",
   },
 };
 
