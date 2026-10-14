@@ -3,7 +3,7 @@
 #   src/blender/export_frames.sh <render dir> [ffmpeg binary]
 # <render dir> holds day/ night/ (orbit frames f000.png …) and day_loop/ night_loop/ (l000_000.png …),
 # or day/ night/ with frame_0001.webp … as rendered from RetailPark_day.blend / RetailPark_night.blend.
-# Writes assets/rp3d/{day,night}/f000.webp (1600 px), …/md/f000.webp (960 px), {day,night}-loop(.md).mp4
+# Writes assets/rp3d/{day,night}/f000.webp (1600 px), …/md/f000.webp (960 px), {day,night}-loop(-md).mp4/.webm
 # and assets/img/rp3d-og.jpg. Needs ImageMagick (with WebP) and ffmpeg.
 set -euo pipefail
 SRC=${1:?render dir}
@@ -40,6 +40,9 @@ for set in day night; do
     first=$(ls "$loop"/l* | head -1); at=$(basename "$first" | cut -d_ -f1); ext=${first##*.}
     "$FFMPEG" -y -loglevel error -framerate 24 -i "$loop/${at}_%03d.$ext" -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -c:v libx264 -preset slow -crf 22 -pix_fmt yuv420p -movflags +faststart -an "$OUT/$set-loop.mp4"
     "$FFMPEG" -y -loglevel error -framerate 24 -i "$loop/${at}_%03d.$ext" -vf scale=960:-2 -c:v libx264 -preset slow -crf 24 -pix_fmt yuv420p -movflags +faststart -an "$OUT/$set-loop-md.mp4"
+    # VP9 copies for browsers without H.264 (some Linux builds of Chromium and Firefox)
+    "$FFMPEG" -y -loglevel error -framerate 24 -i "$loop/${at}_%03d.$ext" -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -c:v libvpx-vp9 -b:v 0 -crf 34 -row-mt 1 -pix_fmt yuv420p -an "$OUT/$set-loop.webm"
+    "$FFMPEG" -y -loglevel error -framerate 24 -i "$loop/${at}_%03d.$ext" -vf scale=960:-2 -c:v libvpx-vp9 -b:v 0 -crf 36 -row-mt 1 -pix_fmt yuv420p -an "$OUT/$set-loop-md.webm"
   fi
 done
 og=$(ls "$SRC"/day/f000.* 2>/dev/null | head -1)

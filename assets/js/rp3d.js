@@ -111,7 +111,8 @@
     loopsOn = true;
     for (const [k, v] of Object.entries(videos)) {
       if (!v.src) {
-        v.src = `${BASE}${k}-loop${small ? "-md" : ""}.mp4`;
+        const ext = v.canPlayType('video/mp4; codecs="avc1.640028"') ? "mp4" : "webm";
+        v.src = `${BASE}${k}-loop${small ? "-md" : ""}.${ext}`;
         v.addEventListener("canplay", syncLoop);
       }
     }
