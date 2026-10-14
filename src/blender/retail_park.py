@@ -7,7 +7,8 @@ Blender's axes are x east, y north (= −z), z up.
 Run with Blender 4.5 (or the `bpy` 4.5 Python module):
     python src/blender/retail_park.py --light day   --orbit 72 --out renders/day
     python src/blender/retail_park.py --light night --orbit 72 --out renders/night
-Options: --res 1600x900 --samples 48 --frames 0-71 (subset) --loop 48 (traffic loop at one view) --preview
+On a PC with a graphics card, src/blender/render_all.bat (Windows) or render_all.sh renders everything.
+Options: --gpu --format webp --res 1600x900 --samples 48 --frames 0-71 (subset) --loop 48 (traffic loop at one view) --preview
 """
 import argparse
 import math
@@ -17,6 +18,9 @@ import sys
 
 import bpy
 import bmesh
+
+if bpy.app.version < (4, 2, 0) or bpy.app.version >= (5, 0, 0):
+    sys.exit(f"This scene needs Blender 4.2 – 4.5 (found {bpy.app.version_string}). Blender 4.5 LTS: https://www.blender.org/download/lts/4-5/")
 import numpy as np
 from mathutils import Vector, Matrix, Euler
 
@@ -33,6 +37,8 @@ ap.add_argument("--loop", type=int, default=0, help="render a traffic loop of N 
 ap.add_argument("--at", type=int, default=0, help="orbit frame for --loop")
 ap.add_argument("--blend", default="", help="also save the scene as a .blend file")
 ap.add_argument("--threads", type=int, default=0)
+ap.add_argument("--gpu", action="store_true", help="render on the graphics card (OptiX/CUDA/HIP/Metal/oneAPI, whichever is found)")
+ap.add_argument("--format", default="png", choices=["png", "webp"], help="webp: smaller files to upload (quality 92)")
 args = ap.parse_args(argv)
 NIGHT = args.light == "night"
 RES = tuple(int(v) for v in args.res.split("x"))
@@ -1335,14 +1341,37 @@ r.engine = "CYCLES"
 r.resolution_x, r.resolution_y = RES
 r.resolution_percentage = 100
 r.film_transparent = False
-r.image_settings.file_format = "PNG"
-r.image_settings.color_mode = "RGB"
-r.image_settings.color_depth = "8"
+EXT = args.format
+if EXT == "webp":
+    r.image_settings.file_format = "WEBP"
+    r.image_settings.color_mode = "RGB"
+    r.image_settings.quality = 92
+else:
+    r.image_settings.file_format = "PNG"
+    r.image_settings.color_mode = "RGB"
+    r.image_settings.color_depth = "8"
 if args.threads:
     r.threads_mode = "FIXED"
     r.threads = args.threads
 cy = scene.cycles
 cy.device = "CPU"
+if args.gpu:
+    prefs = bpy.context.preferences.addons["cycles"].preferences
+    for kind in ("OPTIX", "CUDA", "HIP", "METAL", "ONEAPI"):
+        try:
+            prefs.compute_device_type = kind
+        except TypeError:
+            continue
+        prefs.get_devices()
+        gpus = [d for d in prefs.devices if d.type == kind]
+        if gpus:
+            for d in prefs.devices:
+                d.use = d.type == kind
+            cy.device = "GPU"
+            print("Rendering on", kind, ", ".join(d.name for d in gpus), flush=True)
+            break
+    if cy.device != "GPU":
+        print("No supported graphics card found: rendering on the CPU", flush=True)
 cy.samples = args.samples
 cy.use_adaptive_sampling = True
 cy.adaptive_threshold = 0.02
@@ -1392,7 +1421,47 @@ ct.links.new(mix.outputs[0], glare.inputs[0])
 ct.links.new(glare.outputs[0], comp.inputs[0])
 
 if args.blend:
-    bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(args.blend))
+    # A ready-to-render file: frames 1–orbit are the turn (orbit frame 0 … orbit−1), the next
+    # `loop` frames are the traffic loop at the home view. Render → Render Animation writes them
+    # to a "renders/<light>" folder next to the .blend file.
+    loop_n = args.loop or 48
+    scene.frame_start, scene.frame_end = 1, args.orbit + loop_n
+    scene.render.fps = 24
+
+    def key_traffic(frame):
+        for e, *_ in MOVING:
+            e.keyframe_insert("location", frame=frame)
+            e.keyframe_insert("hide_render", frame=frame)
+            for ch in e.children:
+                ch.keyframe_insert("hide_render", frame=frame)
+
+    for i in range(args.orbit):
+        place_camera(i, args.orbit)
+        cam.keyframe_insert("location", frame=i + 1)
+        cam.keyframe_insert("rotation_euler", frame=i + 1)
+        set_traffic((i * 3 / args.orbit) % 1.0)
+        key_traffic(i + 1)
+    place_camera(args.at, args.orbit)
+    for k in range(loop_n):
+        cam.keyframe_insert("location", frame=args.orbit + k + 1)
+        cam.keyframe_insert("rotation_euler", frame=args.orbit + k + 1)
+        set_traffic(k / loop_n)
+        key_traffic(args.orbit + k + 1)
+    for ob in [cam] + [m[0] for m in MOVING]:  # jump between keys: no in-between drift or wrap-around slides
+        if ob.animation_data and ob.animation_data.action:
+            for fc in ob.animation_data.action.fcurves:
+                for kp in fc.keyframe_points:
+                    kp.interpolation = "CONSTANT"
+    r.filepath = f"//renders/{args.light}/frame_"
+    r.image_settings.file_format = "WEBP"
+    r.image_settings.color_mode = "RGB"
+    r.image_settings.quality = 92
+    if not args.gpu:
+        cy.device = "GPU"  # uses the graphics card enabled in Preferences → System (falls back to CPU if none)
+    bpy.ops.file.pack_all()
+    bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(args.blend), compress=True)
+    print("saved", args.blend, flush=True)
+    sys.exit(0)
 
 os.makedirs(args.out, exist_ok=True)
 
@@ -1414,7 +1483,7 @@ if args.loop:
     place_camera(args.at, args.orbit)
     todo = frames_list(args.frames, args.loop)
     for i in todo:
-        path = os.path.join(args.out, f"l{args.at:03d}_{i:03d}.png")
+        path = os.path.join(args.out, f"l{args.at:03d}_{i:03d}.{EXT}")
         if os.path.exists(path):
             continue
         set_traffic(i / args.loop)
@@ -1423,7 +1492,7 @@ if args.loop:
         print("wrote", path, flush=True)
 else:
     for i in frames_list(args.frames, args.orbit):
-        path = os.path.join(args.out, f"f{i:03d}.png")
+        path = os.path.join(args.out, f"f{i:03d}.{EXT}")
         if os.path.exists(path):
             continue
         place_camera(i, args.orbit)
