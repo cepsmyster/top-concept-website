@@ -143,6 +143,10 @@ const M = {
   coping: new MeshStandardMaterial({ color: "#2c2d30", roughness: 0.6, side: THREE.DoubleSide }),
   flutes: new MeshStandardMaterial({ map: fluteTexture(), roughness: 0.75 }),
   terracotta: plain("#a77760", 0.8),
+  planterStone: plain("#c9c2b5", 0.94),
+  plantingSoil: plain("#827355", 1),
+  dryGrass: new MeshStandardMaterial({ color: "#ad9564", roughness: 1, side: THREE.DoubleSide }),
+  agave: new MeshStandardMaterial({ color: "#647d72", roughness: 0.85, side: THREE.DoubleSide }),
   clay: pbr("floor_klinkers_01", { size: 2.2, arm: true, color: "#e2a58c" }),
   pavers: pbr("concrete_pavers", { size: 1.6, arm: true, color: "#d8d0c4" }),
   deck: pbr("wood_floor_deck", { size: 2.2, arm: true, color: "#c49a72" }),
@@ -358,6 +362,49 @@ function shrubs(list, base, material = M.leaf, size = 0.55) {
   }
 }
 const scatter = (n, x0, x1, z0, z1) => Array.from({ length: n }, () => [x0 + rnd() * (x1 - x0), z0 + rnd() * (z1 - z0)]);
+function grassTuft(x, z, base, size = 1) {
+  const positions = [];
+  for (let i = 0; i < 16; i++) {
+    const angle = rnd() * Math.PI * 2, height = (0.35 + rnd() * 0.65) * size;
+    const dx = Math.cos(angle), dz = Math.sin(angle), spread = height * (0.25 + rnd() * 0.4), width = size * 0.028;
+    const bx = x + dx * rnd() * size * 0.16, bz = z + dz * rnd() * size * 0.16;
+    positions.push(bx - dz * width, base, bz + dx * width, bx + dz * width, base, bz - dx * width,
+      bx + dx * spread, base + height, bz + dz * spread);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3)); geo.computeVertexNormals();
+  add(geo, M.dryGrass);
+}
+function agave(x, z, base, size = 1) {
+  for (let leaf = 0; leaf < 13; leaf++) {
+    const positions = [], indices = [], angle = leaf / 13 * Math.PI * 2 + rnd() * 0.3;
+    const length = size * (0.7 + rnd() * 0.55);
+    for (let step = 0; step <= 7; step++) {
+      const t = step / 7, width = Math.sin(Math.PI * t) * length * 0.13;
+      for (const side of [-1, 0, 1]) positions.push(side * width, length * (Math.sin(t * Math.PI / 2) + (side === 0 ? 0.045 : 0)), length * t * t);
+      if (step) { const k = step * 3; indices.push(k - 3, k, k - 2, k - 2, k, k + 1, k - 2, k + 1, k - 1, k - 1, k + 1, k + 2); }
+    }
+    const geo = new THREE.BufferGeometry();geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));geo.setIndex(indices);geo.computeVertexNormals();
+    const mesh = add(geo, M.agave);mesh.position.set(x, base, z);mesh.rotation.y = angle;
+  }
+}
+/** Raised, tapered parking island with a pale curb and drought-tolerant planting. */
+function parkingPlanter(x, z, w, d, withTree = false) {
+  const corners = [[x - w / 2, z - d / 2], [x + w * 0.34, z - d / 2], [x + w / 2, z + d * 0.28], [x - w * 0.36, z + d / 2]];
+  const outer = roundedPolygon(corners, Math.min(w, d) * 0.2);
+  const inner = roundedPolygon(offsetPolygon(corners, -0.24), Math.min(w, d) * 0.15);
+  slab(outer, 0.58, 0.5, M.planterStone);
+  slab(inner, 0.595, 0.12, M.plantingSoil, { cast: false });
+  const inside = (px, pz) => inner.every((a, i) => { const b = inner[(i + 1) % inner.length];return (b[0] - a[0]) * (pz - a[1]) - (b[1] - a[1]) * (px - a[0]) > 0; });
+  for (let i = 0; i < Math.ceil(w * d * 0.65); i++) {
+    const px = x + (rnd() - 0.5) * (w - 0.8), pz = z + (rnd() - 0.5) * (d - 0.8);
+    if (inside(px, pz)) grassTuft(px, pz, 0.6, 0.6 + rnd() * 0.4);
+  }
+  shrubs([[x - w * 0.18, z - d * 0.16], [x + w * 0.12, z + d * 0.2]], 0.6, M.leaf, 0.65);
+  agave(x + w * 0.12, z - d * 0.15, 0.6, Math.min(w, d) * 0.22);
+  agave(x - w * 0.16, z + d * 0.12, 0.6, Math.min(w, d) * 0.16);
+  if (withTree) tree(x - w * 0.16, z - d * 0.08, 1.2, 0.6);
+}
 function car(x, z, rot, y = 0.06) {
   const g = new Group(), paint = pick(PAINTS);
   const suv = rnd() < 0.45;
@@ -424,7 +471,16 @@ shrubs(scatter(60, X0, X1, 77, 91), 0.08, M.flowers, 0.7);
 // planted verge between the parking and the road, with palms and lamp posts
 slab(rect(X0, 52, X1, 58), 0.2, 0.2, M.grass, { cast: false });
 shrubs(scatter(120, X0, X1, 52.6, 57.4), 0.2, M.flowers, 0.55);
-for (let x = -160; x <= 160; x += 32) { palm(x, 55, 7 + rnd() * 2, 0.2); lampPost(x + 16, 55.2, 7, 0.2); }
+for (let x = -181; x < 184; x += 8 + rnd() * 3) {
+  tree(x, 55 + (rnd() - 0.5) * 1.2, 1.35 + rnd() * 0.45, 0.2);
+  shrubs(scatter(5, x - 3, x + 3, 53, 57), 0.2, M.leaf, 0.7);
+  grassTuft(x + 2, 53.5, 0.2, 0.9);
+}
+for (let x = -160; x <= 160; x += 32) lampPost(x + 16, 55.2, 7, 0.2);
+for (let x = -179; x < 182; x += 9) {
+  tree(x, 85 + (rnd() - 0.5) * 4, 1.5 + rnd() * 0.55, 0.08);
+  shrubs(scatter(4, x - 3, x + 3, 78, 90), 0.08, M.leaf, 0.75);
+}
 
 // ───────── front parking ─────────
 slab(rect(-150, 20, 150, 38), 0.06, 0.1, M.asphalt, { cast: false });
@@ -439,7 +495,7 @@ shrubs(scatter(30, 76, 144, 38.8, 40.2), 0.18, M.leaf, 0.45);
 parkingRow(74, 146, 40.5, 46, { nose: -1, skip: island });
 for (let x = -120; x < 146; x += 40) {
   if (x > 26 && x < 72) continue;
-  for (const [z0, z1] of (x < 74 ? [[20.5, 26]] : [[20.5, 26], [33, 38.5], [40.5, 46]])) { slab(rect(x - 5.2, z0, x, z1), 0.2, 0.2, M.grass, { cast: false }); tree(x - 2.6, (z0 + z1) / 2, 1.3, 0.2, M.leaf); }
+  for (const [z0, z1] of (x < 74 ? [[20.5, 26]] : [[20.5, 26], [33, 38.5], [40.5, 46]])) parkingPlanter(x - 2.6, (z0 + z1) / 2, 4.8, z1 - z0, true);
 }
 
 // ───────── front promenade & food pods ─────────
@@ -620,6 +676,9 @@ for (const [z0, z1, nose] of [[-25, -19.5, -1], [-12.5, -7, 1], [-5, 0.5, -1], [
 slab(rect(80, -7, 148, -5), 0.2, 0.2, M.grass, { cast: false });
 shrubs(scatter(30, 81, 147, -6.8, -5.2), 0.2, M.leaf, 0.45);
 for (const x of [88, 115, 141]) tree(x, -6, 1.2, 0.2);
+for (const z of [-22, -10, -2, 10]) parkingPlanter(115.5, z, 5.1, 5.1);
+parkingPlanter(76, -18, 4.3, 7.8);
+parkingPlanter(145, 17.7, 6.5, 3.3);
 
 // ───────── merge static geometry by material ─────────
 function mergeStatic(group) {
