@@ -393,22 +393,23 @@ function lampPost(x, z, h = 7, base = 0.15) {
 
 // ───────── sand & dunes ─────────
 {
-  const S = 3200, N = 180;
+  const S = 3200, N = 256;
   const g = new THREE.PlaneGeometry(S, S, N, N);
   g.rotateX(-Math.PI / 2);
   const pos = g.attributes.position, uv = g.attributes.uv;
   const smoothstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), z = pos.getZ(i);
-    const d = Math.max(Math.abs(x) - 170, (z < 0 ? -z - 115 : z - 120), 0);
-    const mask = smoothstep(140, 700, d);
-    const ridge = Math.pow(0.5 + 0.5 * Math.sin(x * 0.011 + Math.sin(z * 0.017) * 2.2 + z * 0.004), 2.2);
+    const d = Math.max(Math.abs(x) - 205, (z < 0 ? -z - 115 : z - 120), 0);
+    const mask = smoothstep(8, 140, d);
+    const ridge = Math.pow(0.5 + 0.5 * Math.sin(x * 0.025 + Math.sin(z * 0.017) * 2.2 + z * 0.018), 2.2);
     const swell = 0.5 + 0.5 * Math.sin(z * 0.006 - x * 0.003);
-    pos.setY(i, (ridge * 16 + swell * 10) * mask - 0.02);
+    const shoulder = Math.sin(x * 0.041 + z * 0.027) * Math.cos(z * 0.039) * 1.2;
+    pos.setY(i, (ridge * 16 + swell * 10 + shoulder) * mask - 0.02);
     uv.setXY(i, x, z);
   }
   g.computeVertexNormals();
-  add(g, M.sand, { cast: false });
+  add(g, M.sand, { cast: true });
 }
 
 // ───────── road, jogging track & front verge (south) ─────────
@@ -431,7 +432,7 @@ slab(rect(72, 38, 150, 52), 0.06, 0.1, M.asphalt, { cast: false });
 slab(rect(-150, 38, 28, 52), 0.18, 0.18, M.grass, { cast: false });
 shrubs(scatter(70, -148, 26, 39, 51), 0.18, M.flowers, 0.65);
 const island = (cx) => ((cx % 40) + 40) % 40 > 34; // a planted island every 40 m
-parkingRow(-148, 146, 20.5, 26, { nose: -1, skip: (cx) => island(cx) || (cx > 26 && cx < 72) || (cx > 111 && cx < 125) });
+parkingRow(-148, 146, 20.5, 26, { nose: -1, skip: (cx) => island(cx) || (cx > 111 && cx < 125) });
 parkingRow(74, 146, 33, 38.5, { nose: 1, skip: island });
 slab(rect(74, 38.5, 146, 40.5), 0.18, 0.18, M.grass, { cast: false });
 shrubs(scatter(30, 76, 144, 38.8, 40.2), 0.18, M.leaf, 0.45);
@@ -442,10 +443,11 @@ for (let x = -120; x < 146; x += 40) {
 }
 
 // ───────── front promenade & food pods ─────────
-slab(rect(-150, 12, 150, 20), 0.16, 0.16, M.pavers, { cast: false });
+slab(rect(-150, 12, 78, 20), 0.16, 0.16, M.pavers, { cast: false });
+slab(rect(78, 16, 150, 20), 0.16, 0.16, M.pavers, { cast: false });
 block(-150, 19.8, 26, 20.1, 0, 0.3, M.concrete, { cast: false });
 block(72, 19.8, 150, 20.1, 0, 0.3, M.concrete, { cast: false });
-const pods = [[-100, 16], [-82, 16.4], [-58, 18], [-36, 19], [-14, 18], [4, 16], [22, 23], [23, 31], [84, 16], [106, 16]];
+const pods = [[-100, 16], [-82, 16.4], [-58, 18], [-36, 19], [-14, 18], [4, 16], [22, 16], [84, 17], [106, 17]];
 pods.forEach(([x, z], i) => {
   const mat = i % 2 ? M.podWhite : M.podPink;
   const b = add(new RoundedBoxGeometry(5, 2.7, 2.5, 4, 0.7), mat); b.position.set(x, 0.3 + 1.35 + 0.25, z); b.rotation.y = (rnd() - 0.5) * 0.2;
@@ -463,18 +465,18 @@ block(111.3, 20.3, 120.7, 27.7, 3.4, 3.8, M.darkBand);
 glazing([[113, 27.05], [119, 27.05]], 0.3, 2.9);
 
 // ───────── continuous raised connector, with a separate rear road ─────────
-const SP = { x0: -150, x1: 150, z0: -29, z1: -22 };
+const SP = { x0: -150, x1: 73, z0: -29, z1: -22 };
 block(SP.x0, SP.z0, SP.x1, SP.z1, 0, CONNECTOR_HEIGHT - 0.55, M.concrete);
 block(SP.x0, SP.z0, SP.x1, SP.z1, CONNECTOR_HEIGHT - 0.55, CONNECTOR_HEIGHT - 0.35, M.roof);
 glazing([[SP.x0 + 2, SP.z1 + 0.05], [SP.x1 - 2, SP.z1 + 0.05]], 0.3, 5.7, M.glass, 3);
 block(SP.x0, SP.z1 - 0.4, SP.x1, SP.z1 + 0.9, 5.7, 6.3, M.darkBand);
 wall([[SP.x0, SP.z0], [SP.x1, SP.z0], [SP.x1, SP.z1], [SP.x0, SP.z1]], { base: CONNECTOR_HEIGHT - 0.35, h: 0.65, t: 0.3, material: M.concrete, closed: true });
 // Short offsets in the parapet follow the repeated bays in the aerial references.
-for (const x of [-128, -82, -36, 10, 56, 102]) block(x, -30, x + 8, -28.8, CONNECTOR_HEIGHT - 0.35, CONNECTOR_HEIGHT + 0.3, M.concrete);
+for (const x of [-128, -82, -36, 10, 56]) block(x, -30, x + 8, -28.8, CONNECTOR_HEIGHT - 0.35, CONNECTOR_HEIGHT + 0.3, M.concrete);
 slab(rect(-190, -53, 192, -30), 0.06, 0.1, M.asphalt, { cast: false });
-parkingRow(-146, 146, -38, -32.5, { y: 0.06, nose: 1, fill: 0.38 });
-slab(rect(-190, -31.5, 150, -30), 0.16, 0.2, M.pavers, { cast: false });
-for (let x = -186; x < 190; x += 9) block(x, -46.1, x + 4.5, -45.9, 0.061, 0.07, M.line, { cast: false });
+parkingRow(-146, 146, -51.5, -46, { y: 0.06, nose: -1, fill: 0.38 });
+slab(rect(-190, -31.5, 73, -30), 0.16, 0.2, M.pavers, { cast: false });
+for (let x = -186; x < 190; x += 9) block(x, -40.1, x + 4.5, -39.9, 0.061, 0.07, M.line, { cast: false });
 slab(rect(-190, -61, 192, -53), 0.18, 0.18, M.grass, { cast: false });
 shrubs(scatter(70, -188, 190, -60, -54), 0.18, M.flowers, 0.6);
 // additional ground-level parking past the east end of the spine
@@ -582,12 +584,12 @@ shrubs(scatter(160, -188, 188, -108, -62), 0.08, M.flowers, 0.7);
 
 // ───────── the brick-screen pavilion: rounded box, glass ground floor, perforated brick band ─────────
 {
-  const x0 = 30, x1 = 73, z0 = -22, z1 = 36, r = 1.6;
-  const footprint = [[30, -22], [64, -22], [73, 32], [34, 36]];
+  const x0 = 30, x1 = 73, z0 = -22, z1 = 18, r = 1.6;
+  const footprint = [[30, -22], [64, -22], [73, 14], [34, 18]];
   const ring = (d) => roundedPolygon(offsetPolygon(footprint, d), Math.max(0.2, r + d));
   const outline = ring(0);
   const inset = ring(-1.2);
-  slab(rect(26, -22, 78, 44), 0.17, 0.17, M.pavers, { cast: false });
+  slab(rect(26, -22, 78, 20), 0.17, 0.17, M.pavers, { cast: false });
   slab(outline, 0.3, 0.3, M.concrete, { cast: false });
   // recessed glass ground floor with mullions
   const loop = [...inset, inset[0]];
@@ -608,13 +610,16 @@ shrubs(scatter(160, -188, 188, -108, -62), 0.08, M.flowers, 0.7);
   slab(ring(-0.4), 9.15, 0.25, M.roof);
   ribbon(ring(0.15), 9.2, 9.5, M.coping);
   ribbon(ring(-0.2), 9.2, 9.5, M.coping);
-  for (let x = x0 + 4; x < x1; x += 11) { slab(roundRect(x - 2, z1 + 2, x + 2, z1 + 5, 1, 4), 0.7, 0.5, M.concrete); tree(x, z1 + 3.5, 1.2, 0.7); }
+  for (let x = x0 + 4; x < x1; x += 11) { slab(roundRect(x - 1.5, 17.8, x + 1.5, 19.6, 0.6, 4), 0.7, 0.5, M.concrete); tree(x, 18.7, 1.05, 0.7); }
 }
-// east court between pavilion and the spine end
-slab(rect(68, -22, 150, 12), 0.18, 0.18, M.pavers, { cast: false });
-slab(roundRect(110, -12, 138, 4, 6, 6), 0.7, 0.6, M.grass);
-shrubs(scatter(40, 112, 136, -10, 2), 0.7, M.flowers, 0.7);
-for (const [x, z] of [[108, -16], [140, -14], [104, 6], [142, 6]]) palm(x, z, 7.5, 0.2);
+// Eastern parking continues through the marked court, joining the existing end lot.
+slab(rect(78, -30.5, 150, 16), 0.06, 0.1, M.asphalt, { cast: false });
+for (const [z0, z1, nose] of [[-25, -19.5, -1], [-12.5, -7, 1], [-5, 0.5, -1], [7.5, 13, 1]]) {
+  parkingRow(80, 148, z0, z1, { nose, fill: 0.48, skip: (cx) => cx > 112 && cx < 119 });
+}
+slab(rect(80, -7, 148, -5), 0.2, 0.2, M.grass, { cast: false });
+shrubs(scatter(30, 81, 147, -6.8, -5.2), 0.2, M.leaf, 0.45);
+for (const x of [88, 115, 141]) tree(x, -6, 1.2, 0.2);
 
 // ───────── merge static geometry by material ─────────
 function mergeStatic(group) {
@@ -647,7 +652,7 @@ scene.add(merged);
 // ───────── viewer ─────────
 // [text, x, z, y, visible from, to] — the story range is the scroll progress (0 street level → 1 aerial)
 const LABELS = [
-  ["Brick-screen pavilion", 49, 34, 11.5, 0, 1],
+  ["Brick-screen pavilion", 49, 18, 11.5, 0, 1],
   ["Games hall", -33, 16, 12.8, 0, 1],
   ["Food pods", -20, 16, 4.6, 0, 0.55],
   ["Shade-sail market", -82, -5, 8.5, 0.3, 1],
@@ -699,7 +704,7 @@ function mount() {
   sun.position.set(-170, 62, 120);
   sun.castShadow = true;
   sun.shadow.mapSize.set(small ? 2048 : 4096, small ? 2048 : 4096);
-  Object.assign(sun.shadow.camera, { left: -190, right: 190, top: 130, bottom: -130, near: 10, far: 520 });
+  Object.assign(sun.shadow.camera, { left: -240, right: 240, top: 180, bottom: -180, near: 10, far: 650 });
   sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.06; sun.shadow.radius = 3;
   scene.add(sun);
 
