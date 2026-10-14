@@ -44,6 +44,7 @@ ap.add_argument("--clips", default="", help="tour clips to render, e.g. s0,s3,t2
 ap.add_argument("--still", action="store_true", help="tour: only the first frame of each clip (for checking the framing)")
 ap.add_argument("--path", type=int, default=0, help="tour: render the scroll path instead, N frames between neighbouring stops")
 ap.add_argument("--no-traffic", action="store_true", help="leave out the moving cars on the main road (parked cars stay)")
+ap.add_argument("--ease", action="store_true", help="path: ease in and out of every view (frames go to film/0000.webp …)")
 ap.add_argument("--lens", type=float, default=0.0, help="focal length in mm (default 24 for the tour, 32 otherwise)")
 ap.add_argument("--blend", default="", help="also save the scene as a .blend file")
 ap.add_argument("--threads", type=int, default=0)
@@ -871,8 +872,6 @@ def terrain():
             x = -S / 2 + S * i / N
             z = -S / 2 + S * j / N
             d = max(abs(x) - 205, (-z - 115) if z < 0 else (z - 125), 0)
-            if 55 < z < 80:  # keep the main road corridor flat all the way out
-                d = 0
             mask = ss(8, 160, d)
             warp = math.sin(z * 0.0071 + x * 0.0023) * 2.1 + math.sin(z * 0.019 - x * 0.0061) * 0.7 + math.sin(x * 0.0043 + 2.0) * 1.1
             u = x * 0.0105 + z * 0.0035 + warp
@@ -895,9 +894,9 @@ def terrain():
 
 terrain()
 
-# ── main road along the front (extends into the desert), verge, jogging track
+# ── main road along the front (stops at the site edges; the dunes close in beyond), verge, jogging track
 X0, X1 = -190, 190
-RX0, RX1 = -1700, 1700
+RX0, RX1 = -200, 200
 slab(rect(RX0, 58, RX1, 72), 0.06, 0.12, "asphalt")
 x = RX0
 while x < RX1:
@@ -926,8 +925,6 @@ while x < 184:
     x += 8 + rnd() * 3
 for x in range(-176, 177, 32):
     lamp_post(x, 57.0, 8.5, 0.2, 1.6, 1)
-for x in list(range(-1690, -190, 48)) + list(range(206, 1700, 48)):  # street lights along the road in the desert
-    lamp_post(x, 57.6, 9, 0.06, 1.6, 1)
 
 # ── front parking
 slab(rect(-150, 20, 150, 38), 0.06, 0.1, "asphalt")
@@ -1586,13 +1583,20 @@ if args.tour and args.path:
     # The scroll path the page scrubs: frames evenly along the tour from stop 0 to the last stop, `path` per
     # step. The traffic moves one car spacing per step, so at every stop the phase is 0 and the picture
     # matches the first frame of that stop's traffic loop exactly.
+    # With --ease each step starts and stops softly (smoothstep), for a film the page plays from view to view
+    # rather than scrubs: --path 120 --ease at 60 fps is a 2-second glide between neighbouring views.
     N, F = args.tour, args.path
-    os.makedirs(os.path.join(args.out, "path"), exist_ok=True)
-    for k in range((N - 1) * F + 1):
-        path = os.path.join(args.out, "path", f"{k:03d}.{EXT}")
+    folder = "film" if args.ease else "path"
+    os.makedirs(os.path.join(args.out, folder), exist_ok=True)
+    for k in frames_list(args.frames, (N - 1) * F + 1):
+        path = os.path.join(args.out, folder, f"{k:04d}.{EXT}")
         if os.path.exists(path):
             continue
         a = k / F
+        if args.ease:
+            i = min(N - 2, int(a))
+            t = a - i
+            a = i + t * t * (3 - 2 * t)
         place_tour(a, N)
         set_traffic(a % 1.0)
         r.filepath = path

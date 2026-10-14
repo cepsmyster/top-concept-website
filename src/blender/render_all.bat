@@ -12,8 +12,8 @@ if not exist "%BLENDER%" (
 )
 cd /d "%~dp0..\.."
 set "SCRIPT=src\blender\retail_park.py"
-"%BLENDER%" -b --factory-startup -P %SCRIPT% -- --gpu --format webp --light day   --tour 8 --path 24 --no-traffic --samples 128 --out renders\day
-"%BLENDER%" -b --factory-startup -P %SCRIPT% -- --gpu --format webp --light night --tour 8 --path 24 --no-traffic --samples 128 --out renders\night
+"%BLENDER%" -b --factory-startup -P %SCRIPT% -- --gpu --format webp --light day   --tour 8 --path 120 --ease --no-traffic --samples 64 --out renders\day
+"%BLENDER%" -b --factory-startup -P %SCRIPT% -- --gpu --format webp --light night --tour 8 --path 120 --ease --no-traffic --samples 64 --out renders\night
 echo.
 echo Done. Next: node src\blender\export_tour.mjs renders  (see src\blender\README.md)
 pause

@@ -1048,14 +1048,16 @@ main .prose .hd .hbr { display: none; }
 @media (max-width: 760px) { .hshots { --sh: min(46svh, 70vw); } }
 
 /* ───────── Retail Park in 3D (retail-park-3d.html) ─────────
-   Rendered fly-round: the section is tall and the picture stays pinned while the page scrolls. The scroll
-   scrubs the camera through the path frames on the canvas. The pointer leans the picture slightly. Behaviour in assets/js/rp3d.js. */
+   Rendered fly-round: the section is tall and the picture stays pinned while the page scrolls; each slice of
+   the scroll is a view, and the film (forward, or its reversed copy) glides to it. The pointer leans the picture. Behaviour in assets/js/rp3d.js. */
 .rp3d { position: relative; height: calc(100svh + (var(--stops, 8) - 1) * 70svh); color: #fff; background: #0e1116; }
 .rp3d__pin { position: sticky; top: 0; height: 100svh; min-height: 520px; overflow: hidden; isolation: isolate; }
 .rp3d__stage { position: absolute; inset: 0; overflow: hidden; }
 .rp3d__media { position: absolute; inset: 0; transform: scale(1.05); will-change: transform; }
-.rp3d__poster, .rp3d__canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.rp3d__canvas { display: block; }
+.rp3d__poster, .rp3d__film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rp3d__film { opacity: 0; pointer-events: none; }
+.rp3d.is-live .rp3d__film.is-on { opacity: 1; }
+.rp3d__snap { z-index: 1; transition: opacity .6s linear; }
 .rp3d__scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(8, 10, 14, .55) 0%, rgba(8, 10, 14, 0) 26%, rgba(8, 10, 14, 0) 64%, rgba(8, 10, 14, .66) 100%); }
 .rp3d__head { position: absolute; left: var(--gutter); top: calc(var(--header-h) + clamp(18px, 3vw, 44px)); pointer-events: none; text-shadow: 0 1px 18px rgba(0, 0, 0, .35); }
 .rp3d__kicker { font: 500 .72rem var(--font-head); letter-spacing: .14em; text-transform: uppercase; opacity: .85; margin-bottom: 10px; }

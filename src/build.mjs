@@ -946,12 +946,12 @@ for (const f of fs.readdirSync(ROOT)) {
   if (/^(project|blog)-.+\.html$/.test(f) && !written.includes(f)) { fs.unlinkSync(path.join(ROOT, f)); console.log("Removed stale page:", f); }
 }
 
-// RETAIL PARK IN 3D — rendered fly-round in Blender (src/blender/retail_park.py --tour 8): scroll from view to view, day / night
+// RETAIL PARK IN 3D — rendered fly-round in Blender (src/blender/retail_park.py --tour 8 --path 120 --ease): scroll from view to view
 {
   // the eight tour stops, in scroll order (stop 0 looks in from the main road)
   const VIEWS = ["Main road", "Shade-sail market", "West end", "Jogging trail", "Rear road", "Rear parking", "East parking", "Brick-screen pavilion"];
   // the Day / Night switch appears once the night clips have been exported
-  const NIGHT = fs.existsSync(path.join(ROOT, "assets/rp3d/night/path/000.webp"));
+  const NIGHT = fs.existsSync(path.join(ROOT, "assets/rp3d/night/film.mp4"));
   page({
     file: "retail-park-3d.html",
     title: "Retail Park in 3D",
@@ -961,12 +961,14 @@ for (const f of fs.readdirSync(ROOT)) {
 <link rel="preload" as="image" href="assets/rp3d/day/poster-md.webp" media="(max-width: 900px)">
 <script src="assets/js/rp3d.js?v=${V}" defer></script>`,
     body: `
-<section class="rp3d" data-rp3d data-stops="${VIEWS.length}" data-step="24" data-base="assets/rp3d/" style="--stops: ${VIEWS.length}" aria-labelledby="rp3d-title">
+<section class="rp3d" data-rp3d data-stops="${VIEWS.length}" data-step="2" data-base="assets/rp3d/" style="--stops: ${VIEWS.length}" aria-labelledby="rp3d-title">
   <div class="rp3d__pin">
     <div class="rp3d__stage">
       <div class="rp3d__media" data-rp3d-media>
         <img class="rp3d__poster" data-rp3d-poster src="assets/rp3d/day/poster.webp" srcset="assets/rp3d/day/poster-md.webp 960w, assets/rp3d/day/poster.webp 1600w" sizes="100vw" alt="Retail Park from the air: the shade-sail market, Games hall, tree plaza and brick-screen pavilion between the main road and the dunes" width="1600" height="900" fetchpriority="high">
-        <canvas class="rp3d__canvas" data-rp3d-canvas aria-hidden="true"></canvas>
+        <video class="rp3d__film is-on" data-rp3d-film="fwd" muted playsinline preload="auto" aria-hidden="true"></video>
+        <video class="rp3d__film" data-rp3d-film="rev" muted playsinline preload="auto" aria-hidden="true"></video>
+        <canvas class="rp3d__film rp3d__snap" data-rp3d-snap aria-hidden="true"></canvas>
       </div>
     </div>
     <div class="rp3d__scrim" aria-hidden="true"></div>
