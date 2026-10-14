@@ -1,204 +1,234 @@
 /* Retail Park in 3D (retail-park-3d.html)
-   A photoreal orbit rendered in Blender (src/blender/retail_park.py): one image per 6° for day and for night.
-   Drag (or the arrow keys / buttons) to turn; the slider blends day into night. At the home view a short
-   video loop plays the traffic on the main road. Frames load nearest-first; phones get the 960 px set. */
+   A fly-round rendered in Blender (src/blender/retail_park.py --tour 8): eight views round the park.
+   Scrolling the page flies the camera from view to view. The traffic never stops: a 2-second loop plays at
+   each view, and a 1-second flight joins neighbouring views, landing half-way into the next view's loop,
+   so cars keep driving forward whichever way you scroll. The pointer drifts the picture slightly.
+   Clips are fetched as blobs, nearest views first, so each flight starts at once; phones get the 960 px set. */
 (() => {
   const root = document.querySelector("[data-rp3d]");
   if (!root) return;
-  const N = +root.dataset.frames || 60;
-  const HOME = +root.dataset.home || 0;
+  const N = +root.dataset.stops || 8;
   const BASE = root.dataset.base || "assets/rp3d/";
-  const stage = root.querySelector("[data-rp3d-stage]");
-  const canvas = root.querySelector("[data-rp3d-canvas]");
-  const ctx = canvas.getContext("2d");
-  const range = root.querySelector("[data-rp3d-time]");
+  const LAND = 1; // seconds into a stop's loop where a flight from a neighbour lands
+  const media = root.querySelector("[data-rp3d-media]");
+  const vids = [...root.querySelectorAll("[data-rp3d-video]")];
+  const poster = root.querySelector("[data-rp3d-poster]");
+  const dots = [...root.querySelectorAll("[data-rp3d-go]")];
+  const nameEl = root.querySelector("[data-rp3d-name]");
+  const lightBtns = [...root.querySelectorAll("[data-rp3d-light]")];
   const bar = root.querySelector("[data-rp3d-progress]");
   const hint = root.querySelector("[data-rp3d-hint]");
-  const videos = { day: root.querySelector('[data-rp3d-loop="day"]'), night: root.querySelector('[data-rp3d-loop="night"]') };
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const small = matchMedia("(max-width: 900px)").matches;
-  const dir = small ? "md/" : "";
-  const pad = (i) => String(i).padStart(3, "0");
-  const wrap = (i) => ((i % N) + N) % N;
+  const sfx = small ? "-md" : "";
+  const ext = vids[0].canPlayType('video/mp4; codecs="avc1.640028"') ? "mp4" : "webm";
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const once = (el, ev) => new Promise((res, rej) => {
+    const ok = () => { el.removeEventListener("error", bad); res(); };
+    const bad = () => { el.removeEventListener(ev, ok); rej(new Error("video")); };
+    el.addEventListener(ev, ok, { once: true });
+    el.addEventListener("error", bad, { once: true });
+  });
 
-  // ───── frame loading: nearest to the current view first, day before night ─────
-  const sets = { day: new Array(N), night: new Array(N) };
-  const queue = [];
-  let active = 0;
-  let loadedDay = 0;
-  const order = (from) => {
-    const out = [wrap(from)];
-    for (let d = 1; out.length < N; d++) out.push(wrap(from + d), wrap(from - d));
-    return out.slice(0, N);
-  };
-  function enqueue(set, list, front) {
-    const jobs = list.filter((i) => !sets[set][i]).map((i) => [set, i]);
-    if (front) queue.unshift(...jobs); else queue.push(...jobs);
+  // ───── clips: fetched as blobs, nearest to the current view first ─────
+  const cache = new Map(); // "day/t3f" → Promise<object URL>
+  const waiting = [];
+  let active = 0, loadedDay = 0;
+  const total = N * 3;
+  const fileOf = (light, name) => `${BASE}${light}/${name}${sfx}.${ext}`;
+  function queue(light, from) {
+    for (let d = 0; d <= N; d++) for (const i of d ? [from + d, from - d] : [from]) {
+      if (i < 0 || i >= N) continue;
+      enqueue(light, `s${i}`);
+      if (i < N - 1) enqueue(light, `t${i}f`);
+      if (i > 0) enqueue(light, `t${i}b`);
+    }
     pump();
   }
+  function enqueue(light, name) {
+    const key = `${light}/${name}`;
+    if (cache.has(key)) return;
+    let start;
+    // a failed fetch falls back to streaming the file itself
+    const p = new Promise((r) => (start = r)).then(() =>
+      fetch(fileOf(light, name)).then((r) => (r.ok ? r.blob() : Promise.reject())).then((b) => URL.createObjectURL(b), () => fileOf(light, name))
+        .finally(() => { active--; if (light === "day") progress(++loadedDay); pump(); }));
+    p.start = start;
+    cache.set(key, p);
+    waiting.push(p);
+  }
   function pump() {
-    while (active < 6 && queue.length) {
-      const [set, i] = queue.shift();
-      if (sets[set][i]) continue;
-      const im = new Image();
-      im.decoding = "async";
-      sets[set][i] = im; // reserve; `ready` flips when decoded
-      active++;
-      im.onload = () => {
-        const done = () => { im.ready = true; active--; if (set === "day") { loadedDay++; progress(); } draw(); pump(); };
-        im.decode ? im.decode().then(done, done) : done();
-      };
-      im.onerror = () => { active--; pump(); };
-      im.src = `${BASE}${set}/${dir}f${pad(i)}.webp`;
-    }
+    while (active < 2 && waiting.length) { const p = waiting.shift(); p.started = true; active++; p.start(); }
   }
-  function progress() {
+  function clip(light, name) { // needed now: jump the queue
+    enqueue(light, name);
+    const p = cache.get(`${light}/${name}`);
+    if (!p.started) { waiting.splice(waiting.indexOf(p), 1); p.started = true; active++; p.start(); }
+    return p;
+  }
+  function progress(n) {
     if (!bar) return;
-    bar.style.transform = `scaleX(${loadedDay / N})`;
-    if (loadedDay === N) root.classList.add("is-loaded");
+    bar.style.transform = `scaleX(${Math.min(1, n / total)})`;
+    if (n >= total) root.classList.add("is-loaded");
   }
 
-  // ───── drawing: cover-fit like the poster and the videos ─────
-  let pos = HOME; // fractional frame
-  let t = 0; // 0 day → 1 night
-  function nearest(set, i) {
-    for (let d = 0; d < N / 2; d++) {
-      for (const k of [wrap(i + d), wrap(i - d)]) if (sets[set][k] && sets[set][k].ready) return sets[set][k];
+  // ───── two stacked video layers: the new clip fades in over the old one ─────
+  let top = -1;
+  const other = () => vids[top === 0 ? 1 : 0];
+  async function load(v, url, t, loop) {
+    v.loop = loop;
+    v.playbackRate = 1;
+    if (v.dataset.src !== url) { v.dataset.src = url; v.src = url; await once(v, "loadeddata"); }
+    if (Math.abs(v.currentTime - t) > 0.01) { const p = once(v, "seeked"); v.currentTime = t; await p; }
+  }
+  async function swap(v, ms) {
+    const old = vids[top];
+    top = vids.indexOf(v);
+    v.style.transition = ms ? `opacity ${ms}ms linear` : "none";
+    v.style.zIndex = 2;
+    if (old && old !== v) old.style.zIndex = 1;
+    v.getBoundingClientRect();
+    v.classList.add("is-on");
+    root.classList.add("is-live");
+    await sleep(ms + 40);
+    if (old && old !== v && vids[top] !== old) { old.style.transition = "none"; old.classList.remove("is-on"); old.pause(); }
+  }
+
+  // ───── state: the view shown (`at`), the view the scroll asks for (`target`), day or night ─────
+  let at = 0, target = 0, light = "day", shown = null, running = false;
+  const names = dots.map((d) => d.dataset.name);
+  function ui() {
+    dots.forEach((d, i) => d.setAttribute("aria-current", i === at ? "true" : "false"));
+    if (nameEl) nameEl.textContent = names[at] || "";
+  }
+  function setPoster(i) {
+    if (!poster) return;
+    const b = `${BASE}${light}/s${i}`;
+    poster.srcset = `${b}-md.webp 960w, ${b}.webp 1600w`;
+  }
+  async function start() {
+    const v = vids[0];
+    await load(v, await clip(light, `s${at}`), 0, true);
+    await v.play();
+    shown = light;
+    await swap(v, 400);
+  }
+  async function fly() {
+    const dir = Math.sign(target - at), from = at, to = at + dir;
+    const v = other(), cur = vids[top];
+    await load(v, await clip(light, `t${from}${dir > 0 ? "f" : "b"}`), 0, false);
+    v.playbackRate = Math.abs(target - at) > 1 ? 1.7 : 1; // hurry through views the scroll has already passed
+    // A flight starts where the traffic loop starts. When the loop is about to come round, wait for it:
+    // the cars then carry straight on into the flight. Otherwise a quick fade covers the jump.
+    let fade = 260;
+    if (cur && cur.loop && cur.duration) {
+      const left = cur.duration - cur.currentTime;
+      if (left < 0.45) { await sleep(Math.max(0, left * 1000 - 25)); fade = 80; }
     }
-    return null;
+    const ended = once(v, "ended");
+    await v.play();
+    at = to; ui();
+    await swap(v, fade);
+    shown = light;
+    if (at !== target) return ended.catch(() => {});
+    // land: the next view's loop waits, paused at the moment the flight ends, in the other layer
+    const lv = other();
+    await load(lv, await clip(light, `s${at}`), LAND, true);
+    await ended.catch(() => {});
+    await lv.play();
+    await swap(lv, 0);
   }
-  function size() {
-    const r = stage.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(r.width * dpr);
-    canvas.height = Math.round(r.height * dpr);
-    draw();
+  async function relight() { // same view, other light: fade across at the same moment of the loop
+    const cur = vids[top], v = other(), l = light;
+    await load(v, await clip(l, `s${at}`), 0, true);
+    const p = once(v, "seeked");
+    v.currentTime = (cur.currentTime + 0.06) % cur.duration;
+    await p;
+    await v.play();
+    shown = l;
+    await swap(v, 700);
   }
-  function blit(im, alpha) {
-    const cw = canvas.width, ch = canvas.height;
-    const s = Math.max(cw / im.naturalWidth, ch / im.naturalHeight);
-    const w = im.naturalWidth * s, h = im.naturalHeight * s;
-    ctx.globalAlpha = alpha;
-    ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
+  async function kick() {
+    if (running || reduce) return;
+    running = true;
+    try {
+      if (shown === null) await start();
+      while (at !== target || shown !== light) {
+        if (at !== target) await fly(); else await relight();
+      }
+    } catch (e) {
+      root.classList.add("is-still"); // no video: the stills take over
+      vids.forEach((v) => v.pause());
+      at = target; ui(); setPoster(at);
+    } finally {
+      running = false;
+    }
   }
-  let raf = 0;
-  function draw() {
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      raf = 0;
-      const i = wrap(Math.round(pos));
-      const day = t < 1 ? nearest("day", i) : null;
-      const night = t > 0 ? nearest("night", i) : null;
-      if (!day && !night) return;
-      if (day) blit(day, 1);
-      if (night) blit(night, day ? t : 1);
-      ctx.globalAlpha = 1;
-      root.classList.add("is-live");
-      syncLoop();
+
+  // ───── scroll: the section is tall and the picture stays pinned; each slice of it is one view ─────
+  function onScroll() {
+    const r = root.getBoundingClientRect();
+    const span = Math.max(1, r.height - innerHeight);
+    const p = clamp(-r.top / span, 0, 0.9999);
+    const t = Math.floor(p * N);
+    if (-r.top > 40 && hint) hint.classList.add("is-hidden");
+    if (t === target) return;
+    target = t;
+    if (reduce || root.classList.contains("is-still")) { at = t; ui(); setPoster(t); return; }
+    queue(light, t);
+    kick();
+  }
+  function go(i) {
+    i = clamp(i, 0, N - 1);
+    const r = root.getBoundingClientRect();
+    const span = Math.max(1, r.height - innerHeight);
+    window.scrollTo({ top: scrollY + r.top + span * (i + 0.5) / N, behavior: reduce ? "auto" : "smooth" });
+  }
+  dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
+  root.querySelectorAll("[data-rp3d-step]").forEach((b) => b.addEventListener("click", () => go(target + +b.dataset.rp3dStep)));
+  lightBtns.forEach((b) => b.addEventListener("click", () => {
+    const l = b.dataset.rp3dLight;
+    if (l === light) return;
+    light = l;
+    lightBtns.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    root.classList.toggle("is-night", l === "night");
+    if (reduce || root.classList.contains("is-still")) { setPoster(at); return; }
+    queue(l, at);
+    kick();
+  }));
+
+  // ───── pointer drift: the picture leans a little towards the pointer ─────
+  let mx = 0, my = 0, cx = 0, cy = 0, raf = 0;
+  const drift = () => {
+    cx += (mx - cx) * 0.06;
+    cy += (my - cy) * 0.06;
+    media.style.transform = `translate3d(${(-cx * 1.6).toFixed(3)}%, ${(-cy * 1.2).toFixed(3)}%, 0) scale(1.07)`;
+    raf = Math.abs(mx - cx) + Math.abs(my - cy) > 0.0005 ? requestAnimationFrame(drift) : 0;
+  };
+  if (!reduce && matchMedia("(hover: hover)").matches) {
+    root.addEventListener("pointermove", (e) => {
+      mx = clamp((e.clientX / innerWidth) * 2 - 1, -1, 1);
+      my = clamp((e.clientY / innerHeight) * 2 - 1, -1, 1);
+      if (!raf) raf = requestAnimationFrame(drift);
     });
+    root.addEventListener("pointerleave", () => { mx = my = 0; if (!raf) raf = requestAnimationFrame(drift); });
   }
 
-  // ───── traffic loop at the home view ─────
-  let atRest = true;
-  let loopsOn = false;
-  function syncLoop() {
-    const home = wrap(Math.round(pos)) === HOME && atRest && !reduce;
-    if (home && !loopsOn) startLoops();
-    const ready = videos.day.readyState >= 3 && (t === 0 || videos.night.readyState >= 3);
-    root.classList.toggle("show-loop", home && loopsOn && ready);
-  }
-  function startLoops() {
-    loopsOn = true;
-    for (const [k, v] of Object.entries(videos)) {
-      if (!v.src) {
-        const ext = v.canPlayType('video/mp4; codecs="avc1.640028"') ? "mp4" : "webm";
-        v.src = `${BASE}${k}-loop${small ? "-md" : ""}.${ext}`;
-        v.addEventListener("canplay", syncLoop);
-      }
-    }
-    Promise.all(Object.values(videos).map((v) => v.play().catch(() => {}))).then(() => { videos.night.currentTime = videos.day.currentTime; });
-  }
-  // keep the night loop in step with the day loop so the blend never doubles a car
-  videos.day.addEventListener("timeupdate", () => {
-    if (Math.abs(videos.night.currentTime - videos.day.currentTime) > 0.06) videos.night.currentTime = videos.day.currentTime;
-  });
-
-  // ───── input: drag with inertia, keys, buttons ─────
-  let vel = 0, dragging = false, lastX = 0, lastT = 0, anim = 0;
-  const perPx = () => N / (stage.clientWidth * 1.6); // a drag across 1.6 widths turns a full circle
-  function settle() {
-    cancelAnimationFrame(anim);
-    const step = () => {
-      if (dragging) return;
-      if (Math.abs(vel) > 0.002 && !reduce) {
-        pos += vel;
-        vel *= 0.93;
-        draw();
-        anim = requestAnimationFrame(step);
-        return;
-      }
-      vel = 0;
-      // close to the home view: glide onto it so the traffic loop can play
-      const off = ((pos - HOME) % N + N + N / 2) % N - N / 2;
-      if (Math.abs(off) < 2.5 && Math.abs(off) > 0.01) return turnTo(pos - off);
-      pos = Math.round(pos);
-      atRest = true;
-      draw();
-    };
-    anim = requestAnimationFrame(step);
-  }
-  function turnTo(target) {
-    cancelAnimationFrame(anim);
-    const from = pos, d = target - from, t0 = performance.now(), dur = reduce ? 0 : Math.min(900, 120 + Math.abs(d) * 60);
-    atRest = false;
-    const step = (now) => {
-      const k = dur ? Math.min(1, (now - t0) / dur) : 1;
-      pos = from + d * (1 - Math.pow(1 - k, 3));
-      draw();
-      if (k < 1) anim = requestAnimationFrame(step);
-      else { pos = Math.round(target); atRest = true; draw(); }
-    };
-    anim = requestAnimationFrame(step);
-  }
-  stage.addEventListener("pointerdown", (e) => {
-    if (e.button !== 0) return;
-    dragging = true; atRest = false; vel = 0;
-    lastX = e.clientX; lastT = performance.now();
-    cancelAnimationFrame(anim);
-    stage.setPointerCapture(e.pointerId);
-    root.classList.add("is-dragging");
-    root.classList.remove("show-loop");
-    hint && hint.classList.add("is-hidden");
-  });
-  stage.addEventListener("pointermove", (e) => {
-    if (!dragging) return;
-    const now = performance.now();
-    const dp = -(e.clientX - lastX) * perPx();
-    pos += dp;
-    vel = vel * 0.6 + (dp / Math.max(8, now - lastT)) * 16 * 0.4;
-    lastX = e.clientX; lastT = now;
-    draw();
-  });
-  const end = () => { if (!dragging) return; dragging = false; root.classList.remove("is-dragging"); settle(); };
-  stage.addEventListener("pointerup", end);
-  stage.addEventListener("pointercancel", end);
-  stage.addEventListener("keydown", (e) => {
-    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-    e.preventDefault();
-    turnTo(Math.round(pos) + (e.key === "ArrowRight" ? 1 : -1) * (e.shiftKey ? 5 : 1));
-  });
-  root.querySelectorAll("[data-rp3d-turn]").forEach((b) => b.addEventListener("click", () => turnTo(Math.round(pos) + +b.dataset.rp3dTurn * N / 8)));
-  range.addEventListener("input", () => {
-    t = range.value / 100;
-    root.style.setProperty("--night", t);
-    if (t > 0) enqueue("night", order(Math.round(pos)), true);
-    draw();
-  });
-
-  // ───── start ─────
-  new ResizeObserver(size).observe(stage);
-  enqueue("day", order(HOME));
-  // night frames follow once the day set is in (or straight away when the slider moves)
-  const lazyNight = () => enqueue("night", order(HOME));
-  if ("requestIdleCallback" in window) requestIdleCallback(() => setTimeout(lazyNight, 1500)); else setTimeout(lazyNight, 3000);
+  // ───── start: pause while the section is off screen ─────
+  ui();
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll);
+  onScroll();
+  if (reduce) { root.classList.add("is-still"); return; }
+  queue("day", target);
+  kick();
+  new IntersectionObserver(([e]) => {
+    const v = vids[top];
+    if (!v || root.classList.contains("is-still")) return;
+    if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
+  }).observe(root);
+  if (!lightBtns.length) return; // no night set yet
+  const lazyNight = () => queue("night", target);
+  if ("requestIdleCallback" in window) requestIdleCallback(() => setTimeout(lazyNight, 4000)); else setTimeout(lazyNight, 6000);
 })();

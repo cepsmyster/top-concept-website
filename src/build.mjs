@@ -400,7 +400,7 @@ function projectShowcase() {
         <span class="model__kicker">Interactive 3D</span>
         <h3 class="hd">Explore the park</h3>
         <span class="model__tag">Scroll to rise over the site · drag to look around · Ctrl + scroll to zoom</span>
-        <a class="model__link link-caps" href="retail-park-3d.html">See it in photoreal 3D, day and night</a>
+        <a class="model__link link-caps" href="retail-park-3d.html">See it in photoreal 3D</a>
       </header>
       <div class="model__foot">
         <p class="model__desc">A raised connecting roof links the retail buildings. Behind it runs a separate road. Explore the shade-sail market, Games hall, tree plaza and brick-screen pavilion, with food pods along the promenade.</p>
@@ -946,45 +946,50 @@ for (const f of fs.readdirSync(ROOT)) {
   if (/^(project|blog)-.+\.html$/.test(f) && !written.includes(f)) { fs.unlinkSync(path.join(ROOT, f)); console.log("Removed stale page:", f); }
 }
 
-// RETAIL PARK IN 3D — photoreal orbit rendered in Blender (src/blender/retail_park.py), drag to turn, day ↔ night
+// RETAIL PARK IN 3D — rendered fly-round in Blender (src/blender/retail_park.py --tour 8): scroll from view to view, day / night
 {
-  const RP3D = { frames: 60, home: 0 };
-  const pad = (i) => String(i).padStart(3, "0");
+  // the eight tour stops, in scroll order (stop 0 looks in from the main road)
+  const VIEWS = ["Main road", "Shade-sail market", "West end", "Jogging trail", "Rear road", "Rear parking", "East parking", "Brick-screen pavilion"];
+  // the Day / Night switch appears once the night clips have been exported
+  const NIGHT = fs.existsSync(path.join(ROOT, "assets/rp3d/night/s0.mp4"));
   page({
     file: "retail-park-3d.html",
     title: "Retail Park in 3D",
-    description: "Turn Retail Park in Sharjah through a full circle and watch it from day into night. Photoreal renders of the market court, Games hall, tree plaza and brick-screen pavilion beside the desert.",
+    description: `Fly round Retail Park in Sharjah${NIGHT ? ", by day and by night" : ""}. Rendered views of the market court, Games hall, tree plaza and brick-screen pavilion beside the desert, with the traffic still moving.`,
     ogImage: "rp3d-og.jpg",
-    head: `<link rel="preload" as="image" href="assets/rp3d/day/f${pad(RP3D.home)}.webp" media="(min-width: 901px)">
-<link rel="preload" as="image" href="assets/rp3d/day/md/f${pad(RP3D.home)}.webp" media="(max-width: 900px)">
+    head: `<link rel="preload" as="image" href="assets/rp3d/day/s0.webp" media="(min-width: 901px)">
+<link rel="preload" as="image" href="assets/rp3d/day/s0-md.webp" media="(max-width: 900px)">
 <script src="assets/js/rp3d.js?v=${V}" defer></script>`,
     body: `
-<section class="rp3d" data-rp3d data-frames="${RP3D.frames}" data-home="${RP3D.home}" data-base="assets/rp3d/" aria-labelledby="rp3d-title">
-  <div class="rp3d__stage" data-rp3d-stage tabindex="0" aria-label="Retail Park, 3D view. Drag or use the left and right arrow keys to turn it.">
-    <picture class="rp3d__poster">
-      <source media="(max-width: 900px)" srcset="assets/rp3d/day/md/f${pad(RP3D.home)}.webp">
-      <img src="assets/rp3d/day/f${pad(RP3D.home)}.webp" alt="Retail Park from above: the shade-sail market, Games hall, tree plaza and brick-screen pavilion between the road and the dunes" width="1600" height="900" fetchpriority="high">
-    </picture>
-    <canvas class="rp3d__canvas" data-rp3d-canvas aria-hidden="true"></canvas>
-    <video class="rp3d__loop" data-rp3d-loop="day" muted playsinline loop preload="none" aria-hidden="true"></video>
-    <video class="rp3d__loop" data-rp3d-loop="night" muted playsinline loop preload="none" aria-hidden="true"></video>
-  </div>
-  <div class="rp3d__scrim" aria-hidden="true"></div>
-  <header class="rp3d__head">
-    <p class="rp3d__kicker">Retail Park · Sharjah</p>
-    <h1 id="rp3d-title" class="rp3d__title">See it in <span class="hb">3D</span></h1>
-  </header>
-  <div class="rp3d__bar" aria-hidden="true"><span data-rp3d-progress></span></div>
-  <div class="rp3d__foot">
-    <p class="rp3d__hint" data-rp3d-hint><span class="rp3d__drag" aria-hidden="true"></span>Drag to turn the park</p>
-    <div class="rp3d__time">
-      <span class="rp3d__end">Day</span>
-      <input class="rp3d__range" type="range" min="0" max="100" value="0" step="1" data-rp3d-time aria-label="Time of day, from day to night">
-      <span class="rp3d__end">Night</span>
+<section class="rp3d" data-rp3d data-stops="${VIEWS.length}" data-base="assets/rp3d/" style="--stops: ${VIEWS.length}" aria-labelledby="rp3d-title">
+  <div class="rp3d__pin">
+    <div class="rp3d__stage">
+      <div class="rp3d__media" data-rp3d-media>
+        <img class="rp3d__poster" data-rp3d-poster src="assets/rp3d/day/s0.webp" srcset="assets/rp3d/day/s0-md.webp 960w, assets/rp3d/day/s0.webp 1600w" sizes="100vw" alt="Retail Park from the air: the shade-sail market, Games hall, tree plaza and brick-screen pavilion between the main road and the dunes" width="1600" height="900" fetchpriority="high">
+        <video class="rp3d__video" data-rp3d-video muted playsinline preload="auto" aria-hidden="true"></video>
+        <video class="rp3d__video" data-rp3d-video muted playsinline preload="auto" aria-hidden="true"></video>
+      </div>
     </div>
-    <div class="rp3d__turn" role="group" aria-label="Turn the park">
-      <button class="rp3d__btn" type="button" data-rp3d-turn="-1" aria-label="Turn left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-      <button class="rp3d__btn" type="button" data-rp3d-turn="1" aria-label="Turn right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    <div class="rp3d__scrim" aria-hidden="true"></div>
+    <header class="rp3d__head">
+      <p class="rp3d__kicker">Retail Park · Sharjah</p>
+      <h1 id="rp3d-title" class="rp3d__title">See it in <span class="hb">3D</span></h1>
+    </header>
+    <div class="rp3d__bar" aria-hidden="true"><span data-rp3d-progress></span></div>
+    <div class="rp3d__foot">
+      <p class="rp3d__hint" data-rp3d-hint><span class="rp3d__mouse" aria-hidden="true"></span>Scroll to fly round the park</p>
+      ${NIGHT ? `<div class="rp3d__light" role="group" aria-label="Time of day">
+        <button class="rp3d__seg" type="button" data-rp3d-light="day" aria-pressed="true">Day</button>
+        <button class="rp3d__seg" type="button" data-rp3d-light="night" aria-pressed="false">Night</button>
+      </div>` : `<span aria-hidden="true"></span>`}
+      <nav class="rp3d__views" aria-label="Views of the park">
+        <p class="rp3d__name" data-rp3d-name aria-live="polite">${VIEWS[0]}</p>
+        <div class="rp3d__nav">
+          <button class="rp3d__btn" type="button" data-rp3d-step="-1" aria-label="Previous view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="rp3d__dots">${VIEWS.map((v, i) => `<button class="rp3d__dot" type="button" data-rp3d-go="${i}" data-name="${v}" aria-label="View ${i + 1}: ${v}" aria-current="${i ? "false" : "true"}"></button>`).join("")}</div>
+          <button class="rp3d__btn" type="button" data-rp3d-step="1" aria-label="Next view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+      </nav>
     </div>
   </div>
 </section>

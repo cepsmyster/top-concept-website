@@ -4,11 +4,13 @@ Built entirely from code: no downloaded models, textures or HDRIs. Geometry foll
 src/model3d.mjs (metres; x runs west → east, z from the back of the site (−z) to the road (+z)).
 Blender's axes are x east, y north (= −z), z up.
 
-Run with Blender 4.5 (or the `bpy` 4.5 Python module):
-    python src/blender/retail_park.py --light day   --orbit 72 --out renders/day
-    python src/blender/retail_park.py --light night --orbit 72 --out renders/night
-On a PC with a graphics card, src/blender/render_all.bat (Windows) or render_all.sh renders everything.
-Options: --gpu --format webp --res 1600x900 --samples 48 --frames 0-71 (subset) --loop 48 (traffic loop at one view) --preview
+Run with Blender 4.2 or newer, including 5.x (or the `bpy` Python module):
+    blender -b --factory-startup -P src/blender/retail_park.py -- --gpu --format webp --light day --tour 8 --samples 128 --out renders/day
+    blender -b --factory-startup -P src/blender/retail_park.py -- --gpu --format webp --light night --tour 8 --samples 128 --out renders/night
+--tour 8 renders what the page plays: a 48-frame traffic loop at each of 8 views (s0 … s7) and 24-frame flights
+between neighbouring views (t0f, t1b …). src/blender/render_all.bat (Windows) or render_all.sh renders everything.
+Other options: --res 1600x900 --clips s0,t0f (subset) --still (first frame of each clip) --lens 26 --blend <file>,
+and the older full turn: --orbit 72 --frames 0-71 --loop 48 --at 0.
 """
 import argparse
 import math
@@ -19,8 +21,9 @@ import sys
 import bpy
 import bmesh
 
-if bpy.app.version < (4, 2, 0) or bpy.app.version >= (5, 0, 0):
-    sys.exit(f"Building the scene needs Blender 4.2 – 4.5 (found {bpy.app.version_string}). The saved RetailPark_*.blend files render in Blender 5 too. Blender 4.5 LTS: https://www.blender.org/download/lts/4-5/")
+if bpy.app.version < (4, 2, 0):
+    sys.exit(f"Building the scene needs Blender 4.2 or newer (found {bpy.app.version_string}).")
+V5 = bpy.app.version >= (5, 0, 0)  # Blender 5 renamed the sky model and moved the compositor into a node group
 import numpy as np
 from mathutils import Vector, Matrix, Euler
 
@@ -35,6 +38,11 @@ ap.add_argument("--orbit", type=int, default=72, help="frames in a full turn")
 ap.add_argument("--frames", default="", help="subset of orbit frames, e.g. 0-71 or 0,18,36")
 ap.add_argument("--loop", type=int, default=0, help="render a traffic loop of N frames at --at instead of the orbit")
 ap.add_argument("--at", type=int, default=0, help="orbit frame for --loop")
+ap.add_argument("--tour", type=int, default=0, help="render the scroll tour: a traffic loop at each of N stops and flights between neighbours")
+ap.add_argument("--flight", type=int, default=24, help="frames per flight between two tour stops")
+ap.add_argument("--clips", default="", help="tour clips to render, e.g. s0,s3,t2f (default: all)")
+ap.add_argument("--still", action="store_true", help="tour: only the first frame of each clip (for checking the framing)")
+ap.add_argument("--lens", type=float, default=0.0, help="focal length in mm (default 24 for the tour, 32 otherwise)")
 ap.add_argument("--blend", default="", help="also save the scene as a .blend file")
 ap.add_argument("--threads", type=int, default=0)
 ap.add_argument("--gpu", action="store_true", help="render on the graphics card (OptiX/CUDA/HIP/Metal/oneAPI, whichever is found)")
@@ -335,7 +343,7 @@ def build_materials():
 
     # foliage: leaf cards with an alpha mask; translucent so the sun glows through
     leaf_img = make_leaf_image()
-    for name, tint in (("leaf", ["#3d4d22", "#56652d", "#6e7837", "#4a5a2a"]), ("leafDark", ["#2c3a1c", "#3c4b24", "#4c5a2c", "#334220"]),
+    for name, tint in (("leaf", ["#2f4a1e", "#46662a", "#62823a", "#3a5824"]), ("leafDark", ["#1f3316", "#2d4720", "#3e5c2a", "#27401b"]),
                        ("leafFlower", ["#4f5f2b", "#c76f8c", "#e0b85a", "#62722f"]), ("leafOlive", ["#5f6a48", "#7c8662", "#8f9672", "#6a7452"])):
         m, nt, out = new_mat(name)
         tex = node(nt, "ShaderNodeTexImage")
@@ -617,27 +625,53 @@ def mesh_with_uv(name, verts, faces, uvs, mat, coll):
 
 
 def make_tree(name, seed, height, crown, leaves, leaf_mat="leaf", lean=0.08, kind="broad"):
-    """Broad-leaf shade tree: tapered trunk, a few limbs and a leaf-card crown."""
+    """Open deciduous tree (ash / honey-locust type): a trunk that forks into a few leaning limbs, each splitting
+    twice more, with loose leaf clumps on the twigs. Gaps between the clumps let light and the ground show
+    through, and the crown is lopsided, so no two instances read as the same ball."""
     rr = random.Random(seed)
     coll = proto_collection(name)
     tv, tf = [], []
-    trunk_h = height * (0.38 if kind == "broad" else 0.55)
-    top = Vector((rr.uniform(-lean, lean) * height, rr.uniform(-lean, lean) * height, trunk_h))
-    tube(tv, tf, Vector((0, 0, -0.1)), top, 0.11 * height / 6, 0.075 * height / 6, 8)
-    crown_c = Vector((top.x, top.y, trunk_h + crown[2] * 0.85))
-    limbs = []
-    n_limbs = rr.randint(6, 8)
+    s = height / 8.0
+    fork = height * (0.34 if kind == "broad" else 0.5)
+    lean_v = Vector((rr.uniform(-lean, lean), rr.uniform(-lean, lean), 0)) * height
+    mid = Vector((lean_v.x * 0.4, lean_v.y * 0.4, fork * 0.55))
+    top = Vector((lean_v.x, lean_v.y, fork))
+    tube(tv, tf, Vector((0, 0, -0.1)), mid, 0.17 * s, 0.14 * s, 8)
+    tube(tv, tf, mid, top, 0.14 * s, 0.11 * s, 8)
+    twigs = []  # (tip position, clump radius)
+    reach = Vector((crown[0], crown[1], crown[2]))
+
+    def grow(start, direction, length, radius, depth):
+        end = start + direction * length
+        tube(tv, tf, start, end, radius, radius * 0.62, 6 if depth == 0 else 5)
+        if depth == 2:
+            twigs.append((end, rr.uniform(0.75, 1.15) * s))
+            # a second clump part-way along the twig thickens the outer canopy without closing it
+            if rr.random() < 0.7:
+                twigs.append((start.lerp(end, rr.uniform(0.45, 0.7)), rr.uniform(0.55, 0.85) * s))
+            return
+        n = rr.randint(2, 3)
+        for k in range(n):
+            spin = k / n * TAU + rr.uniform(-0.6, 0.6)
+            side = Vector((math.cos(spin), math.sin(spin), 0))
+            d = (direction * rr.uniform(0.9, 1.4) + side * rr.uniform(0.45, 0.85) + Vector((0, 0, rr.uniform(0.0, 0.35)))).normalized()
+            grow(end, d, length * rr.uniform(0.55, 0.75), radius * 0.62, depth + 1)
+
+    n_limbs = rr.randint(3, 5)
+    heavy = rr.uniform(0, TAU)  # one side of the crown reaches further: lopsided, like a street tree
     for i in range(n_limbs):
-        a = i / n_limbs * TAU + rr.uniform(-0.35, 0.35)
-        end = crown_c + Vector((math.cos(a) * crown[0] * 0.62, math.sin(a) * crown[1] * 0.62, rr.uniform(-0.35, 0.55) * crown[2]))
-        tube(tv, tf, top, end, 0.06 * height / 6, 0.02 * height / 6, 6)
-        limbs.append(end)
+        a = i / n_limbs * TAU + rr.uniform(-0.45, 0.45)
+        out_ = 0.55 + 0.35 * max(0.0, math.cos(a - heavy))
+        d = Vector((math.cos(a) * out_ * reach.x / reach.z, math.sin(a) * out_ * reach.y / reach.z, rr.uniform(0.75, 1.15))).normalized()
+        grow(top, d, height * rr.uniform(0.24, 0.32), 0.1 * s, 0)
+    if kind != "broad":  # a leader keeps narrower trees upright
+        grow(top, Vector((0, 0, 1)), height * 0.3, 0.09 * s, 1)
     make_object(name + "_wood", tv, tf, "bark", smooth=True, parent_coll=coll)
     lv, lf, luv = [], [], []
-    leaf_cards(lv, lf, luv, crown_c, (crown[0] * 0.8, crown[1] * 0.8, crown[2] * 0.85), int(leaves * 0.3), 0.75 * height / 7, rr)
-    for end in limbs:  # overlapping clumps around the limb tips give a layered, irregular canopy
-        r_ = rr.uniform(0.45, 0.65)
-        leaf_cards(lv, lf, luv, end, (crown[0] * r_, crown[1] * r_, crown[2] * r_ * 0.8), int(leaves * 0.7 / len(limbs)), 0.7 * height / 7, rr, shell=0.45)
+    per = max(18, int(leaves / max(1, len(twigs))))
+    for tip, r_ in twigs:
+        squash = rr.uniform(0.55, 0.8)
+        leaf_cards(lv, lf, luv, tip + Vector((0, 0, r_ * 0.15)), (r_, r_, r_ * squash), per, 0.5 * s, rr, up_bias=0.45, shell=0.35)
     mesh_with_uv(name + "_leaves", lv, lf, luv, leaf_mat, coll)
     return coll
 
@@ -752,8 +786,8 @@ def car_color():
 # ───────── build the site ─────────
 build_materials()
 
-TREES = [make_tree(f"tree{i}", 100 + i, rng.uniform(6.5, 9.0), (rng.uniform(3.0, 3.8), rng.uniform(3.0, 3.8), rng.uniform(2.2, 2.8)), 2600,
-                   "leaf" if i % 3 else "leafDark") for i in range(6)]
+TREES = [make_tree(f"tree{i}", 100 + i, rng.uniform(7.0, 10.0), (rng.uniform(3.0, 3.8), rng.uniform(3.0, 3.8), rng.uniform(2.4, 3.0)), 2400,
+                   "leaf" if i % 3 else "leafDark", lean=0.1, kind="narrow" if i % 4 == 3 else "broad") for i in range(8)]
 TREES_OLIVE = [make_tree(f"olive{i}", 200 + i, rng.uniform(4.5, 5.5), (2.2, 2.2, 1.6), 900, "leafOlive", lean=0.12) for i in range(2)]
 SHRUBS = [make_shrub(f"shrub{i}", 300 + i, rng.uniform(0.7, 1.1), 260, m) for i, m in enumerate(["leaf", "leafDark", "leafFlower", "leaf", "leafFlower", "leafOlive"])]
 TUFTS = [make_grass_tuft(f"tuft{i}", 400 + i) for i in range(3)]
@@ -1220,10 +1254,10 @@ wn = world.node_tree
 wn.nodes.clear()
 wout = wn.nodes.new("ShaderNodeOutputWorld")
 sky = wn.nodes.new("ShaderNodeTexSky")
-sky.sky_type = "NISHITA"
+sky.sky_type = "SINGLE_SCATTERING" if V5 else "NISHITA"  # Blender 5 converts Nishita to single scattering
 sky.sun_disc = False  # the sun lamp is the only sun (a visible disc would double the light)
 sky.air_density = 1.0
-sky.dust_density = 1.4  # desert haze
+setattr(sky, "aerosol_density" if V5 else "dust_density", 1.4)  # desert haze
 sky.ozone_density = 1.0
 SUN_EL = 22
 SUN_AZ = math.radians(255)  # afternoon sun from the west-south-west: rakes across the front and the dunes
@@ -1317,7 +1351,7 @@ if NIGHT:
 
 # ───────── camera & render settings ─────────
 cam_d = bpy.data.cameras.new("cam")
-cam_d.lens = 32
+cam_d.lens = args.lens or (26.0 if args.tour else 32.0)
 cam_d.sensor_width = 36
 cam_d.clip_start = 1
 cam_d.clip_end = 6000
@@ -1326,6 +1360,20 @@ COLL.objects.link(cam)
 scene.camera = cam
 TARGET = Vector(B(0, 5, 0))
 ORBIT_R, ORBIT_H = 225.0, 78.0
+
+
+TOUR_TARGET = Vector(B(-28, 0, 0))
+TOUR_RX, TOUR_RY, TOUR_H, TOUR_LOOK = 178.0, 122.0, 58.0, 6.0  # ellipse round the buildings: closer and lower than the orbit
+
+
+def place_tour(a, stops):
+    """Tour camera at `a` stops round the park (fractional between stops). Stop 0 looks in from the road,
+    slightly from the east; stop 1 is a three-quarter view over the market court. A low aerial about
+    25° down with the horizon in view, like the reference (belgradearbor.rs/en/3d)."""
+    ang = math.radians(-78) - a / stops * TAU
+    pos = TOUR_TARGET + Vector((math.cos(ang) * TOUR_RX, math.sin(ang) * TOUR_RY, TOUR_H))
+    cam.location = pos
+    cam.rotation_euler = (TOUR_TARGET + Vector((0, 0, TOUR_LOOK)) - pos).to_track_quat("-Z", "Y").to_euler()
 
 
 def place_camera(frame, total):
@@ -1398,34 +1446,72 @@ vl.use_pass_mist = True
 world.mist_settings.start = 350
 world.mist_settings.depth = 2600
 world.mist_settings.falloff = "QUADRATIC"
-scene.use_nodes = True
-ct = scene.node_tree
-ct.nodes.clear()
-rl = ct.nodes.new("CompositorNodeRLayers")
-comp = ct.nodes.new("CompositorNodeComposite")
-mix = ct.nodes.new("CompositorNodeMixRGB")
-mix.blend_type = "MIX"
-mix.inputs[2].default_value = (0.80, 0.75, 0.67, 1) if not NIGHT else (0.012, 0.016, 0.03, 1)
-mul = ct.nodes.new("CompositorNodeMath")
-mul.operation = "MULTIPLY"
-mul.inputs[1].default_value = 0.28 if not NIGHT else 0.7
-ct.links.new(rl.outputs["Mist"], mul.inputs[0])
-ct.links.new(mul.outputs[0], mix.inputs[0])
-ct.links.new(rl.outputs["Image"], mix.inputs[1])
-glare = ct.nodes.new("CompositorNodeGlare")
-glare.glare_type = "FOG_GLOW"
-glare.quality = "MEDIUM"
-glare.threshold = 1.0 if not NIGHT else 0.8
-glare.size = 7
-ct.links.new(mix.outputs[0], glare.inputs[0])
-ct.links.new(glare.outputs[0], comp.inputs[0])
+HAZE = (0.80, 0.75, 0.67, 1) if not NIGHT else (0.012, 0.016, 0.03, 1)
+HAZE_K = 0.28 if not NIGHT else 0.7
+if V5:  # Blender 5: the compositor is a node group with a Group Output; mix and math use the shader nodes
+    ct = bpy.data.node_groups.new("compositor", "CompositorNodeTree")
+    ct.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+    scene.compositing_node_group = ct
+    rl = ct.nodes.new("CompositorNodeRLayers")
+    comp = ct.nodes.new("NodeGroupOutput")
+    mix = ct.nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    mix.inputs[7].default_value = HAZE
+    mul = ct.nodes.new("ShaderNodeMath")
+    mul.operation = "MULTIPLY"
+    mul.inputs[1].default_value = HAZE_K
+    ct.links.new(rl.outputs["Mist"], mul.inputs[0])
+    ct.links.new(mul.outputs[0], mix.inputs[0])
+    ct.links.new(rl.outputs["Image"], mix.inputs[6])
+    glare = ct.nodes.new("CompositorNodeGlare")
+    glare.inputs["Type"].default_value = "Fog Glow"
+    glare.inputs["Quality"].default_value = "Medium"
+    glare.inputs["Threshold"].default_value = 1.0 if not NIGHT else 0.8
+    glare.inputs["Size"].default_value = 0.25  # = size 7 in Blender 4
+    ct.links.new(mix.outputs[2], glare.inputs["Image"])
+    ct.links.new(glare.outputs["Image"], comp.inputs[0])
+else:
+    scene.use_nodes = True
+    ct = scene.node_tree
+    ct.nodes.clear()
+    rl = ct.nodes.new("CompositorNodeRLayers")
+    comp = ct.nodes.new("CompositorNodeComposite")
+    mix = ct.nodes.new("CompositorNodeMixRGB")
+    mix.blend_type = "MIX"
+    mix.inputs[2].default_value = HAZE
+    mul = ct.nodes.new("CompositorNodeMath")
+    mul.operation = "MULTIPLY"
+    mul.inputs[1].default_value = HAZE_K
+    ct.links.new(rl.outputs["Mist"], mul.inputs[0])
+    ct.links.new(mul.outputs[0], mix.inputs[0])
+    ct.links.new(rl.outputs["Image"], mix.inputs[1])
+    glare = ct.nodes.new("CompositorNodeGlare")
+    glare.glare_type = "FOG_GLOW"
+    glare.quality = "MEDIUM"
+    glare.threshold = 1.0 if not NIGHT else 0.8
+    glare.size = 7
+    ct.links.new(mix.outputs[0], glare.inputs[0])
+    ct.links.new(glare.outputs[0], comp.inputs[0])
+
+def tour_clips(stops, loop, flight):
+    """The scroll tour as (clip name, [(stop position, traffic phase) per frame]). Every clip keeps the traffic
+    running: a loop advances the phase 0 → 1 (one car spacing) over `loop` frames, and a flight leaves at
+    phase 0 and lands at phase flight / loop, where the player picks up the next stop's loop. So cars never
+    stop or run backwards, whichever way the visitor scrolls."""
+    ease = lambda t: t * t * (3 - 2 * t)
+    clips = [(f"s{i}", [(i, k / loop) for k in range(loop)]) for i in range(stops)]
+    for i in range(stops):
+        for tag, d in (("f", 1), ("b", -1)):
+            clips.append((f"t{i}{tag}", [(i + d * ease(k / flight), k / loop) for k in range(flight)]))
+    return clips
+
 
 if args.blend:
-    # A ready-to-render file: frames 1–orbit are the turn (orbit frame 0 … orbit−1), the next
-    # `loop` frames are the traffic loop at the home view. Render → Render Animation writes them
-    # to a "renders/<light>" folder next to the .blend file.
+    # A ready-to-render file. Render → Render Animation writes the frames to a "renders/<light>" folder
+    # next to the .blend file. With --tour the frames are the tour clips one after another, in the
+    # order of tour_clips(); src/blender/export_tour.mjs splits them up again. Without it, frames
+    # 1–orbit are the turn and the next `loop` frames the traffic loop at the home view.
     loop_n = args.loop or 48
-    scene.frame_start, scene.frame_end = 1, args.orbit + loop_n
     scene.render.fps = 24
 
     def key_traffic(frame):
@@ -1435,21 +1521,36 @@ if args.blend:
             for ch in e.children:
                 ch.keyframe_insert("hide_render", frame=frame)
 
-    for i in range(args.orbit):
-        place_camera(i, args.orbit)
-        cam.keyframe_insert("location", frame=i + 1)
-        cam.keyframe_insert("rotation_euler", frame=i + 1)
-        set_traffic((i * 3 / args.orbit) % 1.0)
-        key_traffic(i + 1)
-    place_camera(args.at, args.orbit)
-    for k in range(loop_n):
-        cam.keyframe_insert("location", frame=args.orbit + k + 1)
-        cam.keyframe_insert("rotation_euler", frame=args.orbit + k + 1)
-        set_traffic(k / loop_n)
-        key_traffic(args.orbit + k + 1)
+    def key_frame(frame):
+        cam.keyframe_insert("location", frame=frame)
+        cam.keyframe_insert("rotation_euler", frame=frame)
+        key_traffic(frame)
+
+    if args.tour:
+        n = 0
+        for name, frames in tour_clips(args.tour, loop_n, args.flight):
+            for a, phase in frames:
+                n += 1
+                place_tour(a, args.tour)
+                set_traffic(phase % 1.0)
+                key_frame(n)
+        scene.frame_start, scene.frame_end = 1, n
+        scene["tour"] = f"{args.tour} stops, loop {loop_n}, flight {args.flight}"
+    else:
+        scene.frame_start, scene.frame_end = 1, args.orbit + loop_n
+        for i in range(args.orbit):
+            place_camera(i, args.orbit)
+            set_traffic((i * 3 / args.orbit) % 1.0)
+            key_frame(i + 1)
+        place_camera(args.at, args.orbit)
+        for k in range(loop_n):
+            set_traffic(k / loop_n)
+            key_frame(args.orbit + k + 1)
     for ob in [cam] + [m[0] for m in MOVING]:  # jump between keys: no in-between drift or wrap-around slides
         if ob.animation_data and ob.animation_data.action:
-            for fc in ob.animation_data.action.fcurves:
+            act = ob.animation_data.action
+            curves = act.fcurves if hasattr(act, "fcurves") else [fc for ly in act.layers for st in ly.strips for cb in st.channelbags for fc in cb.fcurves]  # Blender 5: layered actions
+            for fc in curves:
                 for kp in fc.keyframe_points:
                     kp.interpolation = "CONSTANT"
     r.filepath = f"//renders/{args.light}/frame_"
@@ -1479,7 +1580,23 @@ def frames_list(spec, total):
     return out
 
 
-if args.loop:
+if args.tour:
+    N = args.tour
+    want = set(args.clips.split(",")) if args.clips else None
+    for name, frames in tour_clips(N, args.loop or 48, args.flight):
+        if want and name not in want:
+            continue
+        os.makedirs(os.path.join(args.out, name), exist_ok=True)
+        for k, (a, phase) in enumerate(frames[:1] if args.still else frames):
+            path = os.path.join(args.out, name, f"{k:03d}.{EXT}")
+            if os.path.exists(path):
+                continue
+            place_tour(a, N)
+            set_traffic(phase % 1.0)
+            r.filepath = path
+            bpy.ops.render.render(write_still=True)
+            print("wrote", path, flush=True)
+elif args.loop:
     place_camera(args.at, args.orbit)
     todo = frames_list(args.frames, args.loop)
     for i in todo:

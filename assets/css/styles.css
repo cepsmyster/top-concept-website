@@ -1048,52 +1048,54 @@ main .prose .hd .hbr { display: none; }
 @media (max-width: 760px) { .hshots { --sh: min(46svh, 70vw); } }
 
 /* ───────── Retail Park in 3D (retail-park-3d.html) ─────────
-   Full-screen photoreal orbit: canvas of pre-rendered frames, traffic video loops at the home view,
-   day ↔ night slider. Behaviour in assets/js/rp3d.js. */
-.rp3d { --night: 0; position: relative; height: clamp(560px, 100svh, 1200px); overflow: hidden; color: #fff; background: #0e1116; isolation: isolate; }
-.rp3d__stage { position: absolute; inset: 0; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; outline: none; }
-.rp3d__stage:focus-visible { box-shadow: inset 0 0 0 2px #fff; }
-.rp3d.is-dragging .rp3d__stage { cursor: grabbing; }
-.rp3d__poster, .rp3d__poster img, .rp3d__canvas, .rp3d__loop { position: absolute; inset: 0; width: 100%; height: 100%; }
-.rp3d__poster img, .rp3d__loop { object-fit: cover; }
-.rp3d__canvas { display: block; }
-.rp3d__loop { opacity: 0; pointer-events: none; transition: opacity .25s linear; }
-.rp3d.show-loop .rp3d__loop[data-rp3d-loop="day"] { opacity: 1; }
-.rp3d.show-loop .rp3d__loop[data-rp3d-loop="night"] { opacity: var(--night); transition: none; }
-.rp3d.is-dragging .rp3d__loop { transition: none; }
-.rp3d__scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(8, 10, 14, .55) 0%, rgba(8, 10, 14, 0) 26%, rgba(8, 10, 14, 0) 66%, rgba(8, 10, 14, .62) 100%); }
+   Rendered fly-round: the section is tall and the picture stays pinned while the page scrolls; each slice of
+   the scroll is one of the eight views. Two stacked video layers cross-fade between the traffic loops and
+   the flights; the pointer drifts the picture slightly. Behaviour in assets/js/rp3d.js. */
+.rp3d { position: relative; height: calc(100svh + (var(--stops, 8) - 1) * 55svh); color: #fff; background: #0e1116; }
+.rp3d__pin { position: sticky; top: 0; height: 100svh; min-height: 520px; overflow: hidden; isolation: isolate; }
+.rp3d__stage { position: absolute; inset: 0; overflow: hidden; }
+.rp3d__media { position: absolute; inset: 0; transform: scale(1.07); will-change: transform; }
+.rp3d__poster, .rp3d__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rp3d__video { opacity: 0; pointer-events: none; }
+.rp3d__video.is-on { opacity: 1; }
+.rp3d.is-still .rp3d__video { display: none; }
+.rp3d__scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(8, 10, 14, .55) 0%, rgba(8, 10, 14, 0) 26%, rgba(8, 10, 14, 0) 64%, rgba(8, 10, 14, .66) 100%); }
 .rp3d__head { position: absolute; left: var(--gutter); top: calc(var(--header-h) + clamp(18px, 3vw, 44px)); pointer-events: none; text-shadow: 0 1px 18px rgba(0, 0, 0, .35); }
 .rp3d__kicker { font: 500 .72rem var(--font-head); letter-spacing: .14em; text-transform: uppercase; opacity: .85; margin-bottom: 10px; }
 .rp3d__title { font-size: clamp(2.4rem, 1.4rem + 4vw, 5.4rem); color: #fff; }
 .rp3d__bar { position: absolute; left: 0; right: 0; top: 0; height: 2px; pointer-events: none; transition: opacity .6s .4s; }
 .rp3d__bar span { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; transition: transform .3s; }
-.rp3d.is-loaded .rp3d__bar { opacity: 0; }
-.rp3d__foot { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(18px, 3.2vw, 40px); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; pointer-events: none; }
+.rp3d.is-loaded .rp3d__bar, .rp3d.is-still .rp3d__bar { opacity: 0; }
+.rp3d__foot { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(18px, 3.2vw, 40px); display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 20px; pointer-events: none; }
 .rp3d__foot > * { pointer-events: auto; }
-.rp3d__hint { display: flex; align-items: center; gap: 12px; font: 500 .72rem var(--font-head); letter-spacing: .12em; text-transform: uppercase; opacity: .9; transition: opacity .5s; pointer-events: none; }
+.rp3d__hint { align-self: center; display: flex; align-items: center; gap: 12px; font: 500 .72rem var(--font-head); letter-spacing: .12em; text-transform: uppercase; opacity: .9; transition: opacity .5s; pointer-events: none; }
 .rp3d__hint.is-hidden { opacity: 0; }
-.rp3d__drag { width: 34px; height: 2px; background: currentColor; position: relative; animation: rp3d-drag 2.4s var(--ease) infinite; }
-.rp3d__drag::before, .rp3d__drag::after { content: ""; position: absolute; top: -4px; width: 8px; height: 8px; border: solid currentColor; border-width: 0 0 2px 2px; }
-.rp3d__drag::before { left: -2px; transform: rotate(45deg); }
-.rp3d__drag::after { right: -2px; transform: rotate(-135deg); }
-@keyframes rp3d-drag { 0%, 100% { transform: translateX(-6px); } 50% { transform: translateX(6px); } }
-.rp3d__time { display: flex; align-items: center; gap: 14px; padding: 10px 18px; border-radius: 999px; background: rgba(10, 12, 16, .42); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, .18); }
-.rp3d__end { font: 500 .7rem var(--font-head); letter-spacing: .12em; text-transform: uppercase; }
-.rp3d__range { -webkit-appearance: none; appearance: none; width: clamp(140px, 22vw, 300px); height: 4px; border-radius: 4px; background: linear-gradient(90deg, #f6d6a0, #e39a5b 45%, #3b4a7a 75%, #141b33); cursor: pointer; }
-.rp3d__range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(255, 255, 255, .22), 0 2px 10px rgba(0, 0, 0, .4); }
-.rp3d__range::-moz-range-thumb { width: 20px; height: 20px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(255, 255, 255, .22), 0 2px 10px rgba(0, 0, 0, .4); }
-.rp3d__range:focus-visible { outline: 2px solid #fff; outline-offset: 6px; }
-.rp3d__turn { justify-self: end; display: flex; gap: 8px; }
+.rp3d__mouse { width: 20px; height: 30px; border: 2px solid currentColor; border-radius: 11px; position: relative; flex: none; }
+.rp3d__mouse::after { content: ""; position: absolute; left: 50%; top: 5px; width: 2px; height: 6px; margin-left: -1px; border-radius: 2px; background: currentColor; animation: rp3d-wheel 1.8s var(--ease) infinite; }
+@keyframes rp3d-wheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(8px); opacity: 0; } 100% { transform: translateY(0); opacity: 0; } }
+.rp3d__light { align-self: center; display: flex; padding: 4px; border-radius: 999px; background: rgba(10, 12, 16, .42); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, .18); }
+.rp3d__seg { min-width: 84px; padding: 10px 18px; border-radius: 999px; color: #fff; font: 500 .7rem var(--font-head); letter-spacing: .12em; text-transform: uppercase; transition: background .25s, color .25s; }
+.rp3d__seg[aria-pressed="true"] { background: #fff; color: #111; }
+.rp3d__seg:focus-visible, .rp3d__btn:focus-visible, .rp3d__dot:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.rp3d__views { justify-self: end; display: grid; justify-items: end; gap: 10px; }
+.rp3d__name { font: 500 .72rem var(--font-head); letter-spacing: .12em; text-transform: uppercase; text-shadow: 0 1px 12px rgba(0, 0, 0, .4); }
+.rp3d__nav { display: flex; align-items: center; gap: 12px; }
+.rp3d__dots { display: flex; gap: 2px; }
+.rp3d__dot { width: 22px; height: 44px; display: grid; place-items: center; }
+.rp3d__dot::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .45); transition: background .25s, transform .25s; }
+.rp3d__dot:hover::before { background: rgba(255, 255, 255, .8); }
+.rp3d__dot[aria-current="true"]::before { background: #fff; transform: scale(1.35); }
 .rp3d__btn { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .45); background: rgba(10, 12, 16, .35); color: #fff; transition: background .2s, color .2s; }
 .rp3d__btn:hover { background: #fff; color: #111; }
 .rp3d__btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 760px) {
-  .rp3d { height: clamp(440px, 66svh, 680px); }
-  .rp3d__foot { grid-template-columns: 1fr auto; row-gap: 14px; }
-  .rp3d__time { grid-column: 1 / -1; grid-row: 1; justify-self: center; }
-  .rp3d__range { width: 46vw; }
+  .rp3d { height: calc(100svh + (var(--stops, 8) - 1) * 45svh); }
+  .rp3d__foot { grid-template-columns: 1fr; justify-items: center; row-gap: 12px; }
+  .rp3d__hint { display: none; }
+  .rp3d__views { justify-self: center; justify-items: center; }
+  .rp3d__dot { width: 18px; }
 }
-@media (prefers-reduced-motion: reduce) { .rp3d__drag { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .rp3d__mouse::after { animation: none; } .rp3d__media { transform: none; } }
 .rp3d-about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(24px, 5vw, 96px); padding-block: clamp(56px, 8vw, 128px); }
 .rp3d-about h2 { font-size: clamp(2rem, 1.3rem + 2.6vw, 3.8rem); }
 .rp3d-about__text p { margin-bottom: 1.1em; font-size: clamp(1.02rem, .95rem + .3vw, 1.2rem); line-height: 1.55; color: var(--muted); }
