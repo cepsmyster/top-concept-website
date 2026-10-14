@@ -1048,24 +1048,21 @@ main .prose .hd .hbr { display: none; }
 @media (max-width: 760px) { .hshots { --sh: min(46svh, 70vw); } }
 
 /* ───────── Retail Park in 3D (retail-park-3d.html) ─────────
-   Rendered fly-round: the section is tall and the picture stays pinned while the page scrolls; each slice of
-   the scroll is one of the eight views. Two stacked video layers cross-fade between the traffic loops and
-   the flights; the pointer drifts the picture slightly. Behaviour in assets/js/rp3d.js. */
-.rp3d { position: relative; height: calc(100svh + (var(--stops, 8) - 1) * 55svh); color: #fff; background: #0e1116; }
+   Rendered fly-round: the section is tall and the picture stays pinned while the page scrolls. The scroll
+   scrubs the camera through the path frames on the canvas. The pointer leans the picture slightly. Behaviour in assets/js/rp3d.js. */
+.rp3d { position: relative; height: calc(100svh + (var(--stops, 8) - 1) * 70svh); color: #fff; background: #0e1116; }
 .rp3d__pin { position: sticky; top: 0; height: 100svh; min-height: 520px; overflow: hidden; isolation: isolate; }
 .rp3d__stage { position: absolute; inset: 0; overflow: hidden; }
-.rp3d__media { position: absolute; inset: 0; transform: scale(1.07); will-change: transform; }
-.rp3d__poster, .rp3d__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.rp3d__video { opacity: 0; pointer-events: none; }
-.rp3d__video.is-on { opacity: 1; }
-.rp3d.is-still .rp3d__video { display: none; }
+.rp3d__media { position: absolute; inset: 0; transform: scale(1.05); will-change: transform; }
+.rp3d__poster, .rp3d__canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rp3d__canvas { display: block; }
 .rp3d__scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(8, 10, 14, .55) 0%, rgba(8, 10, 14, 0) 26%, rgba(8, 10, 14, 0) 64%, rgba(8, 10, 14, .66) 100%); }
 .rp3d__head { position: absolute; left: var(--gutter); top: calc(var(--header-h) + clamp(18px, 3vw, 44px)); pointer-events: none; text-shadow: 0 1px 18px rgba(0, 0, 0, .35); }
 .rp3d__kicker { font: 500 .72rem var(--font-head); letter-spacing: .14em; text-transform: uppercase; opacity: .85; margin-bottom: 10px; }
 .rp3d__title { font-size: clamp(2.4rem, 1.4rem + 4vw, 5.4rem); color: #fff; }
 .rp3d__bar { position: absolute; left: 0; right: 0; top: 0; height: 2px; pointer-events: none; transition: opacity .6s .4s; }
 .rp3d__bar span { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; transition: transform .3s; }
-.rp3d.is-loaded .rp3d__bar, .rp3d.is-still .rp3d__bar { opacity: 0; }
+.rp3d.is-loaded .rp3d__bar { opacity: 0; }
 .rp3d__foot { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(18px, 3.2vw, 40px); display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 20px; pointer-events: none; }
 .rp3d__foot > * { pointer-events: auto; }
 .rp3d__hint { align-self: center; display: flex; align-items: center; gap: 12px; font: 500 .72rem var(--font-head); letter-spacing: .12em; text-transform: uppercase; opacity: .9; transition: opacity .5s; pointer-events: none; }
@@ -1089,7 +1086,7 @@ main .prose .hd .hbr { display: none; }
 .rp3d__btn:hover { background: #fff; color: #111; }
 .rp3d__btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 760px) {
-  .rp3d { height: calc(100svh + (var(--stops, 8) - 1) * 45svh); }
+  .rp3d { height: calc(100svh + (var(--stops, 8) - 1) * 60svh); }
   .rp3d__foot { grid-template-columns: 1fr; justify-items: center; row-gap: 12px; }
   .rp3d__hint { display: none; }
   .rp3d__views { justify-self: center; justify-items: center; }

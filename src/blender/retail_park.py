@@ -42,6 +42,8 @@ ap.add_argument("--tour", type=int, default=0, help="render the scroll tour: a t
 ap.add_argument("--flight", type=int, default=24, help="frames per flight between two tour stops")
 ap.add_argument("--clips", default="", help="tour clips to render, e.g. s0,s3,t2f (default: all)")
 ap.add_argument("--still", action="store_true", help="tour: only the first frame of each clip (for checking the framing)")
+ap.add_argument("--path", type=int, default=0, help="tour: render the scroll path instead, N frames between neighbouring stops")
+ap.add_argument("--no-traffic", action="store_true", help="leave out the moving cars on the main road (parked cars stay)")
 ap.add_argument("--lens", type=float, default=0.0, help="focal length in mm (default 24 for the tour, 32 otherwise)")
 ap.add_argument("--blend", default="", help="also save the scene as a .blend file")
 ap.add_argument("--threads", type=int, default=0)
@@ -1240,7 +1242,7 @@ def set_traffic(phase):
         s = (base + phase * spacing) % span - span / 2
         x = s * direction
         e.location = B(x, z, 0.06)
-        hide = abs(x) > 760
+        hide = abs(x) > 760 or args.no_traffic
         e.hide_render = hide
         for ch in e.children:
             ch.hide_render = hide
@@ -1580,7 +1582,23 @@ def frames_list(spec, total):
     return out
 
 
-if args.tour:
+if args.tour and args.path:
+    # The scroll path the page scrubs: frames evenly along the tour from stop 0 to the last stop, `path` per
+    # step. The traffic moves one car spacing per step, so at every stop the phase is 0 and the picture
+    # matches the first frame of that stop's traffic loop exactly.
+    N, F = args.tour, args.path
+    os.makedirs(os.path.join(args.out, "path"), exist_ok=True)
+    for k in range((N - 1) * F + 1):
+        path = os.path.join(args.out, "path", f"{k:03d}.{EXT}")
+        if os.path.exists(path):
+            continue
+        a = k / F
+        place_tour(a, N)
+        set_traffic(a % 1.0)
+        r.filepath = path
+        bpy.ops.render.render(write_still=True)
+        print("wrote", path, flush=True)
+elif args.tour:
     N = args.tour
     want = set(args.clips.split(",")) if args.clips else None
     for name, frames in tour_clips(N, args.loop or 48, args.flight):

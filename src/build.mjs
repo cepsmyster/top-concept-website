@@ -951,23 +951,22 @@ for (const f of fs.readdirSync(ROOT)) {
   // the eight tour stops, in scroll order (stop 0 looks in from the main road)
   const VIEWS = ["Main road", "Shade-sail market", "West end", "Jogging trail", "Rear road", "Rear parking", "East parking", "Brick-screen pavilion"];
   // the Day / Night switch appears once the night clips have been exported
-  const NIGHT = fs.existsSync(path.join(ROOT, "assets/rp3d/night/s0.mp4"));
+  const NIGHT = fs.existsSync(path.join(ROOT, "assets/rp3d/night/path/000.webp"));
   page({
     file: "retail-park-3d.html",
     title: "Retail Park in 3D",
-    description: `Fly round Retail Park in Sharjah${NIGHT ? ", by day and by night" : ""}. Rendered views of the market court, Games hall, tree plaza and brick-screen pavilion beside the desert, with the traffic still moving.`,
+    description: `Fly round Retail Park in Sharjah${NIGHT ? ", by day and by night" : ""}. Rendered views of the market court, Games hall, tree plaza and brick-screen pavilion beside the desert, from the main road round to the rear.`,
     ogImage: "rp3d-og.jpg",
-    head: `<link rel="preload" as="image" href="assets/rp3d/day/s0.webp" media="(min-width: 901px)">
-<link rel="preload" as="image" href="assets/rp3d/day/s0-md.webp" media="(max-width: 900px)">
+    head: `<link rel="preload" as="image" href="assets/rp3d/day/poster.webp" media="(min-width: 901px)">
+<link rel="preload" as="image" href="assets/rp3d/day/poster-md.webp" media="(max-width: 900px)">
 <script src="assets/js/rp3d.js?v=${V}" defer></script>`,
     body: `
-<section class="rp3d" data-rp3d data-stops="${VIEWS.length}" data-base="assets/rp3d/" style="--stops: ${VIEWS.length}" aria-labelledby="rp3d-title">
+<section class="rp3d" data-rp3d data-stops="${VIEWS.length}" data-step="24" data-base="assets/rp3d/" style="--stops: ${VIEWS.length}" aria-labelledby="rp3d-title">
   <div class="rp3d__pin">
     <div class="rp3d__stage">
       <div class="rp3d__media" data-rp3d-media>
-        <img class="rp3d__poster" data-rp3d-poster src="assets/rp3d/day/s0.webp" srcset="assets/rp3d/day/s0-md.webp 960w, assets/rp3d/day/s0.webp 1600w" sizes="100vw" alt="Retail Park from the air: the shade-sail market, Games hall, tree plaza and brick-screen pavilion between the main road and the dunes" width="1600" height="900" fetchpriority="high">
-        <video class="rp3d__video" data-rp3d-video muted playsinline preload="auto" aria-hidden="true"></video>
-        <video class="rp3d__video" data-rp3d-video muted playsinline preload="auto" aria-hidden="true"></video>
+        <img class="rp3d__poster" data-rp3d-poster src="assets/rp3d/day/poster.webp" srcset="assets/rp3d/day/poster-md.webp 960w, assets/rp3d/day/poster.webp 1600w" sizes="100vw" alt="Retail Park from the air: the shade-sail market, Games hall, tree plaza and brick-screen pavilion between the main road and the dunes" width="1600" height="900" fetchpriority="high">
+        <canvas class="rp3d__canvas" data-rp3d-canvas aria-hidden="true"></canvas>
       </div>
     </div>
     <div class="rp3d__scrim" aria-hidden="true"></div>
