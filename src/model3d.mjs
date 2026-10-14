@@ -51,11 +51,13 @@ function canvasTex(w, h, paint, repeat) {
   if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat, repeat); }
   return t;
 }
-const rnd = Math.random;
+// Keep landscaping and parked cars stable across visits and Blender exports.
+let seed = 20261014;
+const rnd = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
 const pick = (a) => a[Math.floor(rnd() * a.length)];
 const GREENS = ["#3f5a2a", "#4d6a31", "#5b7a39", "#6a8a42", "#35502a", "#789a4b", "#48652f"];
 const leafTexture = (flowers) => canvasTex(512, 512, (g, w, h) => {
-  for (let i = 0; i < 2600; i++) {
+  for (let i = 0; i < 6200; i++) {
     g.save();
     g.translate(rnd() * w, rnd() * h);
     g.rotate(rnd() * Math.PI * 2);
@@ -278,6 +280,7 @@ function bumpy(radius, detail, amount) {
   return g;
 }
 function tree(x, z, s = 1, base = 0.15, material = M.leaf, detail = 2) {
+  s *= 1.55;
   const g = new Group();
   const trunk = add(new THREE.CylinderGeometry(0.1 * s, 0.18 * s, 2.4 * s, 6), M.bark, { parent: g });
   trunk.position.y = 1.2 * s;
@@ -523,11 +526,12 @@ shrubs(scatter(160, -188, 188, -108, -62), 0.08, M.flowers, 0.7);
 {
   const x0 = -58, x1 = -14, z0 = -22, z1 = 14, H = 12.5;
   block(x0, z0, x1, z1, 0, H - 3, M.flutes);
-  block(x0 - 0.2, z0 - 0.2, x1 + 0.2, z1 + 0.2, H - 3, H, M.darkBand);
-  block(x0 + 0.5, z0 + 0.5, x1 - 0.5, z1 - 0.5, H - 0.2, H + 0.05, M.roof, { cast: false });
+  block(x0, z0, x1, z1, H - 3, H - 1.1, M.flutes);
+  wall([[x0, z0], [x1, z0], [x1, z1], [x0, z1]], { base: H - 0.8, h: 0.8, t: 0.35, material: M.darkBand, closed: true });
+  block(x0 + 0.5, z0 + 0.5, x1 - 0.5, z1 - 0.5, H - 1.05, H - 0.8, M.roof, { cast: false });
   glazing([[x0 - 0.05, z1 - 14], [x0 - 0.05, z1 - 0.05], [x0 + 12, z1 + 0.05]], 0.2, H - 3.2, M.glass, 2.4); // glazed south-west corner
   glazing([[x1 - 10, z1 + 0.05], [x1 + 0.05, z1 + 0.05], [x1 + 0.05, z1 - 10]], 0.2, 5.4, M.glass, 2.4);
-  signBoard(M.signGames, (x0 + x1) / 2 + 6, H - 1.5, z1 + 0.25, 9);
+  signBoard(M.signGames, (x0 + x1) / 2 + 6, H - 0.4, z1 + 0.4, 9);
 }
 
 // ───────── tree plaza: stepped timber terraces under a grove ─────────
@@ -556,13 +560,22 @@ shrubs(scatter(160, -188, 188, -108, -62), 0.08, M.flowers, 0.7);
   // recessed glass ground floor with mullions
   const loop = [...inset, inset[0]];
   glazing(loop, 0.3, 4.2, M.glass, 2.6);
-  // solid inner wall and the perforated brick screen in front of it
-  ribbon(outline, 4.2, 9.2, M.screen);
+  // Open staggered masonry follows the rounded perimeter; openings cast real shadows.
+  const edgeLengths = outline.map((p, i) => Math.hypot(outline[(i + 1) % outline.length][0] - p[0], outline[(i + 1) % outline.length][1] - p[1]));
+  const perimeter = edgeLengths.reduce((a, b) => a + b, 0);
+  const pitch = perimeter / Math.round(perimeter / 0.72);
+  for (let row = 0; row < 17; row++) for (let distance = (row % 2) * pitch / 2; distance < perimeter; distance += pitch) {
+    let segment = 0, d = distance;
+    while (d > edgeLengths[segment] && segment < edgeLengths.length - 1) d -= edgeLengths[segment++];
+    const a = outline[segment], b = outline[(segment + 1) % outline.length], t = d / edgeLengths[segment];
+    const brick = add(metricBox(pitch * 0.64, 0.23, 0.24), M.terracotta);
+    brick.position.set(THREE.MathUtils.lerp(a[0], b[0], t), 4.35 + row * 0.285, THREE.MathUtils.lerp(a[1], b[1], t));
+    brick.rotation.y = -Math.atan2(b[1] - a[1], b[0] - a[0]);
+  }
   slab(outline, 4.3, 0.3, M.darkBand); // soffit / first-floor edge
-  slab(ring(-0.05), 9.3, 5.1, M.roof); // the box behind the screen, with a pale roof
-  ribbon(ring(0.15), 9.2, 10.1, M.coping); // coping band
-  ribbon(ring(-0.2), 9.3, 10.1, M.coping);
-  signBoard(M.signPark, x0 + 12, 6.7, z1 + 0.12, 10);
+  slab(ring(-0.4), 9.15, 0.25, M.roof);
+  ribbon(ring(0.15), 9.2, 9.5, M.coping);
+  ribbon(ring(-0.2), 9.2, 9.5, M.coping);
   for (let x = x0 + 4; x < x1; x += 11) { slab(roundRect(x - 2, z1 + 2, x + 2, z1 + 5, 1, 4), 0.7, 0.5, M.concrete); tree(x, z1 + 3.5, 1.2, 0.7); }
 }
 // east court between pavilion and the spine end
@@ -661,8 +674,8 @@ function mount() {
   const camera = new THREE.PerspectiveCamera(30, 1, 1, 6000);
   const composer = new EffectComposer(renderer, { frameBufferType: THREE.HalfFloatType });
   composer.addPass(new RenderPass(scene, camera));
-  const effects = [new BloomEffect({ intensity: 0.35, luminanceThreshold: 0.92, luminanceSmoothing: 0.15, mipmapBlur: true, radius: 0.6 }),
-    new ToneMappingEffect({ mode: ToneMappingMode.ACES_FILMIC }), new VignetteEffect({ offset: 0.4, darkness: 0.4 })];
+  const effects = [new BloomEffect({ intensity: 0.12, luminanceThreshold: 1.1, luminanceSmoothing: 0.15, mipmapBlur: true, radius: 0.6 }),
+    new ToneMappingEffect({ mode: ToneMappingMode.ACES_FILMIC }), new VignetteEffect({ offset: 0.4, darkness: 0.18 })];
   composer.addPass(new EffectPass(camera, ...effects));
   if (!small) composer.addPass(new EffectPass(camera, new SMAAEffect()));
 
