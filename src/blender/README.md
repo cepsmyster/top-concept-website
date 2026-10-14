@@ -9,7 +9,8 @@ The 3D page (`retail-park-3d.html`) shows a photoreal turn of Retail Park, by da
 | `render_all.bat` / `render_all.sh` | Render everything straight from `retail_park.py` on the graphics card (alternative to the .blend files). |
 | `export_frames.sh` | Turns the renders into the files the page loads (`assets/rp3d/…`). |
 
-Needs **Blender 4.2–4.5** (4.5 LTS recommended). Blender 5 changed the sky and compositor and will not open the scene correctly.
+**Rendering the .blend files:** Blender 4.2 or newer, including Blender 5 (tested in 4.5 and 5.0: 5.0 converts the sky automatically and the frames match). For an RTX 50-series card use Blender 4.5 or 5.x.
+**Rebuilding the scene from `retail_park.py`:** Blender 4.2–4.5 only, because Blender 5 renamed parts of the Python API the script uses (compositor and sky).
 
 ## Render on your own PC (graphics card)
 

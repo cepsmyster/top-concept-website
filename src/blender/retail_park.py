@@ -20,7 +20,7 @@ import bpy
 import bmesh
 
 if bpy.app.version < (4, 2, 0) or bpy.app.version >= (5, 0, 0):
-    sys.exit(f"This scene needs Blender 4.2 – 4.5 (found {bpy.app.version_string}). Blender 4.5 LTS: https://www.blender.org/download/lts/4-5/")
+    sys.exit(f"Building the scene needs Blender 4.2 – 4.5 (found {bpy.app.version_string}). The saved RetailPark_*.blend files render in Blender 5 too. Blender 4.5 LTS: https://www.blender.org/download/lts/4-5/")
 import numpy as np
 from mathutils import Vector, Matrix, Euler
 
