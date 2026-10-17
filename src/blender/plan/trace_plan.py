@@ -5,6 +5,8 @@ Reads the vector linework of the PDF and writes, next to this file:
     site_plan.png           the drawing as a ground image, laid under the massing at true scale
     site_ground.png         the ground surfaces read from the drawing (asphalt, paving, pavers, sand, planting,
                             jogging track) with the road markings, for the desert environment
+    site_zones.png          the same surfaces as class numbers (red = class x 40) with the drawn lines (green),
+                            for the material shaders of the visualisation
     check_overlay.webp      the traced footprints drawn over the drawing, for checking
 
 Run with ordinary Python 3 (not Blender):  pip install pymupdf shapely pillow numpy scipy
@@ -265,14 +267,16 @@ def ground_surfaces(gray, zoom, boundary, planters):
     idx = ndimage.distance_transform_edt(surf == 0, return_distances=False, return_indices=True)
     surf = surf[idx[0], idx[1]]
     rgb = np.zeros(surf.shape + (3,), np.uint8)
+    drawn = lines & (gray < 200)
     for k in SURFACE_RGB:
         rgb[surf == k] = SURFACE_RGB[k]
-        rgb[(surf == k) & lines & (gray < 200)] = LINE_RGB[k]
+        rgb[(surf == k) & drawn] = LINE_RGB[k]
     # fade out over the last 12 m of the sheet, where the surroundings take over
     yy, xx = np.mgrid[0:surf.shape[0], 0:surf.shape[1]]
     edge = np.minimum(np.minimum(xx, surf.shape[1] - 1 - xx), np.minimum(yy, surf.shape[0] - 1 - yy)) / px_m
     alpha = (np.clip(edge / 12.0, 0, 1) * 255).astype(np.uint8)
-    return np.dstack([rgb, alpha])
+    zones = np.dstack([surf.astype(np.uint8) * 40, drawn.astype(np.uint8) * 255, np.zeros_like(alpha)])
+    return np.dstack([rgb, alpha]), zones
 
 
 def bez(v, t):
@@ -287,8 +291,9 @@ def main(pdf_path):
     page = doc[0]
     drawings = page.get_drawings()
 
-    # kiosks (food containers, 2.45 x 6.08 m) and yard units (5.1 x 7.7 m, one is the LPG store)
-    kiosks, yard = [], []
+    # kiosks (food containers, 2.45 x 6.08 m), yard units (5.1 x 7.7 m, one is the LPG store) and tree pits
+    # (grey squares of 1.3 and 1.6 m)
+    kiosks, yard, trees = [], [], []
     seen = set()
     for d in drawings:
         col = d.get("color") or (0, 0, 0)
@@ -303,6 +308,11 @@ def main(pdf_path):
             if key in seen:
                 continue
             short, long_ = sorted((w, h))
+            if abs(col[0] - 0.5) < 0.03 and 1.2 < w < 2.6 and 1.2 < h < 2.6:
+                c = ((min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2)
+                if all(math.dist(c, t) > 2 for t in trees):
+                    trees.append(c)
+                continue
             if abs(col[0] - 0.47) < 0.02 and abs(short - 2.45) < 0.03 and abs(long_ - 6.075) < 0.03:
                 seen.add(key)
                 kiosks.append(pts)
@@ -363,6 +373,7 @@ def main(pdf_path):
         ],
         "passages": [{"box": m(b[:2]) + m(b[2:]), "room_z": [m((0, b2[0]))[1], m((0, b2[1]))[1]]} for b, b2 in PASSAGES],
         "kiosks": [[m(p) for p in k] for k in sorted(kiosks, key=lambda k: k[0][0])],
+        "tree_pits": [m(t) for t in sorted(trees)],
         "yard_units": [{"pts": [m(p) for p in u["pts"]], "lpg": u["lpg"]} for u in sorted(yard, key=lambda u: u["pts"][0][0])],
         "planters": [[m(p) for p in pl] for pl in planters],
         "ground": sunken_ground([SPINE_W, SPINE_M, SPINE_E, CORRIDOR, WEST_WING, WEST_WING_CORRIDOR, COURT_ROOM, GAMES, PAVILION]),
@@ -382,9 +393,13 @@ def main(pdf_path):
             for it in d["items"]:
                 if it[0] == "l":
                     boundary += [(it[1].x, it[1].y), (it[2].x, it[2].y)]
-    surf = ground_surfaces(np.array(img.convert("L")), zoom, boundary, planters)
+    surf, zones = ground_surfaces(np.array(img.convert("L")), zoom, boundary, planters)
     Image.fromarray(surf, "RGBA").save(os.path.join(HERE, "site_ground.png"), optimize=True)
-    out["ground_surfaces"] = {"file": "site_ground.png", "fade_m": 12.0}
+    Image.fromarray(zones, "RGB").save(os.path.join(HERE, "site_zones.png"), optimize=True)
+
+    out["ground_surfaces"] = {"file": "site_ground.png", "fade_m": 12.0, "zones": "site_zones.png",
+                              "classes": {"asphalt": ASPHALT, "paving": PAVING, "pavers": PAVERS, "sand": SAND,
+                                          "planting": PLANTING, "track": TRACK}}
 
     with open(os.path.join(HERE, "retail_park_plan.json"), "w") as f:
         json.dump(out, f, indent=1)
@@ -403,7 +418,8 @@ def main(pdf_path):
         dr.polygon([to_px(p) for p in pl], fill=(40, 170, 60, 90), outline=(20, 120, 40, 255), width=2)
     chk = chk.resize((4096, round(chk.height * 4096 / chk.width)), Image.LANCZOS)
     chk.save(os.path.join(HERE, "check_overlay.webp"), quality=86)
-    print(f"{len(out['buildings'])} buildings, {len(kiosks)} kiosks, {len(yard)} yard units, {len(planters)} planters")
+    print(f"{len(out['buildings'])} buildings, {len(kiosks)} kiosks, {len(yard)} yard units, {len(planters)} planters, "
+          f"{len(trees)} tree pits")
 
 
 if __name__ == "__main__":

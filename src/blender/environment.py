@@ -745,10 +745,10 @@ def frond_material():
     return m
 
 
-def fog_material(density):
+def fog_material(density, color=(0.93, 0.88, 0.80)):
     m, nt, out = new_mat("fog")
     v = nd(nt, "ShaderNodeVolumePrincipled", Density=density, Anisotropy=0.3)
-    v.inputs["Color"].default_value = (0.93, 0.88, 0.80, 1)
+    v.inputs["Color"].default_value = (*color, 1)
     nt.links.new(v.outputs[0], out.inputs["Volume"])
     return m
 
@@ -786,8 +786,9 @@ def sky_and_sun(scene, az_deg=240, el_deg=26, strength=0.32, sun_energy=4.6):
 
 
 # ───────── build ─────────
-def build(scene, plan_dir, plan, tmat, fog_density=0.00042):
-    """The desert round the site. `tmat` is the ground material shared with the site ground (terrain_material)."""
+def build(scene, plan_dir, plan, tmat, fog_density=0.00042, fog_color=(0.93, 0.88, 0.80), light=None):
+    """The desert round the site. `tmat` is the ground material shared with the site ground (terrain_material);
+    `light` = keyword arguments for sky_and_sun (sun azimuth and elevation in degrees, sky strength, sun energy)."""
     root = bpy.data.collections.new("Desert")
     scene.collection.children.link(root)
     sub = {}
@@ -903,9 +904,9 @@ def build(scene, plan_dir, plan, tmat, fog_density=0.00042):
     bmesh.ops.translate(bm, vec=Vector(B(CENTRE[0], CENTRE[1], 200)), verts=r["verts"])
     bm.to_mesh(me)
     bm.free()
-    me.materials.append(fog_material(fog_density))
+    me.materials.append(fog_material(fog_density, fog_color))
     fog = bpy.data.objects.new("fog", me)
     sub["Fog"].objects.link(fog)
 
-    sky_and_sun(scene)
+    sky_and_sun(scene, **(light or {}))
     print(f"desert: {len(roads)} roads, palms {len(P)}", flush=True)
