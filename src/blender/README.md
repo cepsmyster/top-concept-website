@@ -43,3 +43,36 @@ blender -b --factory-startup -P src/blender/retail_park.py -- --light night --to
 ```
 
 Notes on the scene: the connector between the buildings has a plain roof (no parking on it). Behind it runs the rear road at ground level, with a row of parking on its far side.
+
+## Accurate model, step 1: massing from the setting-out plan
+
+The photoreal scene above was laid out by eye from the renders. The accurate model is being rebuilt in steps from the drawings, starting with the massing traced from the site setting-out plan (A-091, sheet 02 of 02).
+
+| File | What it is |
+|---|---|
+| `plan/trace_plan.py` | Reads the plan PDF's vector linework and writes the three files below. Ordinary Python: `pip install pymupdf shapely pillow`, then `python src/blender/plan/trace_plan.py "<plan>.pdf"`. |
+| `plan/retail_park_plan.json` | Every footprint in metres: the retail spine (3 parts, 2 covered through-passages), the 2 links across the mall street, the west wing, the court room, the Games hall, the pavilion, the west pavilion, 2 WC blocks, 16 food kiosks, 6 yard units (one is the LPG store) and 14 raised planters. |
+| `plan/site_plan.png` | The drawing itself, 8192 px wide (about 3 cm a pixel), laid under the massing at true scale, so roads, bays, kerbs and the jogging trail are exact. |
+| `plan/check_overlay.webp` | The traced footprints drawn over the drawing, for checking. |
+| `massing.py` | Builds the massing in Blender (4.2 or newer) from the JSON: white blocks on the plan, 6 cameras. |
+| `RetailPark_massing.blend` | The massing, ready to render (the plan image is packed in). Open it and press Render > Render Animation: frames 1–6 are the 6 views, written to `renders/massing/` at the top of the repo. Uses the graphics card set in Preferences > System > Cycles Render Devices. |
+| `render_massing.bat` | Double-click on Windows: rebuilds the .blend and renders the 6 views on the graphics card into `renders/massing/`. |
+
+**Scale.** The PDF was plotted to fit the sheet, with no scale bar, so the scale was measured from the drawing: 6.3306 PDF points per metre (about 1:448 on A2). Everything agrees with it: parking bays 2.70 × 5.40 m (measured over runs of up to 26 bays), CAD fillet radii of exactly 2, 3, 4, 5 and 6 m, doors 0.90 and 1.00 m, internal stair treads 0.30 m, external steps 0.40 m and accessible-bay zones 1.20 m.
+
+**Accuracy.** Building outlines are the outer wall faces, snapped to the CAD vertices (the PDF stores them to about 2 cm). Kiosks, yard units and planters are read from the drawing automatically.
+
+**Axes.** As in `retail_park.py`: x runs west to east, z from the rear road towards the main road, in metres. The origin is the north-west outer corner of the Games hall.
+
+**Heights are not on the plan.** `HEIGHTS` at the top of `massing.py` holds the heights used for now, carried over from the photoreal scene (spine 9.4 m, west wing 10.5 m, Games hall 10.8 m, pavilion 9.4 m, kiosks 2.9 m, planters 0.45 m). Everything stands on one flat ground level. The plan does show level changes: 16-riser stairs and long ramps from the promenade up to the market court and plaza, and escalators in the Games hall. Sections, elevations or a levels plan will fix both the heights and the ground levels in the next step.
+
+| View (frame) | Camera |
+|---|---|
+| 1 | Aerial from the south-west |
+| 2 | Aerial from the south-east |
+| 3 | Aerial from the rear (north-west) |
+| 4 | From the main road |
+| 5 | Eye level along the mall street between the spine and the Games hall |
+| 6 | Straight down over the whole drawing (orthographic), to check the massing against the plan |
+
+To render here instead of opening the .blend: `blender -b --factory-startup -P src/blender/massing.py -- --gpu --out renders/massing` (`--views 01,06` for a subset, `--samples`, `--res`, `--no-lines` to leave out the edge lines).
