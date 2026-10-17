@@ -1,9 +1,14 @@
-"""Retail Park, Sharjah: step 1 of the accurate model, the massing.
+"""Retail Park, Sharjah: the accurate model, step by step. Step 1: the massing, in its desert setting.
 
-Every footprint comes from the site setting-out plan (A-091, sheet 02 of 02), traced by
-src/blender/plan/trace_plan.py into src/blender/plan/retail_park_plan.json. The drawing itself lies under the
-massing at true scale (site_plan.png), so roads, parking bays, kerbs and the jogging trail are exact too.
-Heights are not on the plan: HEIGHTS below holds the ones used so far, to be replaced from the sections.
+Footprints come from the site setting-out plan (A-091, sheet 02 of 02), traced by src/blender/plan/trace_plan.py
+into src/blender/plan/retail_park_plan.json. Levels come from the elevations and sections (A-200 to A-306): LEVELS
+below. The buildings stand on the lower ground (FFL -1.95), sunk below the rear road (gate level 0.00) and the
+promenade (+0.30/+0.45); the market court and the tree plaza are sunk to the lower ground too, with retaining walls,
+railings, the terraces and the stairs back up.
+
+--env desert (default): the site's ground surfaces from the plan (asphalt, paving, sand, planting, the jogging trail,
+with road markings) in the desert round it, with the roads carrying on, the highway, farms, trees and distant fog
+(src/blender/environment.py). --env plain: the drawing itself as a grey card under the massing.
 
 Axes as in retail_park.py: plan x runs west -> east, z from the rear road (-z) to the main road (+z), metres.
 Origin: the north-west outer corner of the Games hall. Blender: x east, y north (= -z), z up.
@@ -11,8 +16,8 @@ Origin: the north-west outer corner of the Games hall. Blender: x east, y north 
 Run with Blender 4.2 or newer, including 5.x (or the `bpy` Python module):
     blender -b --factory-startup -P src/blender/massing.py -- --blend src/blender/RetailPark_massing.blend
     blender -b --factory-startup -P src/blender/massing.py -- --gpu --out renders/massing
-Options: --views 01,06 (subset) --res 1920x1080 --samples 128 --no-lines (skip the edge lines).
-In the saved .blend each view is a camera bound to one frame (1-6): Render > Render Animation renders them all.
+Options: --views 00,06 (subset) --res 1920x1080 --samples 128 --env plain (--no-lines: no edge lines on the card).
+In the saved .blend each view is a camera bound to one frame (1-7): Render > Render Animation renders them all.
 """
 import argparse
 import json
@@ -28,37 +33,43 @@ if bpy.app.version < (4, 2, 0):
     sys.exit(f"The massing needs Blender 4.2 or newer (found {bpy.app.version_string}).")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 ap = argparse.ArgumentParser()
 ap.add_argument("--plan", default=os.path.join(HERE, "plan", "retail_park_plan.json"))
+ap.add_argument("--env", default="desert", choices=["desert", "plain"])
 ap.add_argument("--out", default="", help="render the views into this folder")
-ap.add_argument("--views", default="", help="subset of views, e.g. 01,06 (default: all)")
+ap.add_argument("--views", default="", help="subset of views, e.g. 00,06 (default: all)")
 ap.add_argument("--res", default="1920x1080")
 ap.add_argument("--samples", type=int, default=128)
-ap.add_argument("--no-lines", action="store_true", help="leave out the thin edge lines (Freestyle)")
+ap.add_argument("--no-lines", action="store_true", help="--env plain: leave out the thin edge lines (Freestyle)")
 ap.add_argument("--blend", default="", help="save the scene as a ready-to-render .blend file")
 ap.add_argument("--gpu", action="store_true", help="render on the graphics card (OptiX/CUDA/HIP/Metal/oneAPI)")
 args = ap.parse_args(argv)
 RES = tuple(int(v) for v in args.res.split("x"))
+DESERT = args.env == "desert"
 
-# Heights in metres above the ground. The plan gives none, so these follow the current photoreal scene
-# (spine 9.4, west block 10.5, Games hall 10.8, pavilion 9.4) until sections and levels are supplied.
-HEIGHTS = {
-    "spine": 9.4,          # F&B units facing the rear road
-    "passage_clear": 4.5,  # open height under the roof of the two through-passages
-    "link": 5.0,           # enclosed links across the mall street
-    "west_wing": 10.5,
-    "court_room": 3.6,
-    "games_hall": 10.8,
-    "pavilion": 9.4,
-    "west_pavilion": 4.5,
-    "wc": 3.6,
-    "kiosk": 2.9,          # food containers 2.45 x 6.08 m
-    "yard": 3.2,           # rear yard units and the LPG store
-    "planter": 0.45,
+# Levels in metres from the elevations and sections (datum 0.00 = gate level at the rear road): (bottom, top).
+# Blocks whose floor is on the promenade (+0.45) start at the ground here (0.00), which is kept level outside.
+LEVELS = {
+    "spine": (-1.95, 6.25),          # F&B and retail units: FFL -1.95, roof SSL 4.80, parapet 6.25 (A-A, B-B, C-C)
+    "passage_room": (-1.95, 4.80),   # the walled room across each through-passage
+    "passage_roof": (4.80, 6.25),    # the spine's roof carries on over the passages
+    "corridor": (-1.95, 2.60),       # the covered mall corridor: lower roof SSL 2.35, FFL 2.60 (D-D to I-I)
+    "west_wing": (-1.95, 6.25),      # roof 4.80, parapet 6.25, head rooms to 7.65 (D-D, E-E)
+    "court_room": (-1.95, 2.60),     # small room in the market court: not in the sections, taken at the corridor roof
+    "games_hall": (-1.95, 7.20),     # gaming area: FFL -1.95, roof 6.00, parapet 7.20 (F-F, G-G, H-H)
+    "pavilion": (-3.00, 7.20),       # FFL +0.45 over a basement at -3.00, roof 6.00, parapet 7.20 (I-I)
+    "west_pavilion": (0.00, 3.90),   # pump room, store and LV room: FFL 0.45, roof SSL 3.65, top 3.90 (D-D)
+    "wc": (0.00, 3.90),              # WC blocks on the promenade: not in the sections, taken as the pump room
+    "kiosk": (0.00, 2.95),           # food trucks 2.45 x 6.08 m on the promenade, top 2.95 (F-F, H-H)
+    "yard": (0.00, 3.20),            # rear yard units and the LPG store: not in the sections
 }
+PLANTER_H = 0.45   # raised planters stand this much above the ground round them
+RAILING_H = 1.10   # railings along the top of the retaining walls
 
 plan = json.load(open(args.plan))
+PLAN_DIR = os.path.dirname(os.path.abspath(args.plan))
 
 
 def B(x, z, y=0.0):
@@ -79,7 +90,7 @@ def collection(name):
     return c
 
 
-C_BUILD, C_SMALL, C_LAND, C_GROUND, C_CAMS = (collection(n) for n in ("Buildings", "Kiosks & yard", "Planters", "Ground", "Cameras"))
+C_BUILD, C_SMALL, C_LAND, C_GROUND, C_CAMS = (collection(n) for n in ("Buildings", "Kiosks & yard", "Planters", "Site ground", "Cameras"))
 
 
 # ───────── materials ─────────
@@ -99,10 +110,12 @@ MAT = {
     "small": clay("massing_kiosk", (0.70, 0.66, 0.60)),
     "lpg": clay("massing_lpg", (0.62, 0.24, 0.20)),
     "planter": clay("massing_planter", (0.42, 0.52, 0.38), 0.9),
+    "wall": clay("retaining_wall", (0.74, 0.72, 0.68), 0.85),
 }
 
 
-def ground_material(img_path):
+def plan_card_material(img_path):
+    """--env plain: the drawing's lines on a light grey card."""
     m = bpy.data.materials.new("site_plan")
     m.use_nodes = True
     nt = m.node_tree
@@ -110,12 +123,18 @@ def ground_material(img_path):
     out = nt.nodes.new("ShaderNodeOutputMaterial")
     bsdf = nt.nodes.new("ShaderNodeBsdfPrincipled")
     bsdf.inputs["Roughness"].default_value = 0.95
+    gi = plan["ground_image"]
+    (gx0, gz0), (gx1, gz1) = gi["min"], gi["max"]
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    mp = nt.nodes.new("ShaderNodeMapping")  # object coordinates -> 0..1 over the sheet
+    mp.inputs["Location"].default_value = (-gx0 / (gx1 - gx0), gz1 / (gz1 - gz0), 0)
+    mp.inputs["Scale"].default_value = (1 / (gx1 - gx0), 1 / (gz1 - gz0), 1)
+    nt.links.new(tc.outputs["Object"], mp.inputs["Vector"])
     tex = nt.nodes.new("ShaderNodeTexImage")
     tex.image = bpy.data.images.load(img_path)
-    tex.image.colorspace_settings.name = "sRGB"
     tex.interpolation = "Cubic"
     tex.extension = "CLIP"
-    # light grey card with the drawing's lines at 80 % strength
+    nt.links.new(mp.outputs[0], tex.inputs["Vector"])
     mix = nt.nodes.new("ShaderNodeMix")
     mix.data_type = "RGBA"
     mix.blend_type = "MULTIPLY"
@@ -157,64 +176,133 @@ def box(name, x0, z0, x1, z1, y0, y1, mat, coll):
     return prism(name, [(x0, z0), (x1, z0), (x1, z1), (x0, z1)], y0, y1, mat, coll)
 
 
-H = HEIGHTS
+def inside(pt, poly):
+    """Point in polygon (plan x, z)."""
+    x, z = pt
+    hit = False
+    for (x0, z0), (x1, z1) in zip(poly, poly[1:] + poly[:1]):
+        if (z0 > z) != (z1 > z) and x < x0 + (z - z0) * (x1 - x0) / (z1 - z0):
+            hit = not hit
+    return hit
+
+
+GROUND_PLAN = plan["ground"]
+FLOORS = [[(p[0], p[1]) for p in f["pts"]] for f in GROUND_PLAN["floors"]]
+
+
+def ground_at(x, z):
+    """Ground height at a plan point: the sunken floors (nearest outline point's height) or 0.00."""
+    for f, poly in zip(GROUND_PLAN["floors"], FLOORS):
+        if inside((x, z), poly):
+            return min(f["pts"], key=lambda p: (p[0] - x) ** 2 + (p[1] - z) ** 2)[2]
+    return 0.0
+
+
+L = LEVELS
 for b in plan["buildings"]:
-    prism(b["id"], b["pts"], 0, H[b["kind"]], MAT["building"], C_BUILD)
-# the two through-passages in the spine: a walled room across the middle, open recesses under one roof
+    y0, y1 = L[b["kind"]]
+    prism(b["id"], b["pts"], y0, y1, MAT["building"], C_BUILD)
+# the two through-passages in the spine: a walled room across the middle, open to the rear and to the corridor
 for i, p in enumerate(plan["passages"]):
     x0, z0, x1, z1 = p["box"]
     rz0, rz1 = p["room_z"]
-    box(f"passage_{i + 1}_room", x0, rz0, x1, rz1, 0, H["passage_clear"], MAT["building"], C_BUILD)
-    box(f"passage_{i + 1}_roof", x0, z0, x1, z1, H["passage_clear"], H["spine"], MAT["building"], C_BUILD)
+    box(f"passage_{i + 1}_room", x0, rz0, x1, rz1, *L["passage_room"], MAT["building"], C_BUILD)
+    box(f"passage_{i + 1}_roof", x0, z0, x1, z1, *L["passage_roof"], MAT["building"], C_BUILD)
 for i, k in enumerate(plan["kiosks"]):
-    prism(f"kiosk_{i + 1:02d}", k, 0, H["kiosk"], MAT["small"], C_SMALL)
+    prism(f"food_truck_{i + 1:02d}", k, *L["kiosk"], MAT["small"], C_SMALL)
 for i, u in enumerate(plan["yard_units"]):
-    prism("LPG_store" if u["lpg"] else f"yard_unit_{i + 1}", u["pts"], 0, H["yard"], MAT["lpg" if u["lpg"] else "small"], C_SMALL)
+    prism("LPG_store" if u["lpg"] else f"yard_unit_{i + 1}", u["pts"], *L["yard"], MAT["lpg" if u["lpg"] else "small"], C_SMALL)
 for i, pl in enumerate(plan["planters"]):
-    prism(f"planter_{i + 1:02d}", pl, 0, H["planter"], MAT["planter"], C_LAND)
+    cx, cz = sum(p[0] for p in pl) / len(pl), sum(p[1] for p in pl) / len(pl)
+    g = ground_at(cx, cz)
+    prism(f"planter_{i + 1:02d}", pl, g - 0.5, g + PLANTER_H, MAT["planter"], C_LAND)
 
-# ground: the drawing at true scale on a light grey card that runs out to the horizon
+
+# ───────── site ground: level outside, sunk to the lower ground in the court and the plaza ─────────
+def tri_mesh(name, mesh, mat, coll, attr=None):
+    """Mesh from trace_plan.py's triangulation: verts [x, z, height], tris [i, j, k]."""
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([B(x, z, h) for x, z, h in mesh["verts"]], [], [tuple(t) for t in mesh["tris"]])
+    for p in me.polygons:  # face up
+        if p.normal.z < 0:
+            p.flip()
+    me.update()
+    me.materials.append(mat)
+    if attr:
+        ca = me.color_attributes.new("ground", "FLOAT_COLOR", "POINT")
+        for d in ca.data:
+            d.color = attr
+    ob = bpy.data.objects.new(name, me)
+    coll.objects.link(ob)
+    return ob
+
+
+def site_ground(mat, attr=None):
+    tri_mesh("site_ground", GROUND_PLAN["base"], mat, C_GROUND, attr)
+    for f in GROUND_PLAN["floors"]:
+        tri_mesh(f["id"], f["mesh"], mat, C_GROUND, attr)
+    # retaining walls from each sunken floor up to the ground, with a railing above
+    me = bpy.data.meshes.new("retaining_walls")
+    bm = bmesh.new()
+    for (ax, az, ah), (bx, bz, bh) in GROUND_PLAN["walls"]:
+        quad = [bm.verts.new(B(ax, az, ah)), bm.verts.new(B(bx, bz, bh)), bm.verts.new(B(bx, bz, 0.0)), bm.verts.new(B(ax, az, 0.0))]
+        bm.faces.new(quad)
+        if min(ah, bh) < -0.6:
+            rail = [bm.verts.new(B(ax, az, 0.0)), bm.verts.new(B(bx, bz, 0.0)), bm.verts.new(B(bx, bz, RAILING_H)), bm.verts.new(B(ax, az, RAILING_H))]
+            bm.faces.new(rail)
+    bm.to_mesh(me)
+    bm.free()
+    me.materials.append(MAT["wall"])
+    C_GROUND.objects.link(bpy.data.objects.new("retaining_walls", me))
+    # stairs from the lower ground up to the promenade: solid steps
+    for i, st in enumerate(GROUND_PLAN["stairs"]):
+        (x0, x1), (z0, z1), n = st["x"], st["z"], st["risers"]
+        h0, h1 = st["h"]
+        for k in range(n):
+            zs = z0 + (z1 - z0) * k / n
+            box(f"stair_{i + 1}_{k:02d}", x0, zs, x1, z1, h0 - 0.05, h0 + (h1 - h0) * (k + 1) / n, MAT["wall"], C_GROUND)
+
+
 gi = plan["ground_image"]
-gmat, gimg = ground_material(os.path.join(os.path.dirname(args.plan), gi["file"]))
 (gx0, gz0), (gx1, gz1) = gi["min"], gi["max"]
-me = bpy.data.meshes.new("site_plan")
-me.from_pydata([B(gx0, gz1), B(gx1, gz1), B(gx1, gz0), B(gx0, gz0)], [], [(0, 1, 2, 3)])
-me.uv_layers.new(name="UVMap")
-for loop, uv in zip(me.uv_layers[0].data, ((0, 0), (1, 0), (1, 1), (0, 1))):
-    loop.uv = uv
-me.materials.append(gmat)
-ob = bpy.data.objects.new("site_plan", me)
-C_GROUND.objects.link(ob)
-paper = clay("paper", GROUND, 0.95)
 cx, cz = (gx0 + gx1) / 2, (gz0 + gz1) / 2
-me = bpy.data.meshes.new("ground")
-S = 3000
-me.from_pydata([B(cx - S, cz + S, -0.02), B(cx + S, cz + S, -0.02), B(cx + S, cz - S, -0.02), B(cx - S, cz - S, -0.02)], [], [(0, 1, 2, 3)])
-me.materials.append(paper)
-C_GROUND.objects.link(bpy.data.objects.new("ground", me))
-
-# ───────── light ─────────
-world = bpy.data.worlds.new("sky")
-scene.world = world
-world.use_nodes = True
-bgn = world.node_tree.nodes["Background"]
-bgn.inputs["Color"].default_value = (0.72, 0.82, 1.0, 1)
-bgn.inputs["Strength"].default_value = 0.35
-sun_d = bpy.data.lights.new("sun", "SUN")
-sun_d.energy = 6.0
-sun_d.angle = math.radians(1.5)
-sun_d.color = (1.0, 0.95, 0.88)
-sun = bpy.data.objects.new("sun", sun_d)
-sun.rotation_euler = (math.radians(48), 0, math.radians(-50))  # afternoon sun from the south-west, 42 degrees up
-COLL.objects.link(sun)
+if DESERT:
+    import environment
+    gmat, gimg = environment.terrain_material(os.path.join(PLAN_DIR, plan["ground_surfaces"]["file"]), gi)
+    site_ground(gmat, (*environment.srgb(environment.SAND), 1))
+    environment.build(scene, PLAN_DIR, plan, gmat)
+else:
+    gmat, gimg = plan_card_material(os.path.join(PLAN_DIR, gi["file"]))
+    site_ground(gmat)
+    paper = clay("paper", GROUND, 0.95)
+    S = 3000
+    outer = [(cx - S, cz - S), (cx + S, cz - S), (cx + S, cz + S), (cx - S, cz + S)]
+    sheet = [(gx0, gz0), (gx1, gz0), (gx1, gz1), (gx0, gz1)]
+    tri_mesh("ground", {"verts": [[x, z, -0.02] for x, z in outer + sheet],
+                        "tris": [t for i in range(4) for t in ([i, (i + 1) % 4, 4 + (i + 1) % 4], [i, 4 + (i + 1) % 4, 4 + i])]},
+             paper, C_GROUND)
+    world = bpy.data.worlds.new("sky")
+    scene.world = world
+    world.use_nodes = True
+    bgn = world.node_tree.nodes["Background"]
+    bgn.inputs["Color"].default_value = (0.72, 0.82, 1.0, 1)
+    bgn.inputs["Strength"].default_value = 0.35
+    sun_d = bpy.data.lights.new("sun", "SUN")
+    sun_d.energy = 6.0
+    sun_d.angle = math.radians(1.5)
+    sun_d.color = (1.0, 0.95, 0.88)
+    sun = bpy.data.objects.new("sun", sun_d)
+    sun.rotation_euler = (math.radians(48), 0, math.radians(-50))  # afternoon sun from the south-west, 42 degrees up
+    COLL.objects.link(sun)
 
 # ───────── cameras: one per frame ─────────
 VIEWS = [  # name, camera (plan x, plan z, height), target (plan x, plan z, height), lens in mm
+    ("00_aerial_from_the_highway", (40, 270, 88), (38, -2, 0), 35),
     ("01_aerial_south_west", (-105, 128, 88), (12, 10, 0), 35),
     ("02_aerial_south_east", (150, 130, 85), (22, 10, 0), 35),
     ("03_aerial_rear_north_west", (-95, -125, 80), (20, 5, 0), 35),
-    ("04_street_main_road", (-30, 100, 12), (-12, 15, 5), 28),
-    ("05_eye_level_mall_street", (-38, -2.5, 1.7), (120, -2.5, 4), 24),
+    ("04_street_main_road", (-30, 100, 12), (-12, 15, 3), 28),
+    ("05_eye_level_market_court", (-14.0, 20.0, -0.25), (-45, 1, 1.0), 24),
 ]
 cams = []
 for name, (px, pz, ph), (tx, tz, th), lens in VIEWS:
@@ -229,11 +317,11 @@ cd = bpy.data.cameras.new("06_plan_top")
 cd.type = "ORTHO"
 cd.ortho_scale = max(gx1 - gx0, (gz1 - gz0) * RES[0] / RES[1]) * 1.01
 cam = bpy.data.objects.new("06_plan_top", cd)
-cam.location = B(cx, cz, 400)
+cam.location = B(cx, cz, 300)
 cams.append(cam)
 for i, cam in enumerate(cams):
     C_CAMS.objects.link(cam)
-    cam.data.clip_start, cam.data.clip_end = 0.5, 6000
+    cam.data.clip_start, cam.data.clip_end = 0.5, 20000
     m = scene.timeline_markers.new(cam.name, frame=i + 1)
     m.camera = cam
 scene.camera = cams[0]
@@ -273,19 +361,23 @@ cy.adaptive_threshold = 0.02
 cy.use_denoising = True
 cy.denoiser = "OPENIMAGEDENOISE"
 cy.max_bounces = 4
+cy.transparent_max_bounces = 16
+cy.volume_step_rate = 4.0
 scene.view_settings.view_transform = "AgX"
-scene.view_settings.exposure = -0.35
+scene.view_settings.exposure = -0.35 if not DESERT else -0.45
 for look in ("AgX - Medium High Contrast", "Medium High Contrast"):  # look names differ between Blender versions
     try:
         scene.view_settings.look = look
         break
     except TypeError:
         pass
-# thin dark edge lines on the building outlines, as on a card model
-r.use_freestyle = not args.no_lines
+# thin dark edge lines on the building outlines, as on a card model (plain only: Freestyle loads every tree in the
+# desert for its visibility test, which runs out of memory)
+LINES = not args.no_lines and not DESERT
+r.use_freestyle = LINES
 r.line_thickness_mode = "RELATIVE"
 r.line_thickness = 0.9
-if not args.no_lines:
+if LINES:
     fs = scene.view_layers[0].freestyle_settings
     for old in list(fs.linesets):  # the default line set's style is not saved with the file
         fs.linesets.remove(old)
@@ -303,7 +395,9 @@ if not args.no_lines:
     fs.crease_angle = math.radians(140)
 
 if args.blend:
-    gimg.pack()
+    for img in bpy.data.images:
+        if img.source == "FILE":
+            img.pack()
     cy.device = "GPU"  # uses the card set in Preferences > System; Blender falls back to the CPU without one
     bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(args.blend), compress=True)
     print("saved", args.blend, flush=True)

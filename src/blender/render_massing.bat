@@ -1,7 +1,7 @@
 @echo off
-rem Renders the Retail Park massing (step 1 of the accurate model) on this PC's graphics card.
+rem Renders the Retail Park massing in its desert setting (step 1 of the accurate model) on this PC's graphics card.
 rem Rebuilds the scene from src\blender\massing.py with Blender 4.2 or newer (5.x works), saves it as
-rem src\blender\RetailPark_massing.blend and writes the six views to the "renders\massing" folder at the top of the repo.
+rem src\blender\RetailPark_massing.blend and writes the seven views to the "renders\massing" folder at the top of the repo.
 setlocal
 if not defined BLENDER set "BLENDER=C:\Program Files\Blender Foundation\Blender 5.1\blender.exe"
 if not exist "%BLENDER%" (
