@@ -6,7 +6,8 @@ Dresses the accurate massing in the finishes of the Retail Park material schedul
            TC01 terracotta cladding (staggered terracotta panels, the pavilion's upper band), LED signage and screen,
            aluminium copings and C-channel parapet bands (elevation legend, sheets A-200 to A-202);
   ground   TC02 terracotta tiles 60 x 240 on the lower ground (sunken court and plaza), CC01 warm terracotta concrete
-           on the seating terraces, ITN01 grey concrete interlock on the upper ground, RP02 blue EPDM jogging path,
+           on the seating terraces, ITN01 grey concrete interlock on the upper ground, RP01 red EPDM on the trail through
+           the rear landscape (red as in the project's own renders; RP02 blue is the schedule's other track finish),
            SHD01 multi-coloured tinted shade fabric over the market court ("Pazar area").
 How the facades are laid out follows the elevations: shopfronts in curtain walls between Lotus piers with Rusty portal
 frames and LED signage on the spine (A1, A2), the Games hall's fluted Rusty walls under a dark band with the GAMES and
@@ -197,7 +198,7 @@ def tiles(name, base, size, row, var, mortar, rough=0.85, herring=False):
     m, nt, out = new_mat(name)
     v = obj_coords(nt)
     br = nd(nt, "ShaderNodeTexBrick", Scale=1.0, Mortar_Size=0.006 * size / 0.24, Bias=0.0,
-            Brick_Width=size, Row_Height=row, Offset=0.5)
+            Brick_Width=size, Row_Height=row, _offset=0.5)
     br.offset_frequency = 2
     lo = tuple(max(0, c * (1 - var)) for c in base)
     hi = tuple(min(255, c * (1 + var)) for c in base)
@@ -219,7 +220,8 @@ def build_materials():
     paint("PT03_lotus", PT03, var=0.03)
     plain("AL_framing", AL, 0.35, 0.75)
     plain("coping", (58, 59, 61), 0.4, 0.6)
-    plain("roof_membrane", (196, 192, 184), 0.92)
+    plain("roof_membrane", (178, 176, 172), 0.92)
+    plain("roof_dark", (86, 86, 88), 0.9)
     plain("roof_units", (176, 178, 178), 0.45, 0.3)
     plain("louvre", (92, 94, 96), 0.5, 0.5)
     plain("door_dark", (38, 38, 40), 0.4, 0.4)
@@ -231,7 +233,13 @@ def build_materials():
     plain("pod_glass", (12, 14, 16), 0.04, coat=1.0)
     plain("awning", (245, 243, 238), 0.7)
     emit("led_sign", (255, 244, 226), 6.0)
-    emit("led_panel", (255, 232, 196), 2.0)
+    m, nt, out = new_mat("led_panel")
+    mg = nd(nt, "ShaderNodeTexMagic", Scale=0.35, Distortion=1.6, _turbulence_depth=3)
+    L(nt, obj_coords(nt), mg.inputs["Vector"])
+    e = nd(nt, "ShaderNodeEmission", Strength=1.6)
+    L(nt, ramp(nt, mg.outputs["Fac"], [(0.0, (30, 20, 40)), (0.4, (200, 90, 60)), (0.7, (240, 190, 120)), (1.0, (90, 150, 190))]), e.inputs["Color"])
+    L(nt, e.outputs[0], out.inputs["Surface"])
+    M["led_panel"] = m
     plain("sign_board", (30, 30, 32), 0.5, 0.3)
 
     # Games hall: Rusty paint on vertically fluted panels
@@ -253,11 +261,11 @@ def build_materials():
     m, nt, out = new_mat("GL_glass")
     v = obj_coords(nt)
     n = noise(nt, v, 0.25, 3, 0.5)
-    lit = ramp(nt, n.outputs["Fac"], [(0.25, (60, 42, 28)), (0.5, (190, 140, 88)), (0.75, (255, 214, 156))])
+    lit = ramp(nt, n.outputs["Fac"], [(0.35, (16, 13, 11)), (0.55, (120, 86, 52)), (0.7, (255, 206, 140))])
     g = nd(nt, "ShaderNodeBsdfPrincipled", Roughness=0.03, Metallic=0.15, IOR=1.52)
     g.inputs["Base Color"].default_value = lin((52, 64, 66))
     g.inputs["Coat Weight"].default_value = 1.0
-    g.inputs["Emission Strength"].default_value = 1.4
+    g.inputs["Emission Strength"].default_value = 0.45
     L(nt, lit, g.inputs["Emission Color"])
     L(nt, g.outputs[0], out.inputs["Surface"])
     m.diffuse_color = lin((52, 64, 66))
@@ -394,7 +402,7 @@ def ground_material(plan, zones_path):
     L(nt, uv.outputs[0], zt.inputs["Vector"])
     zs = nd(nt, "ShaderNodeSeparateColor")
     L(nt, zt.outputs["Color"], zs.inputs[0])
-    cls = mathn(nt, "ROUND", mathn(nt, "MULTIPLY", zs.outputs[0], 255 / 40))
+    cls = mathn(nt, "ROUND", mathn(nt, "MULTIPLY", zs.outputs[0], 255 / plan["ground_surfaces"].get("scale", 40)))
     line = zs.outputs[1]
     # fade over the sheet's last 12 m
     edge = mathn(nt, "MINIMUM", mathn(nt, "MINIMUM", mathn(nt, "MULTIPLY", u, W), mathn(nt, "MULTIPLY", mathn(nt, "SUBTRACT", 1.0, u), W)),
@@ -421,7 +429,7 @@ def ground_material(plan, zones_path):
     asphalt = ramp(nt, n1.outputs["Fac"], [(0.35, (58, 57, 55)), (0.5, (72, 70, 68)), (0.7, (84, 82, 78))])
     asphalt = mix(nt, line, asphalt, lin((226, 226, 218)))
     # upper-ground interlock (ITN01) for paving and pavers, joints darker
-    br = nd(nt, "ShaderNodeTexBrick", Scale=1.0, Mortar_Size=0.006, Brick_Width=0.2, Row_Height=0.1, Offset=0.5)
+    br = nd(nt, "ShaderNodeTexBrick", Scale=1.0, Mortar_Size=0.006, Brick_Width=0.2, Row_Height=0.1, _offset=0.5)
     br.inputs["Color1"].default_value = lin((100, 92, 94))
     br.inputs["Color2"].default_value = lin((124, 116, 116))
     br.inputs["Mortar"].default_value = lin((70, 66, 66))
@@ -433,12 +441,19 @@ def ground_material(plan, zones_path):
     planting = ramp(nt, mulch_n.outputs["Fac"], [(0.3, (70, 56, 42)), (0.7, (104, 84, 62))])
     epdm = nd(nt, "ShaderNodeTexNoise", Scale=180.0, Detail=1.0)
     L(nt, v, epdm.inputs["Vector"])
-    track = mix(nt, 0.2, lin(RP02), epdm.outputs["Color"], "OVERLAY")
-    for k, c in ((1, asphalt), (2, paving), (3, pavers), (4, sand), (5, planting), (6, track)):
+    track = mix(nt, 0.2, lin(RP01), epdm.outputs["Color"], "OVERLAY")
+    # landscape beds (the sand inside the site boundary): drifts of low green ground cover on warm earth
+    cover = noise(nt, v, 0.35, 5, 0.6)
+    fine = noise(nt, v, 6.0, 3)
+    earth = ramp(nt, fine.outputs["Fac"], [(0.3, (150, 126, 94)), (0.7, (176, 150, 112))])
+    green = ramp(nt, fine.outputs["Fac"], [(0.3, (70, 88, 38)), (0.55, (96, 112, 52)), (0.8, (124, 130, 70))])
+    cmask = mathn(nt, "SMOOTH_MIN", mathn(nt, "MULTIPLY", mathn(nt, "SUBTRACT", cover.outputs["Fac"], 0.42), 8.0), 1.0, 0.2)
+    beds = mix(nt, mathn(nt, "MAXIMUM", cmask, 0.0), earth, green)
+    for k, c in ((1, asphalt), (2, paving), (3, pavers), (4, sand), (5, planting), (6, track), (7, beds)):
         col = mix(nt, is_(k), col, c)
     p = nd(nt, "ShaderNodeBsdfPrincipled", Roughness=0.9)
     L(nt, col, p.inputs["Base Color"])
-    rough = mixf(nt, mathn(nt, "ADD", is_(1), is_(6)), 0.95, 0.8)
+    rough = mixf(nt, mathn(nt, "ADD", is_(1), is_(6)), 0.95, 0.8)  # asphalt and EPDM a little smoother
     L(nt, rough, p.inputs["Roughness"])
     hgt = mixf(nt, mathn(nt, "ADD", is_(2), is_(3)), height, br.outputs["Fac"])
     L(nt, bump(nt, hgt, 0.25, 0.01), p.inputs["Normal"])
@@ -642,26 +657,28 @@ def dress_buildings(ctx):
                 if f == "n" and w.length > 6:
                     shopfronts(w, 0.0, 4.4, top)
                     parapet_band(w, top - 0.6, top)
-                elif f == "s":
-                    w.box("PT02_dark_stone", -0.02, w.length + 0.02, 2.6, 3.0, 0.0, 0.1)  # band over the corridor roof
+                elif f == "s":                       # above the corridor roof: dark stone
+                    w.box("PT02_dark_stone", -0.02, w.length + 0.02, 2.6, top - 0.6, 0.0, 0.05)
                     parapet_band(w, top - 0.6, top)
                 else:
                     parapet_band(w, top - 0.6, top)
-            roof_units(poly, top - 1.45, max(2, int(len(poly) * 0.6)), hash(b["id"]) % 1000)
+            roof_units(poly, top - 1.45, max(2, int(len(poly) * 0.6)), sum(map(ord, b["id"])))
+            roof_mat = "roof_dark"
         elif kind == "corridor":
-            wall_mat = "PT02_dark_stone"
+            wall_mat, roof_mat = "PT02_dark_stone", "roof_dark"
             for w in walls:
                 if w.facing() in ("s", "e", "w") and w.length > 2:
                     curtain_wall(w, 0.3, w.length - 0.3, bottom, top - 0.35, 1.5, transoms=(bottom + 2.4,))
                 w.box("PT02_dark_stone", -0.02, w.length + 0.02, top - 0.35, top, 0.0, 0.14)
-        elif kind == "west_wing":
+        elif kind == "west_wing":              # Rusty walls, anthracite reveals, as the project renders
+            wall_mat, roof_mat = "PT01_rusty", "roof_dark"
             for w in walls:
                 f = w.facing()
                 if f == "e" and w.length > 6:        # onto the sunken market court
                     shopfronts(w, bottom, 2.9, top)
                     w.box("PT01_rusty", -0.02, w.length + 0.02, 3.4, 3.8, 0.0, 0.12)
                 elif f == "w":                       # onto the west strip: Rusty fins on Lotus
-                    fins(w, 3.2, 0.0, top - 0.6)
+                    fins(w, 3.2, 0.0, top - 0.6, "AL_framing", 0.22, 0.35)
                     for s in np.arange(2.0, w.length - 3, 9.6):
                         curtain_wall(w, s, s + 3.0, 0.8, 4.2, 1.5)
                 elif f == "d" and w.n[0] < 0 and w.length > 8:   # the knuckle's south-west face: the LED screen (item 11)
@@ -716,7 +733,7 @@ def dress_buildings(ctx):
                 parapet_band(w, top - 0.3, top)
         set_materials(ob, wall_mat, roof_mat)
     for ob in ctx["passages"]:
-        set_materials(ob, "PT03_lotus", "roof_membrane")
+        set_materials(ob, "PT03_lotus", "roof_dark")
 
 
 def dress_pavilion(poly, top):
@@ -1001,15 +1018,16 @@ def market_court(ctx, coll):
             hi, lo = floor + 6.4, floor + 4.6
             flip = (i + j) % 2
             hs = [hi, lo, lo, hi] if flip else [lo, hi, hi, lo]
-            n = 8
+            n = 12
             o = len(V)
+            cut = 0.11  # the tensioned edges curve in between the corners, by this share of the sail's size
             for b_ in range(n + 1):
                 for a_ in range(n + 1):
-                    u, v = a_ / n, b_ / n
-                    h = hs[0] * (1 - u) * (1 - v) + hs[1] * u * (1 - v) + hs[2] * (1 - u) * v + hs[3] * u * v
-                    h -= 0.35 * math.sin(math.pi * u) * math.sin(math.pi * v)
-                    inset = 0.25
-                    V.append(B(cx + (u - 0.5) * (sx - inset), cz + (v - 0.5) * (sz - inset), h))
+                    s_, t_ = a_ / n - 0.5, b_ / n - 0.5
+                    s_, t_ = s_ * (1 - 2 * cut * math.cos(math.pi * t_)), t_ * (1 - 2 * cut * math.cos(math.pi * s_))
+                    u, v = s_ + 0.5, t_ + 0.5
+                    h = hs[0] * (1 - u) * (1 - v) + hs[1] * u * (1 - v) + hs[2] * (1 - u) * v + hs[3] * u * v  # hypar
+                    V.append(B(cx + s_ * (sx - 0.3), cz + t_ * (sz - 0.3), h))
             for b_ in range(n):
                 for a_ in range(n):
                     k = o + b_ * (n + 1) + a_
@@ -1073,11 +1091,74 @@ def food_trucks(ctx, coll):
             side = -side
         w = Wall(tuple(c - ax * Lg / 2 + side * Wd / 2), tuple(c + ax * Lg / 2 + side * Wd / 2), [tuple(q) for q in p])
         w.box("pod_glass", Lg * 0.2, Lg * 0.8, 1.45, 2.45, -0.06, 0.0)
+        for e in (-1, 1):  # the glazed ends
+            end = Wall(tuple(c + e * ax * Lg / 2 - side * Wd / 2), tuple(c + e * ax * Lg / 2 + side * Wd / 2), [tuple(q) for q in p])
+            end.box("pod_glass", Wd * 0.18, Wd * 0.82, 1.15, 2.55, -0.08, -0.02)
         w.box("awning", Lg * 0.18, Lg * 0.82, 2.55, 2.6, 0.0, 0.9)
         ACC.quad_box("door_dark", [tuple(q) for q in (c - ax * (Lg / 2 - 0.4) - side * (Wd / 2 - 0.3),
                                                       c + ax * (Lg / 2 - 0.4) - side * (Wd / 2 - 0.3),
                                                       c + ax * (Lg / 2 - 0.4) + side * (Wd / 2 - 0.3),
                                                       c - ax * (Lg / 2 - 0.4) + side * (Wd / 2 - 0.3))], 0.0, 0.6)
+
+
+def bistro_set(x, z, y, rot, chairs=4):
+    """Square cafe table with chairs round it (white frames, timber seats)."""
+    c, s_ = math.cos(rot), math.sin(rot)
+
+    def sq(cx, cz, half_w, half_d, y0, y1, mat, a=0.0):
+        ca, sa = math.cos(rot + a), math.sin(rot + a)
+        pts = [(cx + ca * u - sa * v, cz + sa * u + ca * v) for u, v in ((-half_w, -half_d), (half_w, -half_d), (half_w, half_d), (-half_w, half_d))]
+        ACC.quad_box(mat, pts, y + y0, y + y1)
+
+    sq(x, z, 0.36, 0.36, 0.71, 0.75, "pod_white")
+    sq(x, z, 0.03, 0.03, 0.0, 0.71, "rail")
+    sq(x, z, 0.22, 0.22, 0.0, 0.02, "rail")
+    for k in range(chairs):
+        a = k * TAU / 4
+        cx, cz = x + math.cos(rot + a) * 0.72, z + math.sin(rot + a) * 0.72
+        sq(cx, cz, 0.21, 0.21, 0.43, 0.47, "timber", a)
+        for du, dv in ((-0.18, -0.18), (0.18, -0.18), (0.18, 0.18), (-0.18, 0.18)):
+            ca, sa = math.cos(rot + a), math.sin(rot + a)
+            sq(cx + ca * du - sa * dv, cz + sa * du + ca * dv, 0.015, 0.015, 0.0, 0.43, "rail", a)
+        bx, bz = cx + math.cos(rot + a) * 0.2, cz + math.sin(rot + a) * 0.2
+        sq(bx, bz, 0.015, 0.2, 0.47, 0.85, "pod_white", a)
+
+
+def furniture(ctx):
+    """Cafe tables by the food trucks, on the serving side, and in the sunken tree plaza between the trees."""
+    plan, G = ctx["plan"], ctx["ground_at"]
+    pits = np.array(plan["tree_pits"], float)
+    blocked = [[tuple(p) for p in k] for k in plan["kiosks"]] + [[tuple(p) for p in pl] for pl, _ in ctx["planters"]]
+    blocked += [[tuple(p) for p in b["pts"]] for _, b in ctx["buildings"]]
+
+    def free(x, z, r=1.3):
+        if len(pits) and np.min(np.hypot(pits[:, 0] - x, pits[:, 1] - z)) < r + 0.9:
+            return False
+        return not any(inside((x + dx, z + dz), poly) for poly in blocked for dx, dz in ((-r, 0), (r, 0), (0, -r), (0, r), (0, 0)))
+
+    n = 0
+    for i, k in enumerate(plan["kiosks"]):
+        p = np.array(k, float)
+        c = p.mean(0)
+        e0, e1 = p[1] - p[0], p[3] - p[0]
+        if np.linalg.norm(e0) < np.linalg.norm(e1):
+            e0, e1 = e1, e0
+        ax = e0 / np.linalg.norm(e0)
+        side = np.array([-ax[1], ax[0]])
+        if side[1] > 0.3 or (abs(side[1]) <= 0.3 and side[0] > 0):
+            side = -side
+        for along in (-1.6, 1.6):
+            q = c + side * (np.linalg.norm(e1) / 2 + 2.4) + ax * along
+            if rnd.random() < 0.8 and free(*q):
+                bistro_set(q[0], q[1], G(*q), rnd.uniform(0, TAU))
+                n += 1
+    plaza = next(f for f in plan["ground"]["floors"] if f["id"] == "tree_plaza")
+    poly = [(p[0], p[1]) for p in plaza["pts"]]
+    for x, z in points_in(poly, 3.6, 0.25):
+        if rnd.random() < 0.55 and free(x, z) and all(inside(q, poly) for q in ((x - 1.3, z), (x + 1.3, z), (x, z - 1.3), (x, z + 1.3))):
+            bistro_set(x, z, G(x, z), rnd.uniform(0, TAU))
+            n += 1
+    print(f"furniture: {n} cafe tables", flush=True)
 
 
 def yard_units(ctx):
@@ -1119,6 +1200,7 @@ def build(ctx):
     dress_buildings(ctx)
     market_court(ctx, coll)
     food_trucks(ctx, coll)
+    furniture(ctx)
     yard_units(ctx)
     site_finishes(ctx)
     landscape(ctx, proto, coll)

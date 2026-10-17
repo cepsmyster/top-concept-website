@@ -754,7 +754,7 @@ def fog_material(density, color=(0.93, 0.88, 0.80)):
 
 
 # ───────── sky ─────────
-def sky_and_sun(scene, az_deg=240, el_deg=26, strength=0.32, sun_energy=4.6):
+def sky_and_sun(scene, az_deg=240, el_deg=26, strength=0.32, sun_energy=4.6, color=(1.0, 0.92, 0.82)):
     world = bpy.data.worlds.new("desert_sky")
     scene.world = world
     world.use_nodes = True
@@ -776,7 +776,7 @@ def sky_and_sun(scene, az_deg=240, el_deg=26, strength=0.32, sun_energy=4.6):
     ld = bpy.data.lights.new("sun", "SUN")
     ld.energy = sun_energy
     ld.angle = math.radians(1.2)
-    ld.color = (1.0, 0.92, 0.82)
+    ld.color = color
     sun = bpy.data.objects.new("sun", ld)
     az, el = math.radians(az_deg), math.radians(el_deg)
     d = Vector((math.cos(el) * math.sin(az), math.cos(el) * math.cos(az), math.sin(el)))  # towards the sun, from +y (north) clockwise
@@ -786,9 +786,10 @@ def sky_and_sun(scene, az_deg=240, el_deg=26, strength=0.32, sun_energy=4.6):
 
 
 # ───────── build ─────────
-def build(scene, plan_dir, plan, tmat, fog_density=0.00042, fog_color=(0.93, 0.88, 0.80), light=None):
+def build(scene, plan_dir, plan, tmat, fog_density=0.00042, fog_color=(0.93, 0.88, 0.80), light=None, fog_height=420):
     """The desert round the site. `tmat` is the ground material shared with the site ground (terrain_material);
-    `light` = keyword arguments for sky_and_sun (sun azimuth and elevation in degrees, sky strength, sun energy)."""
+    `light` = keyword arguments for sky_and_sun (sun azimuth and elevation in degrees, sky strength, sun energy,
+    colour). The fog fills a layer `fog_height` metres deep: a low sun shines through less of a shallow layer."""
     root = bpy.data.collections.new("Desert")
     scene.collection.children.link(root)
     sub = {}
@@ -900,8 +901,8 @@ def build(scene, plan_dir, plan, tmat, fog_density=0.00042, fog_color=(0.93, 0.8
     S = EXTENT + 500
     bm = bmesh.new()
     r = bmesh.ops.create_cube(bm, size=1.0)
-    bmesh.ops.scale(bm, vec=(2 * S, 2 * S, 420), verts=r["verts"])
-    bmesh.ops.translate(bm, vec=Vector(B(CENTRE[0], CENTRE[1], 200)), verts=r["verts"])
+    bmesh.ops.scale(bm, vec=(2 * S, 2 * S, fog_height), verts=r["verts"])
+    bmesh.ops.translate(bm, vec=Vector(B(CENTRE[0], CENTRE[1], fog_height / 2 - 10)), verts=r["verts"])
     bm.to_mesh(me)
     bm.free()
     me.materials.append(fog_material(fog_density, fog_color))

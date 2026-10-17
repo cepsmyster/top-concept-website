@@ -1,4 +1,5 @@
-"""Retail Park, Sharjah: the accurate model, step by step. Step 1: the massing, in its desert setting.
+"""Retail Park, Sharjah: the accurate model, step by step. Step 1: the massing, in its desert setting; step 3: the
+visualisation (src/blender/visual.py: finishes of the material schedule, facades, landscape, shade sails, food trucks).
 
 Footprints come from the site setting-out plan (A-091, sheet 02 of 02), traced by src/blender/plan/trace_plan.py
 into src/blender/plan/retail_park_plan.json. Levels come from the elevations and sections (A-200 to A-306): LEVELS
@@ -6,6 +7,7 @@ below. The buildings stand on the lower ground (FFL -1.95), sunk below the rear 
 promenade (+0.30/+0.45); the market court and the tree plaza are sunk to the lower ground too, with retaining walls,
 railings, the terraces and the stairs back up.
 
+--look visual (default): the visualisation, in the desert at golden hour. --look massing: the white massing.
 --env desert (default): the site's ground surfaces from the plan (asphalt, paving, sand, planting, the jogging trail,
 with road markings) in the desert round it, with the roads carrying on, the highway, farms, trees and distant fog
 (src/blender/environment.py). --env plain: the drawing itself as a grey card under the massing.
@@ -16,7 +18,8 @@ Origin: the north-west outer corner of the Games hall. Blender: x east, y north 
 Run with Blender 4.2 or newer, including 5.x (or the `bpy` Python module):
     blender -b --factory-startup -P src/blender/massing.py -- --blend src/blender/RetailPark_massing.blend
     blender -b --factory-startup -P src/blender/massing.py -- --gpu --out renders/massing
-Options: --views 00,06 (subset) --res 1920x1080 --samples 128 --env plain (--no-lines: no edge lines on the card).
+Options: --views 00,06 (subset) --res 1920x1080 --samples 128 --look massing --env plain (white massing on the drawing;
+--no-lines: no edge lines on the card).
 In the saved .blend each view is a camera bound to one frame (1-7): Render > Render Animation renders them all.
 """
 import argparse
@@ -38,6 +41,7 @@ argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 ap = argparse.ArgumentParser()
 ap.add_argument("--plan", default=os.path.join(HERE, "plan", "retail_park_plan.json"))
 ap.add_argument("--env", default="desert", choices=["desert", "plain"])
+ap.add_argument("--look", default="visual", choices=["visual", "massing"], help="visual: finishes and landscape (desert only)")
 ap.add_argument("--out", default="", help="render the views into this folder")
 ap.add_argument("--views", default="", help="subset of views, e.g. 00,06 (default: all)")
 ap.add_argument("--res", default="1920x1080")
@@ -48,6 +52,7 @@ ap.add_argument("--gpu", action="store_true", help="render on the graphics card 
 args = ap.parse_args(argv)
 RES = tuple(int(v) for v in args.res.split("x"))
 DESERT = args.env == "desert"
+VISUAL = DESERT and args.look == "visual"
 
 # Levels in metres from the elevations and sections (datum 0.00 = gate level at the rear road): (bottom, top).
 # Blocks whose floor is on the promenade (+0.45) start at the ground here (0.00), which is kept level outside.
@@ -199,23 +204,27 @@ def ground_at(x, z):
 
 
 L = LEVELS
+BUILT = {"buildings": [], "passages": [], "planters": [], "planter_objs": [], "yard": []}  # handed to visual.py
 for b in plan["buildings"]:
     y0, y1 = L[b["kind"]]
-    prism(b["id"], b["pts"], y0, y1, MAT["building"], C_BUILD)
+    BUILT["buildings"].append((prism(b["id"], b["pts"], y0, y1, MAT["building"], C_BUILD), b))
 # the two through-passages in the spine: a walled room across the middle, open to the rear and to the corridor
 for i, p in enumerate(plan["passages"]):
     x0, z0, x1, z1 = p["box"]
     rz0, rz1 = p["room_z"]
-    box(f"passage_{i + 1}_room", x0, rz0, x1, rz1, *L["passage_room"], MAT["building"], C_BUILD)
-    box(f"passage_{i + 1}_roof", x0, z0, x1, z1, *L["passage_roof"], MAT["building"], C_BUILD)
-for i, k in enumerate(plan["kiosks"]):
-    prism(f"food_truck_{i + 1:02d}", k, *L["kiosk"], MAT["small"], C_SMALL)
+    BUILT["passages"].append(box(f"passage_{i + 1}_room", x0, rz0, x1, rz1, *L["passage_room"], MAT["building"], C_BUILD))
+    BUILT["passages"].append(box(f"passage_{i + 1}_roof", x0, z0, x1, z1, *L["passage_roof"], MAT["building"], C_BUILD))
+if not VISUAL:  # the visualisation models the food trucks themselves
+    for i, k in enumerate(plan["kiosks"]):
+        prism(f"food_truck_{i + 1:02d}", k, *L["kiosk"], MAT["small"], C_SMALL)
 for i, u in enumerate(plan["yard_units"]):
-    prism("LPG_store" if u["lpg"] else f"yard_unit_{i + 1}", u["pts"], *L["yard"], MAT["lpg" if u["lpg"] else "small"], C_SMALL)
+    ob = prism("LPG_store" if u["lpg"] else f"yard_unit_{i + 1}", u["pts"], *L["yard"], MAT["lpg" if u["lpg"] else "small"], C_SMALL)
+    BUILT["yard"].append((ob, u))
 for i, pl in enumerate(plan["planters"]):
     cx, cz = sum(p[0] for p in pl) / len(pl), sum(p[1] for p in pl) / len(pl)
     g = ground_at(cx, cz)
-    prism(f"planter_{i + 1:02d}", pl, g - 0.5, g + PLANTER_H, MAT["planter"], C_LAND)
+    BUILT["planter_objs"].append(prism(f"planter_{i + 1:02d}", pl, g - 0.5, g + PLANTER_H, MAT["planter"], C_LAND))
+    BUILT["planters"].append((pl, g + PLANTER_H))
 
 
 # ───────── site ground: level outside, sunk to the lower ground in the court and the plaza ─────────
@@ -239,8 +248,7 @@ def tri_mesh(name, mesh, mat, coll, attr=None):
 
 def site_ground(mat, attr=None):
     tri_mesh("site_ground", GROUND_PLAN["base"], mat, C_GROUND, attr)
-    for f in GROUND_PLAN["floors"]:
-        tri_mesh(f["id"], f["mesh"], mat, C_GROUND, attr)
+    BUILT["floors"] = {f["id"]: tri_mesh(f["id"], f["mesh"], mat, C_GROUND, attr) for f in GROUND_PLAN["floors"]}
     # retaining walls from each sunken floor up to the ground, with a railing above
     me = bpy.data.meshes.new("retaining_walls")
     bm = bmesh.new()
@@ -253,20 +261,32 @@ def site_ground(mat, attr=None):
     bm.to_mesh(me)
     bm.free()
     me.materials.append(MAT["wall"])
-    C_GROUND.objects.link(bpy.data.objects.new("retaining_walls", me))
+    BUILT["walls"] = bpy.data.objects.new("retaining_walls", me)
+    C_GROUND.objects.link(BUILT["walls"])
+    BUILT["stairs"] = []
     # stairs from the lower ground up to the promenade: solid steps
     for i, st in enumerate(GROUND_PLAN["stairs"]):
         (x0, x1), (z0, z1), n = st["x"], st["z"], st["risers"]
         h0, h1 = st["h"]
         for k in range(n):
             zs = z0 + (z1 - z0) * k / n
-            box(f"stair_{i + 1}_{k:02d}", x0, zs, x1, z1, h0 - 0.05, h0 + (h1 - h0) * (k + 1) / n, MAT["wall"], C_GROUND)
+            BUILT["stairs"].append(box(f"stair_{i + 1}_{k:02d}", x0, zs, x1, z1, h0 - 0.05, h0 + (h1 - h0) * (k + 1) / n, MAT["wall"], C_GROUND))
 
 
 gi = plan["ground_image"]
 (gx0, gz0), (gx1, gz1) = gi["min"], gi["max"]
 cx, cz = (gx0 + gx1) / 2, (gz0 + gz1) / 2
-if DESERT:
+if VISUAL:
+    import environment
+    import visual
+    gmat = visual.ground_material(plan, os.path.join(PLAN_DIR, plan["ground_surfaces"]["zones"]))
+    site_ground(gmat, (*environment.srgb(environment.SAND), 1))
+    # golden hour: a summer afternoon's low sun from the west-north-west, behind the site from the main road, as in the
+    # project's own aerial renders; warm haze in a shallow layer, so the low sun still reaches the site
+    environment.build(scene, PLAN_DIR, plan, gmat, fog_color=(0.98, 0.86, 0.70), fog_density=0.0003, fog_height=150,
+                      light={"az_deg": 290, "el_deg": 16, "strength": 0.22, "sun_energy": 14.0, "color": (1.0, 0.78, 0.56)})
+    visual.build(dict(BUILT, scene=scene, plan=plan, levels=LEVELS, ground_at=ground_at))
+elif DESERT:
     import environment
     gmat, gimg = environment.terrain_material(os.path.join(PLAN_DIR, plan["ground_surfaces"]["file"]), gi)
     site_ground(gmat, (*environment.srgb(environment.SAND), 1))
@@ -304,6 +324,10 @@ VIEWS = [  # name, camera (plan x, plan z, height), target (plan x, plan z, heig
     ("04_street_main_road", (-30, 100, 12), (-12, 15, 3), 28),
     ("05_eye_level_market_court", (-14.0, 20.0, -0.25), (-45, 1, 1.0), 24),
 ]
+VIEWS_AFTER_PLAN = [  # visualisation only, after the plan view so the first seven frames stay as they were
+    ("07_food_trucks_promenade", (-4.0, 60.0, 4.5), (22, 36, 2.0), 30),   # across the parking to the food trucks
+    ("08_spine_shopfronts", (20.0, -18.5, 1.7), (-2, -12.4, 3.2), 26),    # along the spine's north shopfronts
+]
 cams = []
 for name, (px, pz, ph), (tx, tz, th), lens in VIEWS:
     cd = bpy.data.cameras.new(name)
@@ -319,6 +343,13 @@ cd.ortho_scale = max(gx1 - gx0, (gz1 - gz0) * RES[0] / RES[1]) * 1.01
 cam = bpy.data.objects.new("06_plan_top", cd)
 cam.location = B(cx, cz, 300)
 cams.append(cam)
+for name, (px, pz, ph), (tx, tz, th), lens in (VIEWS_AFTER_PLAN if VISUAL else []):
+    cd = bpy.data.cameras.new(name)
+    cd.lens, cd.sensor_width = lens, 36
+    cam = bpy.data.objects.new(name, cd)
+    cam.location = B(px, pz, ph)
+    cam.rotation_euler = (Vector(B(tx, tz, th)) - cam.location).to_track_quat("-Z", "Y").to_euler()
+    cams.append(cam)
 for i, cam in enumerate(cams):
     C_CAMS.objects.link(cam)
     cam.data.clip_start, cam.data.clip_end = 0.5, 20000
@@ -364,7 +395,13 @@ cy.max_bounces = 4
 cy.transparent_max_bounces = 16
 cy.volume_step_rate = 4.0
 scene.view_settings.view_transform = "AgX"
-scene.view_settings.exposure = -0.35 if not DESERT else -0.45
+scene.view_settings.exposure = -0.35 if not DESERT else -0.75 if VISUAL else -0.45
+if VISUAL:  # eye-level views stand in the low sun's shade: a brighter exposure on their frames (keyframed per view)
+    LIFT = {"04": 0.15, "05": 0.65, "07": 0.4, "08": 0.4}
+    for i, cam in enumerate(cams):
+        scene.view_settings.exposure = -0.75 + LIFT.get(cam.name[:2], 0.0)
+        scene.view_settings.keyframe_insert("exposure", frame=i + 1)
+    scene.view_settings.exposure = -0.75
 for look in ("AgX - Medium High Contrast", "Medium High Contrast"):  # look names differ between Blender versions
     try:
         scene.view_settings.look = look

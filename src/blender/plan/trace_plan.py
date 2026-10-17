@@ -5,8 +5,9 @@ Reads the vector linework of the PDF and writes, next to this file:
     site_plan.png           the drawing as a ground image, laid under the massing at true scale
     site_ground.png         the ground surfaces read from the drawing (asphalt, paving, pavers, sand, planting,
                             jogging track) with the road markings, for the desert environment
-    site_zones.png          the same surfaces as class numbers (red = class x 40) with the drawn lines (green),
-                            for the material shaders of the visualisation
+    site_zones.png          the same surfaces as class numbers (red = class x 30) with the drawn lines (green),
+                            for the material shaders of the visualisation; the sand inside the site boundary is
+                            class 7, the landscape beds
     check_overlay.webp      the traced footprints drawn over the drawing, for checking
 
 Run with ordinary Python 3 (not Blender):  pip install pymupdf shapely pillow numpy scipy
@@ -207,7 +208,7 @@ PLANTER_SEEDS = [(192.8, 668.9), (305.5, 748.6), (288.1, 854.2), (409.1, 600.1),
 # ───────── ground surfaces ─────────
 # The drawing splits the ground into closed regions; each region gets a surface. Seeds (PDF points) pick the
 # roads, the pedestrian areas and the parking aisles; parking bays are found by size; everything else is sand.
-ASPHALT, PAVING, PAVERS, SAND, PLANTING, TRACK = 1, 2, 3, 4, 5, 6
+ASPHALT, PAVING, PAVERS, SAND, PLANTING, TRACK, LANDSCAPE = 1, 2, 3, 4, 5, 6, 7  # LANDSCAPE: site_zones.png only
 SURFACE_RGB = {ASPHALT: (66, 66, 68), PAVING: (198, 190, 176), PAVERS: (160, 150, 138), SAND: (206, 184, 150),
                PLANTING: (98, 106, 74), TRACK: (164, 94, 80)}
 LINE_RGB = {ASPHALT: (228, 228, 222), PAVING: (150, 144, 134), PAVERS: (120, 112, 104), SAND: (170, 150, 120),
@@ -275,8 +276,48 @@ def ground_surfaces(gray, zoom, boundary, planters):
     yy, xx = np.mgrid[0:surf.shape[0], 0:surf.shape[1]]
     edge = np.minimum(np.minimum(xx, surf.shape[1] - 1 - xx), np.minimum(yy, surf.shape[0] - 1 - yy)) / px_m
     alpha = (np.clip(edge / 12.0, 0, 1) * 255).astype(np.uint8)
-    zones = np.dstack([surf.astype(np.uint8) * 40, drawn.astype(np.uint8) * 255, np.zeros_like(alpha)])
+    # zones: the sand inside the site boundary is the landscape beds
+    site = Image.new("1", bar.size, 0)
+    ImageDraw.Draw(site).polygon([px(p) for p in boundary], fill=1)
+    surf[(surf == SAND) & np.array(site)] = LANDSCAPE
+    zones = np.dstack([surf.astype(np.uint8) * 30, drawn.astype(np.uint8) * 255, np.zeros_like(alpha)])
     return np.dstack([rgb, alpha]), zones
+
+
+def landscape_points(zones, zoom, boundary, keep_out):
+    """Planting for the soft landscape: the sand areas inside the site boundary, clear of the buildings, the sunken
+    ground, the kiosks and the planters (`keep_out`, a shapely geometry in metres). Trees on a jittered 6.5 m grid,
+    shrubs and grasses on a 1.2 m grid in drifts (a smooth random field), both kept back from the paved edges."""
+    fx0, fy0 = FRAME[0], FRAME[1]
+    k = 4  # work at a quarter of the image resolution (about 13 cm a pixel)
+    sand = zones[::k, ::k, 0] == LANDSCAPE * 30
+    px_m = zoom * PTS_PER_M / k
+    clear = ndimage.distance_transform_edt(sand) / px_m  # metres to the nearest other surface
+    site = Polygon([m(p) for p in boundary]).buffer(0)
+    rng = np.random.default_rng(20261017)
+    drift = ndimage.gaussian_filter(rng.random((sand.shape[0] // 40 + 2, sand.shape[1] // 40 + 2)), 1.2)
+    drift = (drift - drift.mean()) / drift.std()
+
+    def sample(x, z):
+        c = ((x * PTS_PER_M + ORIGIN[0] - fx0) * zoom) / k
+        r = ((z * PTS_PER_M + ORIGIN[1] - fy0) * zoom) / k
+        if not (0 <= r < sand.shape[0] and 0 <= c < sand.shape[1]):
+            return 0.0, 0.0
+        return clear[int(r), int(c)], drift[int(r) // 40, int(c) // 40]
+
+    x0, z0, x1, z1 = site.bounds
+    trees, shrubs = [], []
+    for spacing, out, margin, keep in ((6.5, trees, 2.2, 0.15), (1.2, shrubs, 0.6, -0.6)):
+        for x in np.arange(x0, x1, spacing):
+            for z in np.arange(z0, z1, spacing):
+                x_, z_ = x + rng.uniform(-0.4, 0.4) * spacing, z + rng.uniform(-0.4, 0.4) * spacing
+                d, f = sample(x_, z_)
+                if d < margin or f + rng.normal(0, 0.5) < keep:
+                    continue
+                p = Point(x_, z_)
+                if site.contains(p) and not keep_out.contains(p):
+                    out.append([round(x_, 2), round(z_, 2)])
+    return {"trees": trees, "shrubs": shrubs}
 
 
 def bez(v, t):
@@ -399,7 +440,14 @@ def main(pdf_path):
 
     out["ground_surfaces"] = {"file": "site_ground.png", "fade_m": 12.0, "zones": "site_zones.png",
                               "classes": {"asphalt": ASPHALT, "paving": PAVING, "pavers": PAVERS, "sand": SAND,
-                                          "planting": PLANTING, "track": TRACK}}
+                                          "planting": PLANTING, "track": TRACK, "landscape": LANDSCAPE}, "scale": 30}
+    keep_out = unary_union([Polygon(b["pts"]).buffer(1.5) for b in out["buildings"]]
+                           + [Polygon(f["pts"]).buffer(1.0) for f in out["ground"]["floors"]]
+                           + [Polygon(k).buffer(1.2) for k in out["kiosks"]]
+                           + [Polygon(u["pts"]).buffer(1.2) for u in out["yard_units"]]
+                           + [Polygon(pl).buffer(0.5) for pl in out["planters"]]
+                           + [Point(t).buffer(3.0) for t in out["tree_pits"]])
+    out["landscape"] = landscape_points(zones, zoom, boundary, keep_out)
 
     with open(os.path.join(HERE, "retail_park_plan.json"), "w") as f:
         json.dump(out, f, indent=1)
@@ -419,7 +467,7 @@ def main(pdf_path):
     chk = chk.resize((4096, round(chk.height * 4096 / chk.width)), Image.LANCZOS)
     chk.save(os.path.join(HERE, "check_overlay.webp"), quality=86)
     print(f"{len(out['buildings'])} buildings, {len(kiosks)} kiosks, {len(yard)} yard units, {len(planters)} planters, "
-          f"{len(trees)} tree pits")
+          f"{len(trees)} tree pits, {len(out['landscape']['trees'])} landscape trees, {len(out['landscape']['shrubs'])} shrubs")
 
 
 if __name__ == "__main__":
