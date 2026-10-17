@@ -2,3 +2,9 @@ node_modules/
 *.blend1
 __pycache__/
 renders/
+# made from the Retail Park drawings: kept off this public repo (src/blender/plan/trace_plan.py rebuilds them from the plan PDF)
+src/blender/plan/*.png
+src/blender/plan/*.webp
+src/blender/plan/retail_park_plan.json
+src/blender/RetailPark_massing.blend
+src/blender/RetailPark_visual.blend

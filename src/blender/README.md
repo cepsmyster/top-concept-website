@@ -48,16 +48,18 @@ Notes on the scene: the connector between the buildings has a plain roof (no par
 
 The photoreal scene above was laid out by eye from the renders. The accurate model is being rebuilt in steps from the drawings: first the massing, with footprints traced from the site setting-out plan (A-091, sheet 02 of 02) and levels from the elevations and sections (A-200 to A-306), set in the desert round the site.
 
+**Not in this repo.** The repo is public, so everything made from the project drawings is kept out of it: the plan data and images in `plan/` (`retail_park_plan.json`, `site_ground.png`, `site_zones.png`, `site_plan.png`, `check_overlay.webp`) and the two scenes, `RetailPark_massing.blend` and `RetailPark_visual.blend`. They are listed in `.gitignore`. To make them again, run `trace_plan.py` on the plan PDF (about a minute), then `massing.py --blend …` for each .blend (about 10 seconds). The .blend files were handed to the owner directly.
+
 | File | What it is |
 |---|---|
 | `plan/trace_plan.py` | Reads the plan PDF's vector linework and writes the files below. Ordinary Python: `pip install pymupdf shapely pillow numpy scipy`, then `python src/blender/plan/trace_plan.py "<plan>.pdf"`. |
-| `plan/retail_park_plan.json` | Every footprint in metres: the retail spine (3 parts, 2 through-passages), the covered mall corridor, the west wing and its corridor, the court room, the Games hall, the pavilion, the pump and LV room, 2 WC blocks, 16 food trucks, 6 yard units (one is the LPG store) and 14 raised planters; and the ground: the sunken market court, tree plaza, terraces and ramp (meshes with heights), their retaining walls and the 2 stairs. |
-| `plan/site_ground.png` | The ground surfaces read from the drawing (asphalt, paving, pavers, sand, planting, the jogging trail) with the road markings, 8192 px wide (about 3 cm a pixel), laid at true scale. |
-| `plan/site_plan.png` | The drawing itself, for the plain card (`--env plain`). |
-| `plan/check_overlay.webp` | The traced footprints drawn over the drawing, for checking. |
+| `plan/retail_park_plan.json` (not in the repo) | Every footprint in metres: the retail spine (3 parts, 2 through-passages), the covered mall corridor, the west wing and its corridor, the court room, the Games hall, the pavilion, the pump and LV room, 2 WC blocks, 16 food trucks, 6 yard units (one is the LPG store) and 14 raised planters; and the ground: the sunken market court, tree plaza, terraces and ramp (meshes with heights), their retaining walls and the 2 stairs. |
+| `plan/site_ground.png` (not in the repo) | The ground surfaces read from the drawing (asphalt, paving, pavers, sand, planting, the jogging trail) with the road markings, 8192 px wide (about 3 cm a pixel), laid at true scale. |
+| `plan/site_plan.png` (not in the repo) | The drawing itself, for the plain card (`--env plain`). |
+| `plan/check_overlay.webp` (not in the repo) | The traced footprints drawn over the drawing, for checking. |
 | `massing.py` | Builds the massing in Blender (4.2 or newer): white blocks at the section levels, the sunken court and plaza, 7 cameras. `--env desert` (default) or `--env plain`; `--look massing` for the white blocks in the desert (the default, `--look visual`, is step 3 below). |
 | `environment.py` | The desert round the site, used by `massing.py`. |
-| `RetailPark_massing.blend` | The scene, ready to render (images packed in; saved in Blender 5.1). It is self-contained, so it can be downloaded on its own and saved anywhere. Open it and press Render > Render Animation: frames 1–7 are the 7 views, written to a `renders` folder next to the .blend. Uses the graphics card set in Preferences > System > Cycles Render Devices. |
+| `RetailPark_massing.blend` (not in the repo) | The scene, ready to render (images packed in; saved in Blender 5.1). It is self-contained, so it can be downloaded on its own and saved anywhere. Open it and press Render > Render Animation: frames 1–7 are the 7 views, written to a `renders` folder next to the .blend. Uses the graphics card set in Preferences > System > Cycles Render Devices. |
 | `render_massing.bat` | Double-click on Windows: rebuilds the .blend and renders the 7 views on the graphics card into `renders/massing/`. |
 
 **Scale.** The PDF was plotted to fit the sheet, with no scale bar, so the scale was measured from the drawing: 6.3306 PDF points per metre (about 1:448 on A2). Everything agrees with it: parking bays 2.70 × 5.40 m (measured over runs of up to 26 bays), CAD fillet radii of exactly 2, 3, 4, 5 and 6 m, doors 0.90 and 1.00 m, internal stair treads 0.30 m, external steps 0.40 m and accessible-bay zones 1.20 m.
@@ -132,7 +134,7 @@ Two eye-level views are added after the plan view, so frames 1–7 stay as in st
 | File | What it is |
 |---|---|
 | `visual.py` | The finishes, facades, landscape, sails, food trucks and furniture, used by `massing.py` |
-| `RetailPark_visual.blend` | The visualisation, ready to render (saved in Blender 5.1, self-contained: its two images are packed in, everything else is procedural). Render > Render Animation renders the 9 views into a `renders` folder next to the .blend. It's set to 128 samples at 1920 × 1080; raise the samples for final stills. |
+| `RetailPark_visual.blend` (not in the repo) | The visualisation, ready to render (saved in Blender 5.1, self-contained: its two images are packed in, everything else is procedural). Render > Render Animation renders the 9 views into a `renders` folder next to the .blend. It's set to 128 samples at 1920 × 1080; raise the samples for final stills. |
 | `render_visual.bat` | Double-click on Windows: rebuilds the .blend and renders the 9 views at 256 samples on the graphics card into `renders/visual/` |
 
 To render without opening the .blend: `blender -b --factory-startup -P src/blender/massing.py -- --gpu --out renders/visual` (`--views 05,07` for a subset, `--samples`, `--res`).

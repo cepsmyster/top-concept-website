@@ -12,6 +12,13 @@ if not exist "%BLENDER%" (
   exit /b 1
 )
 cd /d "%~dp0..\.."
+if not exist "src\blender\plan\retail_park_plan.json" (
+  echo The plan data isn't here: it is made from the project drawings and kept off the public repo.
+  echo Run  python src\blender\plan\trace_plan.py "path\to\the setting-out plan.pdf"  first ^(see src\blender\README.md^),
+  echo or open the .blend file you were sent and use Render ^> Render Animation.
+  pause
+  exit /b 1
+)
 "%BLENDER%" -b --factory-startup -P src\blender\massing.py -- --look massing --gpu --samples 128 --blend src\blender\RetailPark_massing.blend --out renders\massing
 echo.
 echo Done. The views are in renders\massing

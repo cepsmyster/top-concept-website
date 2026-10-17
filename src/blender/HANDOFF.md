@@ -14,7 +14,8 @@ The website's photoreal 3D page (`retail-park-3d.html`, rendered by `src/blender
 ## Where the work is
 
 - Repo `cepsmyster/top-concept-website`, branch **`claude/loving-babbage-h6o4i7`** (no pull request yet).
-- Commits: `8f6aff5` (massing from the plan), `adeab20` (.blend edge-line fix), `c7080bc` (section levels and desert setting), `6618999` (the visualisation), and the commit after it (docs, `RetailPark_visual.blend`).
+- History: nine commits for steps 1–3, then one that keeps the drawing-derived files out (`git log` on the branch). The branch's history was rewritten on 17 October 2026 to take those files out of every commit, so commit IDs from before then no longer exist on GitHub's branch.
+- **Not in the repo** (it is public): everything made from the drawings, namely `plan/retail_park_plan.json`, `plan/site_ground.png`, `plan/site_zones.png`, `plan/site_plan.png`, `plan/check_overlay.webp`, `RetailPark_massing.blend` and `RetailPark_visual.blend`. They are in `.gitignore`. The owner has the .blend files. A new session needs the plan PDF: `python src/blender/plan/trace_plan.py "<plan>.pdf"` remakes the plan files in about a minute, and `massing.py --blend` remakes each .blend.
 - Claude Code session: https://claude.ai/code/session_01EWeF7S7Cmxq5E2Z8pY8YQv
 - Everything for this lives in `src/blender/`. `README.md` there has the full reference; this file is the short version.
 
@@ -36,7 +37,7 @@ To re-trace after a drawing revision: `pip install pymupdf shapely pillow numpy 
 
 - **Scale of the plan PDF:** 6.3306 PDF points per metre (about 1:448; the sheet was plotted to fit, with no scale bar). It was confirmed several ways: bays 2.70 × 5.40 m, CAD fillets of exactly 2/3/4/5/6 m, doors 0.90/1.00 m, stair treads 0.30/0.40 m.
 - **Axes:** plan x runs west → east, z from the rear road (north) to the main road (south), in metres. The origin is the Games hall's north-west outer corner. Blender coordinates are (x, −z, height). The plan is close to north-up: the owner confirmed the plot sits north-east of the Al Dhaid interchange.
-- **Footprints:** the outer wall faces, snapped to the CAD vertices (about 2 cm). The check image is `src/blender/plan/check_overlay.webp`.
+- **Footprints:** the outer wall faces, snapped to the CAD vertices (about 2 cm). The check image is `src/blender/plan/check_overlay.webp` (made by `trace_plan.py`; not in the repo).
 - **Levels** (datum 0.00 = gate level at the rear road), from the sections:
 
 | Block | Bottom | Top |
@@ -61,10 +62,10 @@ To re-trace after a drawing revision: `pip install pymupdf shapely pillow numpy 
 | `plan/trace_plan.py` | PDF → `plan/retail_park_plan.json` (footprints, sunken ground meshes, walls, stairs, tree pits, landscape positions), `plan/site_ground.png` (ground surfaces with road markings), `plan/site_zones.png` (surface classes for the visual shaders), `plan/site_plan.png` (the drawing), `plan/check_overlay.webp` |
 | `massing.py` | Builds the Blender scene: `LEVELS`, buildings, sunken ground, cameras. `--look visual` (default) or `--look massing`; `--env desert` (default) or `--env plain` (grey card with edge lines) |
 | `visual.py` | Step 3: materials, facades, landscape, sails, food trucks, furniture |
-| `RetailPark_visual.blend` | The visualisation, ready to render (Blender 5.1, about 14 MB, self-contained). Render > Render Animation: frames 1–9 = the 9 views |
+| `RetailPark_visual.blend` (not in the repo) | The visualisation, ready to render (Blender 5.1, about 14 MB, self-contained). Render > Render Animation: frames 1–9 = the 9 views |
 | `render_visual.bat` | Windows double-click: rebuilds `RetailPark_visual.blend` and renders the 9 views at 256 samples into `renders/visual` |
 | `environment.py` | The desert: terrain 16 km across, roads and bridges, palm farms, compounds, housing, about 140,000 instanced trees and shrubs, hazy sky, fog volume |
-| `RetailPark_massing.blend` | Ready to render, saved in Blender 5.1, self-contained (the one image is packed in; everything else is procedural). Render > Render Animation: frames 1–7 = the 7 views → a `renders` folder next to the .blend |
+| `RetailPark_massing.blend` (not in the repo) | Ready to render, saved in Blender 5.1, self-contained (the one image is packed in; everything else is procedural). Render > Render Animation: frames 1–7 = the 7 views → a `renders` folder next to the .blend |
 | `render_massing.bat` | Windows double-click: rebuilds the massing .blend and renders the 7 views on the graphics card (expects Blender 5.1 at the default path, or set `BLENDER`) |
 | `retail_park.py`, `export_tour.mjs`, `RetailPark_day/night.blend` | The **old** photoreal pipeline behind the live page, not yet rebuilt on the accurate model |
 
@@ -86,7 +87,7 @@ Run: `blender -b --factory-startup -P src/blender/massing.py -- --gpu --out rend
 1. Owner review of the step 3 renders: finishes, the sails, the planting, the light.
 2. Confirm the assumed heights (WC blocks, yard units, court room) and the promenade level, and the open choices listed under Visualisation above.
 3. Step 4: rebuild the photoreal film from the accurate scene (camera tour, `export_tour.mjs`) and replace the live page's film.
-4. Still open: the repo is **public**, so the plan-derived files (`site_plan.png`, the plan JSON, the zones) are visible to anyone. The owner was offered their removal; nothing has been decided.
+4. The repo is **public**. At the owner's request the drawing-derived files were taken out of the branch and its history (17 October 2026). Still public: the code, which carries the traced building outlines in `trace_plan.py` (PDF coordinates) and a few positions in `massing.py` and `visual.py`, and the levels and finishes written in these docs. GitHub can keep old commits viewable by their direct link for a while after a rewrite; GitHub Support can purge them.
 
 ## Continuing elsewhere
 
