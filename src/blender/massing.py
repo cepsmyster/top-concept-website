@@ -297,7 +297,7 @@ else:
 
 # ───────── cameras: one per frame ─────────
 VIEWS = [  # name, camera (plan x, plan z, height), target (plan x, plan z, height), lens in mm
-    ("00_aerial_from_the_highway", (40, 270, 88), (38, -2, 0), 35),
+    ("00_aerial_from_the_highway", (40, 280, 80), (38, -80, 0), 35),  # horizon and haze in the top of the frame
     ("01_aerial_south_west", (-105, 128, 88), (12, 10, 0), 35),
     ("02_aerial_south_east", (150, 130, 85), (22, 10, 0), 35),
     ("03_aerial_rear_north_west", (-95, -125, 80), (20, 5, 0), 35),
