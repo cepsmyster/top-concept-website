@@ -57,7 +57,7 @@ To re-trace after a drawing revision: `pip install pymupdf shapely pillow numpy 
 | `plan/trace_plan.py` | PDF → `plan/retail_park_plan.json` (footprints, sunken ground meshes, walls, stairs), `plan/site_ground.png` (ground surfaces with road markings), `plan/site_plan.png` (the drawing), `plan/check_overlay.webp` |
 | `massing.py` | Builds the Blender scene: `LEVELS`, buildings, sunken ground, 7 cameras. `--env desert` (default) or `--env plain` (grey card with edge lines) |
 | `environment.py` | The desert: terrain 16 km across, roads and bridges, palm farms, compounds, housing, about 140,000 instanced trees and shrubs, hazy sky, fog volume |
-| `RetailPark_massing.blend` | Ready to render, saved in Blender 5.1, images packed. Render > Render Animation: frames 1–7 = the 7 views → `renders/massing/` |
+| `RetailPark_massing.blend` | Ready to render, saved in Blender 5.1, self-contained (the one image is packed in; everything else is procedural). Render > Render Animation: frames 1–7 = the 7 views → a `renders` folder next to the .blend |
 | `render_massing.bat` | Windows double-click: rebuilds the .blend and renders the 7 views on the graphics card (expects Blender 5.1 at the default path, or set `BLENDER`) |
 | `retail_park.py`, `export_tour.mjs`, `RetailPark_day/night.blend` | The **old** photoreal pipeline behind the live page, not yet rebuilt on the accurate model |
 

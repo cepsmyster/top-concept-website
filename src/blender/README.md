@@ -57,7 +57,7 @@ The photoreal scene above was laid out by eye from the renders. The accurate mod
 | `plan/check_overlay.webp` | The traced footprints drawn over the drawing, for checking. |
 | `massing.py` | Builds the massing in Blender (4.2 or newer): white blocks at the section levels, the sunken court and plaza, 7 cameras. `--env desert` (default) or `--env plain`. |
 | `environment.py` | The desert round the site, used by `massing.py`. |
-| `RetailPark_massing.blend` | The scene, ready to render (images packed in; saved in Blender 5.1). Open it and press Render > Render Animation: frames 1–7 are the 7 views, written to `renders/massing/` at the top of the repo. Uses the graphics card set in Preferences > System > Cycles Render Devices. |
+| `RetailPark_massing.blend` | The scene, ready to render (images packed in; saved in Blender 5.1). It is self-contained, so it can be downloaded on its own and saved anywhere. Open it and press Render > Render Animation: frames 1–7 are the 7 views, written to a `renders` folder next to the .blend. Uses the graphics card set in Preferences > System > Cycles Render Devices. |
 | `render_massing.bat` | Double-click on Windows: rebuilds the .blend and renders the 7 views on the graphics card into `renders/massing/`. |
 
 **Scale.** The PDF was plotted to fit the sheet, with no scale bar, so the scale was measured from the drawing: 6.3306 PDF points per metre (about 1:448 on A2). Everything agrees with it: parking bays 2.70 × 5.40 m (measured over runs of up to 26 bays), CAD fillet radii of exactly 2, 3, 4, 5 and 6 m, doors 0.90 and 1.00 m, internal stair treads 0.30 m, external steps 0.40 m and accessible-bay zones 1.20 m.

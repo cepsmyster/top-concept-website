@@ -334,7 +334,7 @@ r.resolution_x, r.resolution_y = RES
 r.resolution_percentage = 100
 r.image_settings.file_format = "PNG"
 r.image_settings.color_mode = "RGB"
-r.filepath = "//../../renders/massing/view_"  # the "renders" folder at the top of the repo
+r.filepath = "//renders/view_"  # a "renders" folder next to the .blend, wherever it is saved
 cy = scene.cycles
 cy.device = "CPU"
 if args.gpu:
