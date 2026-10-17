@@ -286,15 +286,21 @@ r.use_freestyle = not args.no_lines
 r.line_thickness_mode = "RELATIVE"
 r.line_thickness = 0.9
 if not args.no_lines:
-    ls = scene.view_layers[0].freestyle_settings.linesets.new("edges")
+    fs = scene.view_layers[0].freestyle_settings
+    for old in list(fs.linesets):  # the default line set's style is not saved with the file
+        fs.linesets.remove(old)
+    ls = fs.linesets.new("edges")
     ls.select_by_visibility = True
     ls.select_by_edge_types = True
     ls.select_silhouette = ls.select_border = ls.select_crease = True
     ls.select_by_collection = True
     ls.collection = C_BUILD
-    ls.linestyle.color = (0.25, 0.24, 0.23)
-    ls.linestyle.thickness = 1.0
-    scene.view_layers[0].freestyle_settings.crease_angle = math.radians(140)
+    style = bpy.data.linestyles.new("edges")
+    style.use_fake_user = True  # keeps the style in the saved .blend
+    style.color = (0.25, 0.24, 0.23)
+    style.thickness = 1.0
+    ls.linestyle = style
+    fs.crease_angle = math.radians(140)
 
 if args.blend:
     gimg.pack()
