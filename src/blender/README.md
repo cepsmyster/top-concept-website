@@ -55,7 +55,7 @@ The photoreal scene above was laid out by eye from the renders. The accurate mod
 | `plan/site_ground.png` | The ground surfaces read from the drawing (asphalt, paving, pavers, sand, planting, the jogging trail) with the road markings, 8192 px wide (about 3 cm a pixel), laid at true scale. |
 | `plan/site_plan.png` | The drawing itself, for the plain card (`--env plain`). |
 | `plan/check_overlay.webp` | The traced footprints drawn over the drawing, for checking. |
-| `massing.py` | Builds the massing in Blender (4.2 or newer): white blocks at the section levels, the sunken court and plaza, 7 cameras. `--env desert` (default) or `--env plain`. |
+| `massing.py` | Builds the massing in Blender (4.2 or newer): white blocks at the section levels, the sunken court and plaza, 7 cameras. `--env desert` (default) or `--env plain`; `--look massing` for the white blocks in the desert (the default, `--look visual`, is step 3 below). |
 | `environment.py` | The desert round the site, used by `massing.py`. |
 | `RetailPark_massing.blend` | The scene, ready to render (images packed in; saved in Blender 5.1). It is self-contained, so it can be downloaded on its own and saved anywhere. Open it and press Render > Render Animation: frames 1–7 are the 7 views, written to a `renders` folder next to the .blend. Uses the graphics card set in Preferences > System > Cycles Render Devices. |
 | `render_massing.bat` | Double-click on Windows: rebuilds the .blend and renders the 7 views on the graphics card into `renders/massing/`. |
@@ -91,4 +91,50 @@ The market court and the tree plaza are sunk to −1.95, with retaining walls an
 | 6 | Eye level in the sunken market court |
 | 7 | Straight down over the whole sheet (orthographic), to check the massing against the plan |
 
-To render without opening the .blend: `blender -b --factory-startup -P src/blender/massing.py -- --gpu --out renders/massing` (`--views 00,06` for a subset, `--samples`, `--res`; `--env plain` for the grey card with edge lines). Building the scene takes about 10 seconds; on a graphics card each view takes well under a minute at 128 samples.
+To render without opening the .blend: `blender -b --factory-startup -P src/blender/massing.py -- --look massing --gpu --out renders/massing` (`--views 00,06` for a subset, `--samples`, `--res`; `--env plain` for the grey card with edge lines). Building the scene takes about 10 seconds; on a graphics card each view takes well under a minute at 128 samples.
+
+## Accurate model, step 3: the visualisation
+
+`massing.py --look visual` (the default with the desert) dresses the accurate massing in the finishes of the Retail Park material schedule (MATERIAL SHEETS – RETAIL PARK) and the elevations, and plants it. It's built by `visual.py`, from code only (no downloaded models, textures or HDRIs). `--look massing` still gives the white massing of steps 1 and 2.
+
+| Code | Finish (schedule) | Where in the model |
+|---|---|---|
+| GL | Reflective double glazing | Shopfronts and curtain walls, warm-lit inside |
+| AL-01 / AL-02 | Anthracite aluminium framing (mullions 50 × 100) / canopies | Curtain-wall frames, entrance canopies, the west wing's reveals |
+| PT01 | Jotashield Rusty 1259 (165, 114, 82) | Shopfront portal frames, the Games hall's fluted walls, the west wing, WC bands |
+| PT02 | Dark Stone 7687 (86, 87, 83) | Parapet bands, the Games hall's top band, the corridors, the spine above the corridor roof, the pavilion's soffit |
+| PT03 | Lotus 1108 (228, 221, 202) | The spine's shopfront wall, the pump room, the planters |
+| TC01 | Terracotta, staggered tilted panels | The pavilion's upper band (elevation C2) |
+| TC02 | Terracotta tiles 60 × 240 (150, 108, 92) | Lower ground: the sunken market court and tree plaza |
+| CC01 | Warm terracotta concrete (148, 113, 99) | The plaza's seating terraces, the stairs |
+| ITN01 | Grey interlock (96, 88, 90) | Upper ground: the plan's paving and pavers, the ramp |
+| RP01 | Red EPDM | The trail through the rear landscape |
+| SHD01 | Multi-coloured tinted shade fabric | The sails over the market court ("Pazar area") |
+| 08 / 11 | LED signage / LED screen (elevation legend) | Shop signs in the portals, RETAIL PARK and GAMES on the Games hall, the screen on the west wing's corner |
+
+**Facades** follow elevations A1/A2 (the spine's north shopfronts: curtain walls, Rusty portals with LED signs, the C-channel parapet band) and C1/C2 (the Games hall's fluted Rusty walls under the dark band with its signs, the pavilion's glass ground floor under the terracotta band, the louvred pump and LV rooms).
+
+**Landscape.** Trees stand on the 82 tree pits drawn on the plan. The 14 raised planters are planted with shrubs and grasses. The plan's sand inside the site boundary is the landscape beds: green ground cover on warm earth, with about 60 trees and 4,100 shrubs and grasses in drifts, kept back from the paths and kerbs (`trace_plan.py` writes the positions to `landscape` in the plan JSON, and the beds as class 7 of `site_zones.png`).
+
+**Market court.** 15 hyperbolic sails (5 × 3, curved tensioned edges, alternating high and low corners at +4.45 and +2.65 over the court floor at −1.95), 24 white masts and 8 timber stalls.
+
+**Promenade.** The 16 food trucks as rounded pink and white pods with glazed ends, a serving hatch and an awning on the side towards the buildings, and 19 café tables by the trucks and in the tree plaza. No cars and no people.
+
+**Light.** A summer afternoon's low sun from the west-north-west (290°, 16° up), warm, behind the site as seen from the main road, as in the project's own aerial renders. The haze is warm and kept to a layer 150 m deep, so the low sun still reaches the site; the far desert still fades out. Eye-level views stand in the buildings' shade, so each view has its own exposure (keyframed on its frame).
+
+Two eye-level views are added after the plan view, so frames 1–7 stay as in step 1:
+
+| View (frame) | Camera |
+|---|---|
+| 8 | Across the main parking to the food trucks and the Games hall |
+| 9 | Along the spine's north shopfronts |
+
+| File | What it is |
+|---|---|
+| `visual.py` | The finishes, facades, landscape, sails, food trucks and furniture, used by `massing.py` |
+| `RetailPark_visual.blend` | The visualisation, ready to render (saved in Blender 5.1, self-contained: its two images are packed in, everything else is procedural). Render > Render Animation renders the 9 views into a `renders` folder next to the .blend. It's set to 128 samples at 1920 × 1080; raise the samples for final stills. |
+| `render_visual.bat` | Double-click on Windows: rebuilds the .blend and renders the 9 views at 256 samples on the graphics card into `renders/visual/` |
+
+To render without opening the .blend: `blender -b --factory-startup -P src/blender/massing.py -- --gpu --out renders/visual` (`--views 05,07` for a subset, `--samples`, `--res`).
+
+**Not in the drawings, so taken from the references or assumed:** the sail layout, sizes and colour order; the stall and café-table positions; the tenant signs (blank LED boards); the food trucks' look (from the reference pods); the west wing in Rusty with anthracite reveals (from the project renders); the trail in red RP01 (the project renders show it red; the schedule also lists a blue RP02 jogging path); tree and shrub species (generic shade trees, olives, shrubs, grasses and agaves).

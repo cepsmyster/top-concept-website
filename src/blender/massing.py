@@ -16,11 +16,13 @@ Axes as in retail_park.py: plan x runs west -> east, z from the rear road (-z) t
 Origin: the north-west outer corner of the Games hall. Blender: x east, y north (= -z), z up.
 
 Run with Blender 4.2 or newer, including 5.x (or the `bpy` Python module):
-    blender -b --factory-startup -P src/blender/massing.py -- --blend src/blender/RetailPark_massing.blend
-    blender -b --factory-startup -P src/blender/massing.py -- --gpu --out renders/massing
-Options: --views 00,06 (subset) --res 1920x1080 --samples 128 --look massing --env plain (white massing on the drawing;
+    blender -b --factory-startup -P src/blender/massing.py -- --blend src/blender/RetailPark_visual.blend
+    blender -b --factory-startup -P src/blender/massing.py -- --gpu --out renders/visual
+    blender -b --factory-startup -P src/blender/massing.py -- --look massing --blend src/blender/RetailPark_massing.blend
+Options: --views 00,06 (subset) --res 1920x1080 --samples 128 --env plain (white massing on the drawing;
 --no-lines: no edge lines on the card).
-In the saved .blend each view is a camera bound to one frame (1-7): Render > Render Animation renders them all.
+In the saved .blend each view is a camera bound to one frame (1-7; 1-9 in the visualisation): Render > Render
+Animation renders them all.
 """
 import argparse
 import json
